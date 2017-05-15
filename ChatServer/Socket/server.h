@@ -13,7 +13,7 @@ int init();
 
 
 //start server
-void start(int fd, struct pollfd fds[], int *size);
+void start(int fd, struct pollfd fds[], nfds_t *size);
 
 
 

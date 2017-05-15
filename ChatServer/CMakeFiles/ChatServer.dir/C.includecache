@@ -61,6 +61,8 @@ unistd.h
 -
 pthread.h
 -
+string.h
+-
 Socket/server.h
 /home/liuzheng/ClionProjects/ChatServer/Socket/server.h
 

@@ -637,3 +637,31 @@ make[1]: Leaving directory '/home/liuzheng/ClionProjects/ChatServer/CMakeFiles/C
     Feature record: CXX_FEATURE:0cxx_variable_templates
     Feature record: CXX_FEATURE:0cxx_variadic_macros
     Feature record: CXX_FEATURE:0cxx_variadic_templates
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: /home/liuzheng/ClionProjects/ChatServer/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_f0351/fast"
+/usr/bin/make -f CMakeFiles/cmTC_f0351.dir/build.make CMakeFiles/cmTC_f0351.dir/build
+make[1]: Entering directory '/home/liuzheng/ClionProjects/ChatServer/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_f0351.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_f0351.dir/CheckIncludeFile.c.o   -c /home/liuzheng/ClionProjects/ChatServer/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_f0351
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f0351.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_f0351.dir/CheckIncludeFile.c.o  -o cmTC_f0351 
+make[1]: Leaving directory '/home/liuzheng/ClionProjects/ChatServer/CMakeFiles/CMakeTmp'
+
+
+Determining if the function pthread_create exists in the pthread passed with the following output:
+Change Dir: /home/liuzheng/ClionProjects/ChatServer/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_65d9f/fast"
+/usr/bin/make -f CMakeFiles/cmTC_65d9f.dir/build.make CMakeFiles/cmTC_65d9f.dir/build
+make[1]: Entering directory '/home/liuzheng/ClionProjects/ChatServer/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_65d9f.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_65d9f.dir/CheckFunctionExists.c.o   -c /usr/local/share/cmake-3.8/Modules/CheckFunctionExists.c
+Linking C executable cmTC_65d9f
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_65d9f.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_65d9f.dir/CheckFunctionExists.c.o  -o cmTC_65d9f -lpthread 
+make[1]: Leaving directory '/home/liuzheng/ClionProjects/ChatServer/CMakeFiles/CMakeTmp'
+
+

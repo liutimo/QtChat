@@ -6,6 +6,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "server.h"
 #include "socketmarco.h"
@@ -36,7 +37,7 @@ int init()
     return fd;
 }
 //start server
-void start(int fd, struct pollfd fds[], int *size)
+void start(int fd, struct pollfd fds[], nfds_t *size)
 {
     struct sockaddr_in client;
     socklen_t len;
@@ -48,8 +49,10 @@ void start(int fd, struct pollfd fds[], int *size)
             continue;
 
         fds[*size].fd = client_fd;
-        fds[*size].events = POLLIN | POLLOUT;
+        fds[*size].events = (POLLIN | POLLOUT);
         ++(*size);
+
+        printf("connecte from %s\n", inet_ntoa(client.sin_addr));
     }
 
 

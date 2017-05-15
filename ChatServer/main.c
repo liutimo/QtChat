@@ -8,40 +8,51 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <string.h>
 
 #include "Socket/server.h"
 
 
-
+#define TRUE 1
 
 struct pollfd pollfds[1024];
-int pollsize = 0;
+nfds_t pollsize = 0;
 
 
 void *handle(void *arg)
 {
-    int ret, i, len = 0;
-    char buf[4096];
-    struct timeval t;
-    t.tv_sec = 1;
+    int ret, i, j = 1, len = 0;
+    char buf[4096] = "s";
+
     printf("开entry io thread\n");
 
-    while (1)
+    while (j == 1)
     {
         ret = poll(pollfds, pollsize, 0);
         if (ret > 0) {
             for (int i = 0; i < pollsize; i++) {
                 if (pollfds[i].revents & POLLIN) {
-                    len = read(pollfds[i].fd, buf, sizeof(buf));
-                    write(STDOUT_FILENO, buf, len);
-                }
 
+                    memset(buf, 0, sizeof(buf));
+                    len = read(pollfds[i].fd, buf, sizeof(buf));
+
+                    if(strcmp(buf, "q") == 0)
+                    {
+                        close(pollfds[i].fd);
+                        printf("client exit\n");
+                    }
+
+                }
                 if (pollfds[i].revents & POLLOUT) {
-                    write(pollfds[i].fd, buf, len);
+                    int  i = write(pollfds[i].fd, buf, len);
+                    if (i < 0)
+                        printf("send error\n");
+                    len = 0;
                 }
             }
         }
     }
+    printf("开entry io thread\n");
 }
 
 
@@ -50,8 +61,10 @@ int main()
 
     printf("server starting...\n");
 
-    int fd = init();
     pthread_t pid;
+
+
+    int fd = init();
 
     if(fd == -1)
     {
