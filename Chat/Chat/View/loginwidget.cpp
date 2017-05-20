@@ -1,11 +1,13 @@
 ﻿#include "loginwidget.h"
 #include "BasicControls/headicon.h"
+#include "Setting/rwsetting.h"
 
+#include <QSettings>
 #include <QPushButton>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QCheckBox>
-
+#include <QDebug>
 
 LoginWidget::LoginWidget(QWidget *parent) : BasicWidget(parent)
 {
@@ -14,7 +16,7 @@ LoginWidget::LoginWidget(QWidget *parent) : BasicWidget(parent)
     setFixedSize(320, 480);
 
     init();
-
+    loadSetting();
 }
 
 void LoginWidget::init()
@@ -56,5 +58,28 @@ void LoginWidget::init()
     btn_login->setFixedSize(200, 30);
     btn_login->move((w - btn_login->width()) / 2, 310);
 
+    connect(cb_rememberpw, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
+    connect(cb_autologin, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
+}
 
+void LoginWidget::addSetting(int status)
+{
+    QCheckBox *check = static_cast<QCheckBox*>(sender());
+
+    if(check == cb_rememberpw)
+    {
+        RWSetting::getInstance()->getSetting()->setValue("记住密码", cb_rememberpw->isChecked());
+    }
+
+    if(check == cb_autologin)
+    {
+        RWSetting::getInstance()->getSetting()->setValue("自动登录", cb_rememberpw->isChecked());
+
+    }
+}
+
+void LoginWidget::loadSetting()
+{
+    cb_rememberpw->setChecked(RWSetting::getInstance()->getSetting()->value("记住密码").toBool());
+    cb_autologin->setChecked(RWSetting::getInstance()->getSetting()->value("自动登录").toBool());
 }

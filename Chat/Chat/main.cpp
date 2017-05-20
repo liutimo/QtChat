@@ -2,6 +2,7 @@
 #include "View/loginwidget.h"
 #include "BasicControls/headicon.h"
 #include <QApplication>
+#include "DataBase/database.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,6 +10,9 @@ int main(int argc, char *argv[])
     LoginWidget w;
 //    HeadIcon w;
 //    w.setPixmap(QPixmap(":/timg (1).jpg"));
+
+    DataBase d;
+
     w.show();
 
     return a.exec();

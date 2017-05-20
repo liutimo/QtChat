@@ -42,6 +42,10 @@ public:
 
 private:
     void init();
+    void loadSetting();
+
+private slots:
+    void addSetting(int status);
 
 private:
     QPushButton *btn_login;
