@@ -2,7 +2,8 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QResizeEvent>
-#include <QDebug>
+#include <QPushButton>
+#include <QApplication>
 BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);
@@ -12,6 +13,9 @@ BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
     pressed2 = false;
     orientation = NONE;
 
+    btn_close = new QPushButton(this);
+    btn_close->setFixedSize(30, 30);
+    connect(btn_close, &QPushButton::clicked, qApp, &QApplication::quit);
 }
 
 BasicWidget::~BasicWidget()
@@ -37,7 +41,7 @@ void BasicWidget::mousePressEvent(QMouseEvent *e)
 {
     point = e->pos();
     rect = this->geometry();
-    qDebug() << orientation;
+
     if (e->button() == Qt::LeftButton && orientation == NONE) {
        pressed = true;
     }
@@ -64,6 +68,7 @@ void BasicWidget::paintEvent(QPaintEvent *e)
 void BasicWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
+    btn_close->move(width() - btn_close->width(), 0);
 }
 
 void BasicWidget::enterEvent(QEvent *event)
