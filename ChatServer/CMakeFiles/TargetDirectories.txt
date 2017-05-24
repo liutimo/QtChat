@@ -1,3 +1,0 @@
-/home/liuzheng/ClionProjects/ChatServer/CMakeFiles/rebuild_cache.dir
-/home/liuzheng/ClionProjects/ChatServer/CMakeFiles/edit_cache.dir
-/home/liuzheng/ClionProjects/ChatServer/CMakeFiles/ChatServer.dir

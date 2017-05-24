@@ -1,1 +1,0 @@
-/usr/bin/cc   -rdynamic CMakeFiles/ChatServer.dir/main.c.o CMakeFiles/ChatServer.dir/MessageStructure/user.c.o CMakeFiles/ChatServer.dir/DataStructure/onlinelinklist.c.o CMakeFiles/ChatServer.dir/Socket/server.c.o  -o ChatServer -lpthread 
