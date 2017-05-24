@@ -1,0 +1,22 @@
+用户表：
+用户ID、用户密码
+create table user(
+	userid char(10) unique not null primary key,
+	password varchar(130) not null);
+
+
+用户信息表；
+用户ID、用户昵称、出生日期、注册日期、性别、个性签名、手机、邮箱。
+
+create table userinfo(
+	userid char(10) not null,
+	username varchar(20) not null,
+	birthofdate date not null,
+	sex char(2),
+	personalizedsignature varchar(200),
+	mobile char(11),
+	mail varchar(30),
+	registertime timestamp not null default current_timestamp,
+	primary key(userid),
+	foreign key(userid) references user(userid)
+);

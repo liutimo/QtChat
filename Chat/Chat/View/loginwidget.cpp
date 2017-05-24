@@ -1,6 +1,8 @@
 ﻿#include "loginwidget.h"
 #include "BasicControls/headicon.h"
 #include "Setting/rwsetting.h"
+#include "DataBase/database.h"
+#include "NetWork/connecttoserver.h"
 
 #include <QSettings>
 #include <QPushButton>
@@ -8,6 +10,8 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QDebug>
+
+#include "NetWork/msgstructure.h"
 
 LoginWidget::LoginWidget(QWidget *parent) : BasicWidget(parent)
 {
@@ -42,6 +46,7 @@ void LoginWidget::init()
     le_password = new QLineEdit(this);
     le_password->setFixedSize(200, 30);
     le_password->setPlaceholderText("用户密码");
+    le_password->setEchoMode(QLineEdit::Password);
     le_password->move((w - le_password->width()) / 2, 240);
 
 
@@ -60,6 +65,7 @@ void LoginWidget::init()
 
     connect(cb_rememberpw, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
     connect(cb_autologin, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
+    connect(btn_login, &QPushButton::clicked, this, &LoginWidget::btn_login_clicked);
 }
 
 void LoginWidget::addSetting(int status)
@@ -74,7 +80,6 @@ void LoginWidget::addSetting(int status)
     if(check == cb_autologin)
     {
         RWSetting::getInstance()->getSetting()->setValue("自动登录", cb_rememberpw->isChecked());
-
     }
 }
 
@@ -82,4 +87,43 @@ void LoginWidget::loadSetting()
 {
     cb_rememberpw->setChecked(RWSetting::getInstance()->getSetting()->value("记住密码").toBool());
     cb_autologin->setChecked(RWSetting::getInstance()->getSetting()->value("自动登录").toBool());
+
+    if(cb_rememberpw->isChecked())
+    {
+        DataBase *d = DataBase::getInstance();
+        QPair<QString, QString> p = d->getLocalUserInfo();
+
+        cb_username->setCurrentText(p.first);
+        le_password->setText(p.second);
+    }
+    else
+    {
+        DataBase *d = DataBase::getInstance();
+        QPair<QString, QString> p = d->getLocalUserInfo();
+
+        cb_username->setCurrentText(p.first);
+        le_password->setText("");
+    }
+}
+
+void LoginWidget::btn_login_clicked()
+{
+    //更新数据库。
+    DataBase *d = DataBase::getInstance();
+    d->setLoaclUserInfo(cb_username->currentText(), le_password->text());
+
+    ConnectToServer *server = new ConnectToServer(this);
+
+    LoginMsg *l = new LoginMsg();
+
+    strcpy(l->userid, "123456");
+    strcpy(l->password, "654321");
+
+    server->sendLoginMsg(*l);
+
+    delete l;
+
+    connect(server, &ConnectToServer::connected, [](){qDebug() << "connected;";});
+    connect(server, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
+          [=](QAbstractSocket::SocketError socketError){ qDebug() << socketError; });
 }

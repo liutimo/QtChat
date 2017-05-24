@@ -46,6 +46,8 @@ private:
 
 private slots:
     void addSetting(int status);
+    void btn_login_clicked();
+
 
 private:
     QPushButton *btn_login;

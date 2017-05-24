@@ -11,8 +11,6 @@ int main(int argc, char *argv[])
 //    HeadIcon w;
 //    w.setPixmap(QPixmap(":/timg (1).jpg"));
 
-    DataBase d;
-
     w.show();
 
     return a.exec();
