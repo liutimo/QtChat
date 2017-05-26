@@ -44,18 +44,19 @@ void start(int sfd, struct pollfd *fds, nfds_t *size)
 	printf("等待用户接入\n");
 	
 	char info[1024];
-	for (; ;)
-	{
+	for (; ;) {
 		struct sockaddr_in client;
-		socklen_t len;
+		socklen_t len = sizeof(client);
 
 		int sock = accept(sfd, (struct sockaddr*)&client, &len);
-		
-		sprintf(info, "来自%s的连接\n", inet_ntoa(client.sin_addr));
-		write(STDOUT_FILENO, info, strlen(info) + 1);
 
-		fds[*size].fd = sock;
-		fds[*size].events = POLLIN;
-		++(*size);
+		if (sock > 0) {
+			sprintf(info, "来自%s的连接\n", inet_ntoa(client.sin_addr));
+			write(STDOUT_FILENO, info, strlen(info) + 1);
+
+			fds[*size].fd = sock;
+			fds[*size].events = POLLIN;
+			++(*size);
+		}
 	}
 }

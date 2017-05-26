@@ -2,17 +2,17 @@
 #define SENDTOCLIENT_H
 
 #include "msgstructure.h"
-
+#include <unistd.h>
 
 
 //通用发送函数
 
-void sendMsg(int fd, Msg msg);
+void sendMsg(int fd, Msg *msg, ssize_t msgsize);
 
 
 //正常的通讯
 
-
+void sendResponseLoginMsg(int fd, ResponseLoginMsg *msg);
 
 
 

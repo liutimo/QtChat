@@ -1,16 +1,23 @@
 ﻿#include "widget.h"
 #include "View/loginwidget.h"
-#include "BasicControls/headicon.h"
-#include <QApplication>
 #include "DataBase/database.h"
+#include "BasicControls/headicon.h"
+
+
+#include <QApplication>
+#include <QFile>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    LoginWidget w;
-//    HeadIcon w;
-//    w.setPixmap(QPixmap(":/timg (1).jpg"));
 
+
+    QFile f(":/style.qss");
+    f.open(QIODevice::ReadOnly | QIODevice::Text);
+    a.setStyleSheet(f.readAll());
+    //qDebug() << f.readAll();
+    LoginWidget w;
     w.show();
 
     return a.exec();

@@ -67,6 +67,7 @@
     <ClCompile Include="database.c" />
     <ClCompile Include="error.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="onlinehashtable.c" />
     <ClCompile Include="recvfromclient.c" />
     <ClCompile Include="sendtoclient.c" />
     <ClCompile Include="server.c" />
@@ -78,6 +79,7 @@
     <ClInclude Include="error.h" />
     <ClInclude Include="marco.h" />
     <ClInclude Include="msgstructure.h" />
+    <ClInclude Include="onlinehashtable.h" />
     <ClInclude Include="recvfromclient.h" />
     <ClInclude Include="sendtoclient.h" />
     <ClInclude Include="server.h" />
@@ -86,7 +88,7 @@
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <Link>
-      <LibraryDependencies>pthread</LibraryDependencies>
+      <LibraryDependencies>pthread;mysqlclient</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -32,15 +32,15 @@
     <ClCompile Include="utility.c">
       <Filter>网络</Filter>
     </ClCompile>
+    <ClCompile Include="onlinehashtable.c">
+      <Filter>数据结构</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database.h">
       <Filter>数据库</Filter>
     </ClInclude>
     <ClInclude Include="msgstructure.h">
-      <Filter>网络</Filter>
-    </ClInclude>
-    <ClInclude Include="marco.h">
       <Filter>网络</Filter>
     </ClInclude>
     <ClInclude Include="server.h">
@@ -58,6 +58,10 @@
     </ClInclude>
     <ClInclude Include="utility.h">
       <Filter>网络</Filter>
+    </ClInclude>
+    <ClInclude Include="marco.h" />
+    <ClInclude Include="onlinehashtable.h">
+      <Filter>数据结构</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

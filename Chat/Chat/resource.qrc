@@ -1,5 +1,19 @@
 <RCC>
     <qresource prefix="/">
         <file>timg (1).jpg</file>
+        <file>Resource/arrowback.png</file>
+        <file>Resource/checkbox.png</file>
+        <file>Resource/closeback.png</file>
+        <file>Resource/minback.png</file>
+        <file>Resource/state_away.png</file>
+        <file>Resource/state_busy.png</file>
+        <file>Resource/state_hide.png</file>
+        <file>Resource/state_notdisturb.png</file>
+        <file>Resource/state_online.png</file>
+        <file>Resource/state_Qme.png</file>
+        <file>style.qss</file>
+        <file>Resource/btn_Skin_down.png</file>
+        <file>Resource/btn_Skin_highlight.png</file>
+        <file>Resource/btn_skin_normal.png</file>
     </qresource>
 </RCC>

@@ -39,6 +39,7 @@ QPair<QString, QString> DataBase::getLocalUserInfo()
         QString pw = sql_query.value(2).toString();
         return QPair<QString, QString>(name, pw);
     }
+    return QPair<QString, QString>("","");
 }
 
 void DataBase::setLoaclUserInfo(const QString& userid, const QString &password)

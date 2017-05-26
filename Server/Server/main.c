@@ -12,6 +12,7 @@
 #include "server.h"
 #include "marco.h"
 #include "threadhandle.h"
+#include "onlinehashtable.h"
 
 //全局
 int fd;
@@ -40,6 +41,9 @@ int main()
 
     printf("hello from Server!\n");
     
+	//初始化在线用户链表
+	init_onlineuser();
+
 	fd = init();
 
 	pthread_create(&pid, NULL, pollhandle, NULL);

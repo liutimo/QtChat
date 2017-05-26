@@ -62,6 +62,7 @@ private:
     bool adjustment; // 窗口大小是否可以调整
     Orientation orientation; //记录8个方向
     QRect rect; //记录原始窗口大小
+    QSize size;
 
     QPushButton* btn_close;
 };

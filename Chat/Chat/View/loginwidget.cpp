@@ -1,9 +1,12 @@
 ﻿#include "loginwidget.h"
+#include "mainwidget.h"
 #include "BasicControls/headicon.h"
 #include "Setting/rwsetting.h"
 #include "DataBase/database.h"
 #include "NetWork/connecttoserver.h"
 
+
+#include <QCryptographicHash>
 #include <QSettings>
 #include <QPushButton>
 #include <QComboBox>
@@ -63,9 +66,14 @@ void LoginWidget::init()
     btn_login->setFixedSize(200, 30);
     btn_login->move((w - btn_login->width()) / 2, 310);
 
+
+    server = ConnectToServer::getInstance();
+
     connect(cb_rememberpw, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
     connect(cb_autologin, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
     connect(btn_login, &QPushButton::clicked, this, &LoginWidget::btn_login_clicked);
+    connect(server, &ConnectToServer::connected, [](){qDebug() << "connected;";});
+    connect(server, &ConnectToServer::loginStatus, this, loginStatus);
 }
 
 void LoginWidget::addSetting(int status)
@@ -104,6 +112,7 @@ void LoginWidget::loadSetting()
         cb_username->setCurrentText(p.first);
         le_password->setText("");
     }
+
 }
 
 void LoginWidget::btn_login_clicked()
@@ -112,18 +121,35 @@ void LoginWidget::btn_login_clicked()
     DataBase *d = DataBase::getInstance();
     d->setLoaclUserInfo(cb_username->currentText(), le_password->text());
 
-    ConnectToServer *server = new ConnectToServer(this);
+
 
     LoginMsg *l = new LoginMsg();
 
     strcpy(l->userid, "123456");
-    strcpy(l->password, "654321");
+    //对密码进行哈希加密
+    strcpy(l->password, QCryptographicHash::hash(le_password->text().toUtf8(), QCryptographicHash::Sha1).toHex());
 
     server->sendLoginMsg(*l);
 
     delete l;
+}
 
-    connect(server, &ConnectToServer::connected, [](){qDebug() << "connected;";});
-    connect(server, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
-          [=](QAbstractSocket::SocketError socketError){ qDebug() << socketError; });
+void LoginWidget::loginStatus(LoginStatus ls)
+{
+    qDebug() << ls;
+
+    switch (ls)
+    {
+    case LOGINSUCCESS:
+    {
+        MainWidget *w = new MainWidget();
+        w->show();
+        this->close();
+    }
+        break;
+    case LOGINPWERROR:
+    case LOGINUNKNOW:
+        qDebug() << "登录错误";
+        break;
+    }
 }

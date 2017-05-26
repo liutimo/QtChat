@@ -12,10 +12,13 @@ BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
     pressed=false;
     pressed2 = false;
     orientation = NONE;
+    setMinimumSize(300,600);
 
     btn_close = new QPushButton(this);
+    btn_close->setObjectName("btn_close");
     btn_close->setFixedSize(30, 30);
     connect(btn_close, &QPushButton::clicked, qApp, &QApplication::quit);
+
 }
 
 BasicWidget::~BasicWidget()
@@ -62,6 +65,7 @@ void BasicWidget::paintEvent(QPaintEvent *e)
     QWidget::paintEvent(e);
     QPainter p(this);
     p.setPen(Qt::NoPen);
+    p.setBrush(QColor(40,138,221));
     p.drawRect(0, 0, width(), height());
 }
 
@@ -187,5 +191,8 @@ void BasicWidget::setSize(QMouseEvent *e)
             break;
     }
 
+
     this->setGeometry(QRect(ltp, rbp));
 }
+
+

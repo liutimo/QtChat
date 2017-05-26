@@ -26,13 +26,15 @@
 #define LOGINWIDGET_H
 
 #include "basicwidget.h"
-
+#include "NetWork/msgstructure.h"
 
 class QPushButton;
 class QLineEdit;
 class QCheckBox;
 class HeadIcon;
 class QComboBox;
+class ConnectToServer;
+
 
 class LoginWidget : public BasicWidget
 {
@@ -47,7 +49,7 @@ private:
 private slots:
     void addSetting(int status);
     void btn_login_clicked();
-
+    void loginStatus(LoginStatus);
 
 private:
     QPushButton *btn_login;
@@ -56,6 +58,8 @@ private:
     HeadIcon *hi_headicon;
     QCheckBox *cb_rememberpw;
     QCheckBox *cb_autologin;
+
+    ConnectToServer *server;
 };
 
 #endif // LOGINWIDGET_H

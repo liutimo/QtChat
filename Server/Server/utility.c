@@ -27,7 +27,25 @@ ssize_t readn(int filedes, void *buff, size_t nbytes)
 
 ssize_t writen(int filedes, const void *buff, size_t nbytes)
 {
+	ssize_t nleft;
+	ssize_t nwritten;
+	const char *ptr;
 
+	ptr = buff;
+	nleft = nbytes;
+	while (nleft > 0) {
+		if ((nwritten == write(filedes, ptr, nleft)) <= 0) {
+			if (nwritten < 0 && errno == EINTR)
+				nwritten = 0;
+			else
+				return -1;    //error
+		}
+
+		nleft -= nwritten;
+		ptr += nwritten;
+	}
+
+	return nbytes;
 }
 
 

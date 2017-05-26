@@ -1,7 +1,10 @@
 #include "recvfromclient.h"
+#include "sendtoclient.h"
 #include "utility.h"
 #include "msgstructure.h"
+#include "database.h"
 #include "error.h"
+#include "onlinehashtable.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -24,37 +27,52 @@ void recvMsg(int fd)
 	if (readn(fd, buf, length) != length)
 		err_sys("读取消息失败");
 	
-	Msg *msg = (Msg*)malloc(sizeof(Msg) + sizeof(LoginMsg));
+	Msg *msg = (Msg*)buf;
 
-	memcpy(msg, buf, length);
-
-	if (msg->type == REQUESTLOGIN)
+	switch (msg->type)
 	{
-		write(STDOUT_FILENO, "login\n", 6);
-
-		LoginMsg m;
-		memcpy(&m, msg->data, sizeof(LoginMsg));
-
-		write(STDOUT_FILENO, m.userid, strlen(m.userid));
-		write(STDOUT_FILENO, m.password, strlen(m.password));
-
+	case REQUESTLOGIN:
+		handleLoginMsg(fd, msg);
+		break;
+	default:
+		break;
 	}
 
-
-
-	/*LoginMsg *msg = (LoginMsg*)malloc(sizeof(LoginMsg));
-	strcpy(msg->userid, "123456");
-	strcpy(msg->password, "654321");
-
-	Msg *s = (Msg*)malloc(sizeof(Msg) + sizeof(LoginMsg));
-
-	memcpy(s->data, msg, sizeof(LoginMsg));
-
-	LoginMsg m;
-	memcpy(&m, s->data, sizeof(LoginMsg));
-
-	printf("%s\n%s\n", m.userid, m.password);
-	*/
-
 	free(buf);
+}
+
+
+void handleLoginMsg(int fd, Msg *msg)
+{
+	LoginMsg lmsg;
+	memcpy(&lmsg, msg->data, msg->len);
+
+//	printf("userid:%s\n password:%s\n", lmsg.userid, lmsg.password);
+
+	init_mysql();
+	
+	ResponseLoginMsg r_msg;
+
+	switch (login_check_mysql(lmsg.userid, lmsg.password))
+	{
+	case DATABASE_USER_PASSWORDERROR:
+		r_msg.ls = LOGINPWERROR;
+		break;
+	case DATABASE_USER_NOTEXIST:
+		r_msg.ls = LOGINUNKNOW;
+		break;
+	case DATABASE_USER_CORRECT:
+		r_msg.ls = LOGINSUCCESS;
+		//维持在线状态需要做的事
+
+		//加入在线队列
+		OnlineUser user;
+		user.fd = fd;
+		strcpy(user.userid, lmsg.userid);
+		addOnlineUser(&user);
+		break;
+	}
+	close_mysql();
+	
+	sendResponseLoginMsg(fd, &r_msg);
 }
