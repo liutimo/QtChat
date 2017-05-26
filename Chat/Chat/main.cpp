@@ -3,7 +3,7 @@
 #include "DataBase/database.h"
 #include "BasicControls/headicon.h"
 
-
+#include "View/mainwidget.h"
 #include <QApplication>
 #include <QFile>
 #include <QDebug>
@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
     //qDebug() << f.readAll();
-    LoginWidget w;
+    MainWidget w;
     w.show();
 
     return a.exec();

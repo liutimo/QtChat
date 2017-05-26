@@ -142,7 +142,7 @@ void LoginWidget::loginStatus(LoginStatus ls)
     {
     case LOGINSUCCESS:
     {
-        MainWidget *w = new MainWidget();
+        MainWidget *w = new MainWidget(NULL);
         w->show();
         this->close();
     }

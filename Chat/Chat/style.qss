@@ -1,32 +1,32 @@
 /*关闭按钮*/
 QPushButton#btn_close
 {
-    border-image:url(:/Resource/closeback.png) 0 60 0 0 ;
+    border-image:url(:/Resource/btn_close_normal.png);
 }
 
 QPushButton#btn_close:hover
 {
-    border-image:url(:/Resource/closeback.png) 0 30 0 30 ;
+    border-image:url(:/Resource/btn_close_highlight.png);
 }
 
 QPushButton#btn_close:pressed
 {
-    border-image:url(:/Resource/closeback.png) 0 0 0 60 ;
+    border-image:url(:/Resource/btn_close_down.png);
 }
 /*最小化按钮*/
 QPushButton#btn_mini
 {
-    border-image:url(:/Resource/minback.png) 0 60 0 0 ;
+    border-image:url(:/Resource/btn_mini_normal.png);
 }
 
 QPushButton#btn_mini:hover
 {
-    border-image:url(:/Resource/minback.png) 0 30 0 30 ;
+    border-image:url(:/Resource/btn_mini_highlight.png);
 }
 
 QPushButton#btn_mini:pressed
 {
-    border-image:url(:/Resource/minback.png) 0 0 0 60 ;
+    border-image:url(:/Resource/btn_mini_down.png);
 }
 /*换肤按钮*/
 QPushButton#btn_skin

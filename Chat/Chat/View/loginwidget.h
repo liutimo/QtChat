@@ -38,6 +38,7 @@ class ConnectToServer;
 
 class LoginWidget : public BasicWidget
 {
+    Q_OBJECT
 public:
     LoginWidget(QWidget *parent = Q_NULLPTR);
 

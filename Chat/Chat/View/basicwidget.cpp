@@ -1,8 +1,9 @@
 ﻿#include "basicwidget.h"
+#include "BasicControls/pushbutton.h"
+
 #include <QMouseEvent>
 #include <QPainter>
 #include <QResizeEvent>
-#include <QPushButton>
 #include <QApplication>
 BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
 {
@@ -14,10 +15,11 @@ BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
     orientation = NONE;
     setMinimumSize(300,600);
 
-    btn_close = new QPushButton(this);
+    btn_close = new PushButton(this);
+    btn_close->setToolTip("关闭");
     btn_close->setObjectName("btn_close");
-    btn_close->setFixedSize(30, 30);
-    connect(btn_close, &QPushButton::clicked, qApp, &QApplication::quit);
+    btn_close->setFixedSize(28, 26);
+    connect(btn_close, &PushButton::clicked, qApp, &QApplication::quit);
 
 }
 
@@ -63,10 +65,10 @@ void BasicWidget::mouseReleaseEvent(QMouseEvent *e)
 void BasicWidget::paintEvent(QPaintEvent *e)
 {
     QWidget::paintEvent(e);
-    QPainter p(this);
-    p.setPen(Qt::NoPen);
-    p.setBrush(QColor(40,138,221));
-    p.drawRect(0, 0, width(), height());
+//    QPainter p(this);
+//    p.setPen(Qt::NoPen);
+//    p.setBrush(QColor(40,138,221));
+//    p.drawRect(0, 0, width(), height());
 }
 
 void BasicWidget::resizeEvent(QResizeEvent *event)

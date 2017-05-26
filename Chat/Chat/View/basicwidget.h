@@ -28,7 +28,7 @@
 
 #include <QWidget>
 
-class QPushButton;
+class PushButton;
 
 class BasicWidget : public QWidget
 {
@@ -49,6 +49,8 @@ protected:
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
 
+    PushButton* btn_close;
+
 signals:
 
 public slots:
@@ -62,9 +64,9 @@ private:
     bool adjustment; // 窗口大小是否可以调整
     Orientation orientation; //记录8个方向
     QRect rect; //记录原始窗口大小
-    QSize size;
+    QSize m_size;
 
-    QPushButton* btn_close;
+
 };
 
 #endif // BASICWIDGET_H

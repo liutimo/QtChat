@@ -3,8 +3,6 @@
         <file>timg (1).jpg</file>
         <file>Resource/arrowback.png</file>
         <file>Resource/checkbox.png</file>
-        <file>Resource/closeback.png</file>
-        <file>Resource/minback.png</file>
         <file>Resource/state_away.png</file>
         <file>Resource/state_busy.png</file>
         <file>Resource/state_hide.png</file>
@@ -15,5 +13,12 @@
         <file>Resource/btn_Skin_down.png</file>
         <file>Resource/btn_Skin_highlight.png</file>
         <file>Resource/btn_skin_normal.png</file>
+        <file>Resource/background_test.jpg</file>
+        <file>Resource/btn_close_normal.png</file>
+        <file>Resource/btn_close_down.png</file>
+        <file>Resource/btn_close_highlight.png</file>
+        <file>Resource/btn_mini_down.png</file>
+        <file>Resource/btn_mini_highlight.png</file>
+        <file>Resource/btn_mini_normal.png</file>
     </qresource>
 </RCC>
