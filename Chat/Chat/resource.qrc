@@ -48,5 +48,18 @@
         <file>Resource/skinmanage/16.jpg</file>
         <file>Resource/skinmanage/17.jpg</file>
         <file>Resource/skinmanage/18.jpg</file>
+        <file>Resource/mainwidget/search_icon.png</file>
+        <file>Resource/mainwidget/main_search_deldown.png</file>
+        <file>Resource/mainwidget/main_search_delhighlight.png</file>
+        <file>Resource/mainwidget/main_search_delnormal.png</file>
+        <file>Resource/mainwidget/icon_contacts_hover.png</file>
+        <file>Resource/mainwidget/icon_contacts_normal.png</file>
+        <file>Resource/mainwidget/icon_contacts_selected.png</file>
+        <file>Resource/mainwidget/icon_group_hover.png</file>
+        <file>Resource/mainwidget/icon_group_normal.png</file>
+        <file>Resource/mainwidget/icon_group_selected.png</file>
+        <file>Resource/mainwidget/icon_last_hover.png</file>
+        <file>Resource/mainwidget/icon_last_normal.png</file>
+        <file>Resource/mainwidget/icon_last_selected.png</file>
     </qresource>
 </RCC>

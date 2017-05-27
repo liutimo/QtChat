@@ -79,6 +79,102 @@ QLabel#mainwidget_headicon:hover
 }
 /*图片背景选择框*/
 QLabel#ImageSkinLabel:hover
-{   border-image:url(:/Resource/skinmanage/grou_main_search_frame.png);
+{
+    border-image:url(:/Resource/skinmanage/grou_main_search_frame.png);
 }
 
+/*搜索框*/
+QPushButton#main_search_btn_clear
+{
+    border-image:url(:/Resource/mainwidget/main_search_delnormal.png);
+}
+QPushButton#main_search_btn_clear:hover
+{
+    border-image:url(:/Resource/mainwidget/main_search_delhighlight.png);
+}
+
+QPushButton#main_search_btn_clear:pressed
+{
+    border-image:url(:/Resource/mainwidget/main_search_deldown.png);
+}
+
+/*主界面分类*/
+QToolButton#tb_contact
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_contacts_normal.png);
+}
+QToolButton#tb_contact:hover
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_contacts_hover.png);
+}
+QToolButton#tb_contact[selected="true"]
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: red;
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_contacts_selected.png);
+}
+
+
+
+QToolButton#tb_group
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_group_normal.png);
+}
+QToolButton#tb_group:hover
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_group_hover.png);
+}
+
+QToolButton#tb_group[selected="true"]
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: red;
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_group_selected.png);
+}
+
+
+QToolButton#tb_last
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_last_normal.png);
+}
+QToolButton#tb_last:hover
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_last_hover.png);
+}
+
+QToolButton#tb_last[selected="true"]
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: red;
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_last_selected.png);
+}

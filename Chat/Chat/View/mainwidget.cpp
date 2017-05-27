@@ -1,18 +1,22 @@
 #include "mainwidget.h"
 #include "skinmanagewidget.h"
 #include "BasicControls/headicon.h"
+#include "BasicControls/lineedit.h"
 
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QPainter>
 #include <QTime>
 #include <QDebug>
-
+#include <QStyle>
+#include <QToolButton>
 
 MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     skinType(PURECOLOR),
     color(QColor(40,138,221))
 {
+
+    setAdjustmentSize(true);
     init();
     setAutoFillBackground(true);
     setMinimumWidth(300);
@@ -41,8 +45,27 @@ void MainWidget::init()
     headIcon->move(15, 40);
     headIcon->setObjectName("mainwidget_headicon");
 
-    connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
 
+    le_serach = new LineEdit(this);
+    le_serach->move(0, 123);
+
+    tb_contact = new QToolButton(this);
+    tb_contact->setObjectName("tb_contact");
+    tb_contact->setCheckable(true);
+
+    tb_group = new QToolButton(this);
+    tb_group->setObjectName("tb_group");
+    tb_group->setCheckable(true);
+
+    tb_last = new QToolButton(this);
+    tb_last->setObjectName("tb_last");
+
+
+
+    connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
+    connect(tb_contact, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
+    connect(tb_group, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
+    connect(tb_last, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event)
@@ -50,6 +73,17 @@ void MainWidget::resizeEvent(QResizeEvent *event)
     BasicWidget::resizeEvent(event);
     btn_mini->move(width() - btn_mini->width() - 28, 0);
     btn_skin->move(width() - btn_skin->width() - 56, 0);
+
+    tb_contact->resize(width() / 3, 30);
+    tb_contact->move(0, 153);
+
+    tb_group->resize(width() / 3, 30);
+    tb_group->move(width() / 3, 153);
+
+    tb_last->resize(width() / 3, 30);
+    tb_last->move(width() / 3 * 2, 153);
+
+    le_serach->resize(width(), 30);
 }
 
 void MainWidget::paintEvent(QPaintEvent*event)
@@ -61,7 +95,7 @@ void MainWidget::paintEvent(QPaintEvent*event)
     case PURECOLOR:
     {
         p.setBrush(color);
-        p.drawRect(0, 0, width(), 153);
+        p.drawRect(0, 0, width(), height());
         //emit changeBackGround(color);
         break;
     }
@@ -97,4 +131,19 @@ void MainWidget::changeImageSkin(const QString &path)
     skinType = LOCALIMAGE;
     skinPath = path;
     update();
+}
+
+void MainWidget::changSelectedButton()
+{
+    QToolButton *tb_sender = static_cast<QToolButton*>(sender());
+
+    tb_contact->setProperty("selected", false);
+    tb_group->setProperty("selected", false);
+    tb_last->setProperty("selected", false);
+
+    tb_sender->setProperty("selected", "true");
+
+    tb_contact->style()->polish(tb_contact);
+    tb_group->style()->polish(tb_group);
+    tb_last->style()->polish(tb_last);
 }
