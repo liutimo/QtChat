@@ -40,6 +40,7 @@ public:
     ~BasicWidget();
     void setAdjustmentSize(bool);
     void setWidgetTitle(const QString&);
+    void setTitleBackgroundColor(QColor color);
     void setBackgroundColor(QColor color);
 protected:
     void mouseMoveEvent(QMouseEvent *e);
@@ -68,6 +69,7 @@ private:
     QLabel *widgetIcon;
     QLabel *widgetTitle;
 
+    QColor backgroundColor;
     QColor color;
 };
 

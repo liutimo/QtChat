@@ -8,7 +8,7 @@
 #include "basicwidget.h"
 
 class QPushButton;
-
+class HeadIcon;
 class MainWidget : public BasicWidget
 {
     Q_OBJECT
@@ -26,7 +26,8 @@ signals:
     void changeBackGround(QColor color);
 
 private slots:
-    void changeSkin(QColor );
+    void changePureColorSkin(QColor );
+    void changeImageSkin(const QString &);
     void showSkinManageWidget();
 
 private:
@@ -40,7 +41,10 @@ private:
     QPushButton *btn_skin;
 
     SkinType skinType;
-    QColor color;
+    QColor color;               //纯色皮肤颜色
+    QString skinPath;           //本地文件皮肤
+
+    HeadIcon *headIcon;
 
 };
 

@@ -24,7 +24,6 @@ void PureColorLabel::mouseReleaseEvent(QMouseEvent *ev)
     {
         emit selecteColor(color);
     }
-
 }
 
 void PureColorLabel::mousePressEvent(QMouseEvent *ev)

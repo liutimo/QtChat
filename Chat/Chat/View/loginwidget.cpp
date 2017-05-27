@@ -33,9 +33,10 @@ void LoginWidget::init()
 
 
     hi_headicon = new HeadIcon(this);
-    hi_headicon->setFixedSize(120, 120);
+    hi_headicon->setFixedSize(100, 100);
     hi_headicon->setPixmap(QPixmap(":/timg (1).jpg"));
     hi_headicon->move((w - hi_headicon->width()) / 2, 70);
+    hi_headicon->setObjectName("hi_headicon");
 
 
     QLineEdit *line = new QLineEdit;

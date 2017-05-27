@@ -15,6 +15,7 @@ BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
     setMouseTracking(true); // 响应鼠标移动
 
     color = QColor(40,138,221);
+    backgroundColor = Qt::white;
 
     pressed=false;
     pressed2 = false;
@@ -84,6 +85,8 @@ void BasicWidget::paintEvent(QPaintEvent *e)
     p.setPen(Qt::NoPen);
     p.setBrush(color);
     p.drawRect(0, 0, width(), 28);
+    p.setBrush(backgroundColor);
+    p.drawRect(0, 29, width(), height());
 }
 
 void BasicWidget::resizeEvent(QResizeEvent *event)
@@ -220,8 +223,14 @@ void BasicWidget::setWidgetTitle(const QString &title)
     widgetTitle->setText(title);
 }
 
-void BasicWidget::setBackgroundColor(QColor _color)
+void BasicWidget::setTitleBackgroundColor(QColor _color)
 {
     color = _color;
+    update();
+}
+
+void BasicWidget::setBackgroundColor(QColor color)
+{
+    backgroundColor = color;
     update();
 }

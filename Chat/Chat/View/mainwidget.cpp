@@ -1,5 +1,6 @@
 #include "mainwidget.h"
 #include "skinmanagewidget.h"
+#include "BasicControls/headicon.h"
 
 #include <QPushButton>
 #include <QResizeEvent>
@@ -34,6 +35,12 @@ void MainWidget::init()
     btn_skin->setObjectName("btn_skin");
     btn_skin->setMouseTracking(false);
 
+    headIcon = new HeadIcon(this);
+    headIcon->setPixmap(QPixmap(":/timg (1).jpg"));
+    headIcon->setFixedSize(64, 64);
+    headIcon->move(15, 40);
+    headIcon->setObjectName("mainwidget_headicon");
+
     connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
 
 }
@@ -54,15 +61,14 @@ void MainWidget::paintEvent(QPaintEvent*event)
     case PURECOLOR:
     {
         p.setBrush(color);
-        p.drawRect(0, 0, width(), 105);
-        emit changeBackGround(color);
+        p.drawRect(0, 0, width(), 153);
+        //emit changeBackGround(color);
         break;
     }
     case LOCALIMAGE:
     {
         p.drawPixmap(0, 0, width(), height(),
-                     /*QPixmap(":/Resource/background_test.jpg").scaled(
-                         this->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation)*/QPixmap(":/Resource/background_test.jpg").copy(0,0,width(), height()));
+                     QPixmap(skinPath).copy(0,0,width(), height()));
         break;
     }
     default:
@@ -74,12 +80,21 @@ void MainWidget::showSkinManageWidget()
 {
     SkinManageWidget *skin = SkinManageWidget::getInstance();
     skin->show();
-    connect(skin, &SkinManageWidget::updatePureColorSkin, this, &MainWidget::changeSkin);
+    skin->move(this->geometry().right() + 1, this->geometry().y());
+    connect(skin, &SkinManageWidget::updatePureColorSkin, this, &MainWidget::changePureColorSkin);
+    connect(skin, &SkinManageWidget::updateImageSkin, this, &MainWidget::changeImageSkin);
 }
 
-void MainWidget::changeSkin(QColor _color)
+void MainWidget::changePureColorSkin(QColor _color)
 {
     skinType = PURECOLOR;
     color = _color;
+    update();
+}
+
+void MainWidget::changeImageSkin(const QString &path)
+{
+    skinType = LOCALIMAGE;
+    skinPath = path;
     update();
 }

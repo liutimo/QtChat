@@ -65,3 +65,20 @@ QToolButton#tbtn_selectImage:pressed
 {
     border-image:url(:/Resource/skinmanage/adddown.png);
 }
+
+/*登录界面头像*/
+QLabel#hi_headicon:hover
+{
+    border-image:url(:/Resource/head/head_bkg_highlight_100.png);
+}
+
+/*主界面头像*/
+QLabel#mainwidget_headicon:hover
+{
+    border-image:url(:/Resource/head/head_bkg_highlight_64.png);
+}
+/*图片背景选择框*/
+QLabel#ImageSkinLabel:hover
+{   border-image:url(:/Resource/skinmanage/grou_main_search_frame.png);
+}
+

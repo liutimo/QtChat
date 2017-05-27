@@ -16,8 +16,9 @@ signals:
     void updateImageSkin(const QString &);
 
 private slots:
-    void changSkin(QColor);
-
+    void changPureColorSkin(QColor);
+    void changImageSkin(QString);
+    void selectImageFromFileSystem();
 
 private:
     SkinManageWidget(QWidget *parent = Q_NULLPTR);

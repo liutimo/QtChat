@@ -15,7 +15,7 @@ void HeadIcon::paintEvent(QPaintEvent *event)
 
 
     QPainterPath path;
-    path.addEllipse(this->rect());
+    path.addEllipse(2, 2, width() - 4, height() -4 );
 
     p.setClipPath(path);
     p.clipPath();
