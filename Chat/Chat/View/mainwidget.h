@@ -7,7 +7,7 @@
 
 #include "basicwidget.h"
 
-class PushButton;
+class QPushButton;
 
 class MainWidget : public BasicWidget
 {
@@ -26,7 +26,8 @@ signals:
     void changeBackGround(QColor color);
 
 private slots:
-    void changeSkin();
+    void changeSkin(QColor );
+    void showSkinManageWidget();
 
 private:
     typedef enum _SkinType{
@@ -35,8 +36,8 @@ private:
         NETWORKIMAGE            //网络图片
     }SkinType;
 
-    PushButton *btn_mini;
-    PushButton *btn_skin;
+    QPushButton *btn_mini;
+    QPushButton *btn_skin;
 
     SkinType skinType;
     QColor color;

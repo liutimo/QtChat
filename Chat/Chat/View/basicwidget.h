@@ -29,7 +29,7 @@
 #include <QWidget>
 
 class PushButton;
-
+class QLabel;
 class BasicWidget : public QWidget
 {
     Q_OBJECT
@@ -39,7 +39,8 @@ public:
     explicit BasicWidget(QWidget *parent = 0);
     ~BasicWidget();
     void setAdjustmentSize(bool);
-
+    void setWidgetTitle(const QString&);
+    void setBackgroundColor(QColor color);
 protected:
     void mouseMoveEvent(QMouseEvent *e);
     void mousePressEvent(QMouseEvent *e);
@@ -53,8 +54,6 @@ protected:
 
 signals:
 
-public slots:
-
 private:
     void setOrientation(QMouseEvent *e);
     void setSize(QMouseEvent *e);
@@ -64,9 +63,12 @@ private:
     bool adjustment; // 窗口大小是否可以调整
     Orientation orientation; //记录8个方向
     QRect rect; //记录原始窗口大小
-    QSize m_size;
 
 
+    QLabel *widgetIcon;
+    QLabel *widgetTitle;
+
+    QColor color;
 };
 
 #endif // BASICWIDGET_H

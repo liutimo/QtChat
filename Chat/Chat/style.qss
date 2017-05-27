@@ -1,3 +1,10 @@
+*{font-family:Microsoft YaHei;}
+
+/*标题栏字体*/
+QLabel#widgetTitle{
+    font: bold 12px ;
+    color: white;
+}
 /*关闭按钮*/
 QPushButton#btn_close
 {
@@ -42,4 +49,19 @@ QPushButton#btn_skin:hover
 QPushButton#btn_skin:pressed
 {
     border-image:url(:/Resource/btn_Skin_down.png);
+}
+/*添加本地资源按钮*/
+QToolButton#tbtn_selectImage
+{
+    border-image:url(:/Resource/skinmanage/addnormal.png);
+}
+
+QToolButton#tbtn_selectImage:hover
+{
+    border-image:url(:/Resource/skinmanage/addhover.png);
+}
+
+QToolButton#tbtn_selectImage:pressed
+{
+    border-image:url(:/Resource/skinmanage/adddown.png);
 }

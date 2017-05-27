@@ -20,5 +20,9 @@
         <file>Resource/btn_mini_down.png</file>
         <file>Resource/btn_mini_highlight.png</file>
         <file>Resource/btn_mini_normal.png</file>
+        <file>Resource/js-linux.png</file>
+        <file>Resource/skinmanage/adddown.png</file>
+        <file>Resource/skinmanage/addhover.png</file>
+        <file>Resource/skinmanage/addnormal.png</file>
     </qresource>
 </RCC>

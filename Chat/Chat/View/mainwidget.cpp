@@ -1,11 +1,15 @@
 #include "mainwidget.h"
-#include "BasicControls/pushbutton.h"
+#include "skinmanagewidget.h"
+
+#include <QPushButton>
 #include <QResizeEvent>
 #include <QPainter>
 #include <QTime>
 #include <QDebug>
+
+
 MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
-    skinType(LOCALIMAGE),
+    skinType(PURECOLOR),
     color(QColor(40,138,221))
 {
     init();
@@ -13,25 +17,25 @@ MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     setMinimumWidth(300);
     resize(300, 600);
 
+    setWidgetTitle("这是一个主窗口");
+
 }
 
 void MainWidget::init()
 {
-    btn_mini = new PushButton(this);
+    btn_mini = new QPushButton(this);
     btn_mini->setToolTip("最小化");
     btn_mini->setFixedSize(28, 26);
     btn_mini->setObjectName("btn_mini");
 
-    btn_skin = new PushButton(this);
+    btn_skin = new QPushButton(this);
     btn_skin->setToolTip("更换皮肤");
     btn_skin->setFixedSize(28, 26);
     btn_skin->setObjectName("btn_skin");
     btn_skin->setMouseTracking(false);
 
-    connect(btn_skin, &PushButton::clicked, this, &MainWidget::changeSkin);
-    connect(this, MainWidget::changeBackGround, btn_mini, &PushButton::setBackgroundColor);
-    connect(this, MainWidget::changeBackGround, btn_skin, &PushButton::setBackgroundColor);
-    connect(this, MainWidget::changeBackGround, btn_close, &PushButton::setBackgroundColor);
+    connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
+
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event)
@@ -52,7 +56,6 @@ void MainWidget::paintEvent(QPaintEvent*event)
         p.setBrush(color);
         p.drawRect(0, 0, width(), 105);
         emit changeBackGround(color);
-        qDebug() << "重绘" << color.toRgb();
         break;
     }
     case LOCALIMAGE:
@@ -67,8 +70,16 @@ void MainWidget::paintEvent(QPaintEvent*event)
     }
 }
 
-void MainWidget::changeSkin()
+void MainWidget::showSkinManageWidget()
 {
-    color = QColor(qrand() % 256, qrand() % 256, qrand() % 256);
+    SkinManageWidget *skin = SkinManageWidget::getInstance();
+    skin->show();
+    connect(skin, &SkinManageWidget::updatePureColorSkin, this, &MainWidget::changeSkin);
+}
+
+void MainWidget::changeSkin(QColor _color)
+{
+    skinType = PURECOLOR;
+    color = _color;
     update();
 }

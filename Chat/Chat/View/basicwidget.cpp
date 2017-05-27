@@ -1,14 +1,20 @@
 ﻿#include "basicwidget.h"
+#include "skinmanagewidget.h"
 #include "BasicControls/pushbutton.h"
 
 #include <QMouseEvent>
 #include <QPainter>
 #include <QResizeEvent>
 #include <QApplication>
+#include <QLabel>
+#include <QDebug>
+#include <QPixmap>
 BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);
     setMouseTracking(true); // 响应鼠标移动
+
+    color = QColor(40,138,221);
 
     pressed=false;
     pressed2 = false;
@@ -18,9 +24,17 @@ BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
     btn_close = new PushButton(this);
     btn_close->setToolTip("关闭");
     btn_close->setObjectName("btn_close");
-    btn_close->setFixedSize(28, 26);
-    connect(btn_close, &PushButton::clicked, qApp, &QApplication::quit);
+    btn_close->setFixedSize(28, 28);
 
+
+    widgetIcon = new QLabel(this);
+    widgetIcon->setFixedSize(28, 28);
+    widgetIcon->setPixmap(QPixmap(":/Resource/js-linux.png").scaled(28, 28,Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+
+    widgetTitle = new QLabel(this);
+    widgetTitle->setFixedHeight(28);
+    widgetTitle->setObjectName("widgetTitle");
+    connect(btn_close, &PushButton::clicked, this, &QWidget::close);
 }
 
 BasicWidget::~BasicWidget()
@@ -31,10 +45,10 @@ BasicWidget::~BasicWidget()
 void BasicWidget::mouseMoveEvent(QMouseEvent *e)
 {
     setOrientation(e);
-
     if (pressed && !adjustment) {
         QPoint p = e->globalPos();
         this->move(p.x() - point.x(), p.y() - point.y());
+
     }
     else if (pressed2 && orientation != NONE)
     {
@@ -48,7 +62,7 @@ void BasicWidget::mousePressEvent(QMouseEvent *e)
     rect = this->geometry();
 
     if (e->button() == Qt::LeftButton && orientation == NONE) {
-       pressed = true;
+        pressed = true;
     }
     else if(e->button() == Qt::LeftButton && orientation != NONE)
         pressed2 = true;
@@ -57,24 +71,28 @@ void BasicWidget::mousePressEvent(QMouseEvent *e)
 void BasicWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
-       pressed = pressed2 = false;
-       rect = this->geometry();
+        pressed = pressed2 = false;
+        rect = this->geometry();
     }
+    pressed = false;
 }
 
 void BasicWidget::paintEvent(QPaintEvent *e)
 {
     QWidget::paintEvent(e);
-//    QPainter p(this);
-//    p.setPen(Qt::NoPen);
-//    p.setBrush(QColor(40,138,221));
-//    p.drawRect(0, 0, width(), height());
+    QPainter p(this);
+    p.setPen(Qt::NoPen);
+    p.setBrush(color);
+    p.drawRect(0, 0, width(), 28);
 }
 
 void BasicWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
     btn_close->move(width() - btn_close->width(), 0);
+    widgetIcon->move(0, 0);
+    widgetTitle->move(33, 0);
+    widgetTitle->resize(width()-100, 28);
 }
 
 void BasicWidget::enterEvent(QEvent *event)
@@ -161,40 +179,49 @@ void BasicWidget::setSize(QMouseEvent *e)
 
     switch(orientation)
     {
-        case RIGHT:
-            rbp.setX(gp.x() + rect.width() - point.x());
-            break;
-        case LEFT:
-            ltp.setX(gp.x() - point.x());
-            break;
-        case TOP:
-            ltp.setY(gp.y() - point.y());
-            break;
-        case BOTTOM:
-            rbp.setY(gp.y() + rect.height() - point.y());
-            break;
-        case LEFTBOTTOM:
-            ltp.setX(gp.x() - point.x());
-            rbp.setY(gp.y() + rect.height() - point.y());
-            break;
-        case LEFTTOP:
-            ltp.setX(gp.x() - point.x());
-            ltp.setY(gp.y() - point.y());
-            break;
-        case RIGHTBOTTOM:
-            rbp.setX(gp.x() + rect.width() - point.x());
-            rbp.setY(gp.y() + rect.height() - point.y());
-            break;
-        case RIGHTTOP:
-            rbp.setX(gp.x() + rect.width() - point.x());
-            ltp.setY(gp.y() - point.y());
-            break;
-        default:
-            break;
+    case RIGHT:
+        rbp.setX(gp.x() + rect.width() - point.x());
+        break;
+    case LEFT:
+        ltp.setX(gp.x() - point.x());
+        break;
+    case TOP:
+        ltp.setY(gp.y() - point.y());
+        break;
+    case BOTTOM:
+        rbp.setY(gp.y() + rect.height() - point.y());
+        break;
+    case LEFTBOTTOM:
+        ltp.setX(gp.x() - point.x());
+        rbp.setY(gp.y() + rect.height() - point.y());
+        break;
+    case LEFTTOP:
+        ltp.setX(gp.x() - point.x());
+        ltp.setY(gp.y() - point.y());
+        break;
+    case RIGHTBOTTOM:
+        rbp.setX(gp.x() + rect.width() - point.x());
+        rbp.setY(gp.y() + rect.height() - point.y());
+        break;
+    case RIGHTTOP:
+        rbp.setX(gp.x() + rect.width() - point.x());
+        ltp.setY(gp.y() - point.y());
+        break;
+    default:
+        break;
     }
 
 
     this->setGeometry(QRect(ltp, rbp));
 }
 
+void BasicWidget::setWidgetTitle(const QString &title)
+{
+    widgetTitle->setText(title);
+}
 
+void BasicWidget::setBackgroundColor(QColor _color)
+{
+    color = _color;
+    update();
+}
