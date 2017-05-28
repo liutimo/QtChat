@@ -74,7 +74,7 @@ void ListWidget::mousePressEvent(QMouseEvent *event)
                     subItem->setHidden(true);                            //好友全部隐藏
                 }
              isHideMap.insert(currentItem,true);                          //设置该组为隐藏状态
-             currentItem->setIcon(QIcon(":/arrowRight"));
+             currentItem->setIcon(QIcon(":/Resource/mainwidget/arrowright"));
         }
     }
 }
