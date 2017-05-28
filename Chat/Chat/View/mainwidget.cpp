@@ -1,7 +1,9 @@
 #include "mainwidget.h"
 #include "skinmanagewidget.h"
+#include "Setting/rwsetting.h"
 #include "BasicControls/headicon.h"
 #include "BasicControls/lineedit.h"
+#include "BasicControls/listwidget.h"
 
 #include <QPushButton>
 #include <QResizeEvent>
@@ -10,14 +12,16 @@
 #include <QDebug>
 #include <QStyle>
 #include <QToolButton>
+#include <QMenu>
 
 MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     skinType(PURECOLOR),
     color(QColor(40,138,221))
 {
+    init();
+    loadSetting();
 
     setAdjustmentSize(true);
-    init();
     setAutoFillBackground(true);
     setMinimumWidth(300);
     resize(300, 600);
@@ -51,21 +55,37 @@ void MainWidget::init()
 
     tb_contact = new QToolButton(this);
     tb_contact->setObjectName("tb_contact");
-    tb_contact->setCheckable(true);
+    tb_contact->setProperty("selected", true);
 
     tb_group = new QToolButton(this);
     tb_group->setObjectName("tb_group");
-    tb_group->setCheckable(true);
 
     tb_last = new QToolButton(this);
     tb_last->setObjectName("tb_last");
 
 
+    lw_friendlist = new ListWidget(this);
 
     connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
     connect(tb_contact, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
     connect(tb_group, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
     connect(tb_last, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
+}
+
+void MainWidget::loadSetting()
+{
+    QSettings *setting = RWSetting::getInstance()->getSetting();
+    SkinType skintype = (SkinType)setting->value("SkinType").toInt();
+
+    switch (skintype) {
+    case PURECOLOR:
+        changePureColorSkin((setting->value("SKINCOLOR")).value<QColor>());
+        break;
+    case LOCALIMAGE:
+        changeImageSkin(setting->value("SKINIMAGE").toString());
+    default:
+        break;
+    }
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event)
@@ -82,6 +102,9 @@ void MainWidget::resizeEvent(QResizeEvent *event)
 
     tb_last->resize(width() / 3, 30);
     tb_last->move(width() / 3 * 2, 153);
+
+    lw_friendlist->resize(width(), height() - 213);
+    lw_friendlist->move(0, 183);
 
     le_serach->resize(width(), 30);
 }
@@ -121,6 +144,8 @@ void MainWidget::showSkinManageWidget()
 
 void MainWidget::changePureColorSkin(QColor _color)
 {
+    RWSetting::getInstance()->getSetting()->setValue("SkinType", PURECOLOR);
+    RWSetting::getInstance()->getSetting()->setValue("SKINCOLOR", _color);
     skinType = PURECOLOR;
     color = _color;
     update();
@@ -128,6 +153,8 @@ void MainWidget::changePureColorSkin(QColor _color)
 
 void MainWidget::changeImageSkin(const QString &path)
 {
+    RWSetting::getInstance()->getSetting()->setValue("SkinType", LOCALIMAGE);
+    RWSetting::getInstance()->getSetting()->setValue("SKINIMAGE", path);
     skinType = LOCALIMAGE;
     skinPath = path;
     update();

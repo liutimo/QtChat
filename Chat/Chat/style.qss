@@ -178,3 +178,54 @@ QToolButton#tb_last[selected="true"]
     background-color: rgba(255, 255, 255, 200);
     image:url(:/Resource/mainwidget/icon_last_selected.png);
 }
+
+/*好友列表*/
+QListWidget{
+    background:white;
+    color:black;
+    border:none;
+    background-color: rgba(255, 255, 255, 175)
+}
+
+QListWidget::item{
+    border:none;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 175)
+}
+
+QListWidget::item:hover{
+    background:rgb(252,240,193)
+}
+
+QListWidget::item:selected{
+    background:rgb(252,233,161);
+    color:black;
+}
+
+QScrollBar:vertical {
+    background:transparent;
+    width:9px;
+    margin: 0px 0px 2px 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: rgb(195, 195, 195);
+    min-height: 20px;
+    border-radius: 3px;
+}
+
+QScrollBar::handle:vertical:hover{
+    background:rgba(0,0,0,30%);
+}
+
+QScrollBar::add-line:vertical {
+    height: 0px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+    height: 0px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}

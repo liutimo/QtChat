@@ -11,6 +11,7 @@ class QPushButton;
 class HeadIcon;
 class LineEdit;
 class QToolButton;
+class ListWidget;
 
 class MainWidget : public BasicWidget
 {
@@ -24,7 +25,7 @@ protected:
 
 private:
     void init();
-
+    void loadSetting();
 signals:
     void changeBackGround(QColor color);
 
@@ -58,6 +59,9 @@ private:
     QToolButton *tb_contact;    //好友列表
     QToolButton *tb_group;      //群
     QToolButton *tb_last;       //最近聊天
+
+    //好友列表
+    ListWidget *lw_friendlist;
 };
 
 #endif // MAINWIDGET_H

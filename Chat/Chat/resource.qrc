@@ -61,5 +61,7 @@
         <file>Resource/mainwidget/icon_last_hover.png</file>
         <file>Resource/mainwidget/icon_last_normal.png</file>
         <file>Resource/mainwidget/icon_last_selected.png</file>
+        <file>Resource/mainwidget/arrowdow.png</file>
+        <file>Resource/mainwidget/arrowright.png</file>
     </qresource>
 </RCC>
