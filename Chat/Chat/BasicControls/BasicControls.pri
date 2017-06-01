@@ -6,7 +6,8 @@ HEADERS += \
     $$PWD/lineedit.h \
     $$PWD/MyToolButton.h \
     $$PWD/listviewitemwidget.h \
-    $$PWD/listwidget.h
+    $$PWD/listwidget.h \
+    $$PWD/loginstatusbar.h
 
 SOURCES += \
     $$PWD/headicon.cpp \
@@ -16,4 +17,5 @@ SOURCES += \
     $$PWD/lineedit.cpp \
     $$PWD/MyToolButton.cpp \
     $$PWD/listviewitemwidget.cpp \
-    $$PWD/listwidget.cpp
+    $$PWD/listwidget.cpp \
+    $$PWD/loginstatusbar.cpp

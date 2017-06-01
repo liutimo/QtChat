@@ -1,12 +1,14 @@
 ﻿#ifndef RWSETTING_H
 #define RWSETTING_H
 
+#include <QObject>
 #include <QSettings>
 #include <QVariant>
 #include <QMutex>
 
-class RWSetting
+class RWSetting : public QObject
 {
+    Q_OBJECT
 public:
 
     ~RWSetting();
@@ -16,7 +18,7 @@ public:
     QSettings *getSetting();
 
 private:
-    RWSetting();
+    RWSetting(QObject *parent = Q_NULLPTR);
     QSettings *configSettings;
 
     static QMutex *mutex;

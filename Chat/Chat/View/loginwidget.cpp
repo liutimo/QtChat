@@ -1,36 +1,39 @@
 ﻿#include "loginwidget.h"
 #include "mainwidget.h"
 #include "BasicControls/headicon.h"
+#include "BasicControls/loginstatusbar.h"
 #include "Setting/rwsetting.h"
 #include "DataBase/database.h"
 #include "NetWork/connecttoserver.h"
-
+#include "Thread/heartbeatthread.h"
+#include "NetWork/msgstructure.h"
 
 #include <QCryptographicHash>
+#include <QEventLoop>
 #include <QSettings>
 #include <QPushButton>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QDebug>
+#include <QTimerEvent>
 
-#include "NetWork/msgstructure.h"
 
 LoginWidget::LoginWidget(QWidget *parent) : BasicWidget(parent)
 {
     //设置大小不可变
     setAdjustmentSize(false);
-    setFixedSize(320, 480);
 
+    setFixedSize(320, 480);
     init();
     loadSetting();
+
+    msg.status = 'a';
 }
 
 void LoginWidget::init()
 {
     int w = width();
-    int h = height();
-
 
     hi_headicon = new HeadIcon(this);
     hi_headicon->setFixedSize(100, 100);
@@ -70,11 +73,22 @@ void LoginWidget::init()
 
     server = ConnectToServer::getInstance();
 
+    loginStatusBar = new LoginStatusBar(this);
+    loginStatusBar->move(0, 480);
+    loginStatusBar->resize(width(), 20);
+    loginStatusBar->hide();
+
+
     connect(cb_rememberpw, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
     connect(cb_autologin, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
     connect(btn_login, &QPushButton::clicked, this, &LoginWidget::btn_login_clicked);
+    connect(loginStatusBar, &LoginStatusBar::hide_status, this, &LoginWidget::hide_status);
+
+
+    /*登陆状态*/
     connect(server, &ConnectToServer::connected, [](){qDebug() << "connected;";});
     connect(server, &ConnectToServer::loginStatus, this, loginStatus);
+    connect(server, &ConnectToServer::responseHeartBeat, this, &LoginWidget::recvHeartBeat);
 }
 
 void LoginWidget::addSetting(int status)
@@ -122,35 +136,82 @@ void LoginWidget::btn_login_clicked()
     DataBase *d = DataBase::getInstance();
     d->setLoaclUserInfo(cb_username->currentText(), le_password->text());
 
-
-
     LoginMsg *l = new LoginMsg();
-
     strcpy(l->userid, "123456");
-    //对密码进行哈希加密
-    strcpy(l->password, QCryptographicHash::hash(le_password->text().toUtf8(), QCryptographicHash::Sha1).toHex());
-
-    server->sendLoginMsg(*l);
+    strcpy(l->password, QCryptographicHash::hash(le_password->text().toUtf8(), QCryptographicHash::Sha1).toHex());      //对密码进行哈希加密
+    server->sendLoginMsg(l);
 
     delete l;
 }
 
+void LoginWidget::hide_status()
+{
+    hideStatusBar();
+}
+
+void LoginWidget::hideStatusBar()
+{
+    loginStatusBar->hide();
+    setFixedHeight(this->height() - 20);
+}
+
+void LoginWidget::showStatusBar(const QString &text)
+{
+    loginStatusBar->show();
+    loginStatusBar->setInfo(text);
+    setFixedHeight(this->height() + 20);
+}
+
 void LoginWidget::loginStatus(LoginStatus ls)
 {
-    qDebug() << ls;
-
     switch (ls)
     {
     case LOGINSUCCESS:
     {
-        MainWidget *w = new MainWidget(NULL);
+        hide();
+
+        MainWidget *w = new MainWidget();
         w->show();
-        this->close();
-    }
+
+        startTimer(2000);
+
         break;
+    }
     case LOGINPWERROR:
     case LOGINUNKNOW:
-        qDebug() << "登录错误";
+    {
+        showStatusBar("密码错误，请重新输入密码!");
         break;
     }
+    case LOGINREPEAT:
+    {
+        QString str = QString("%1已经登陆,请勿重复登陆!").arg(cb_username->currentText());
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void LoginWidget::recvHeartBeat()
+{
+    i = 0;
+    qDebug() << "收到心跳包回复";
+}
+
+void LoginWidget::timerEvent(QTimerEvent *event)
+{
+    qDebug() << "发送心跳包";
+    if(i > 3)
+    {
+        qDebug() << "离线";
+        i = 0;
+        killTimer(event->timerId());
+    }
+    else
+    {
+        i++;
+        server->sendHeartBeatMsg(&msg);
+    }
+    event->accept();
 }

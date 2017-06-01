@@ -13,6 +13,9 @@ class ListViewItemWidget : public QWidget
 public:
     explicit ListViewItemWidget(QWidget *parent = 0);
 
+
+
+
 signals:
 
 public slots:

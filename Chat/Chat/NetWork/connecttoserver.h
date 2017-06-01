@@ -10,21 +10,25 @@ class ConnectToServer : public QTcpSocket
 {
     Q_OBJECT
 public:
-    void send(Msg *msg, ssize_t length);
-    void sendLoginMsg(LoginMsg loginmsg);
     static ConnectToServer* getInstance();
+    void closeServer();
+
+
+    void send(MsgType msgtype, char *data, ssize_t size);
+    void sendLoginMsg(LoginMsg *loginmsg);
+    void sendHeartBeatMsg(HeartBeatMsg *hearteabtmsg);
 
 protected:
     void recv();
 
 signals:
     void loginStatus(LoginStatus s);
-
+    void responseHeartBeat();
 private:
-     ConnectToServer(QObject *parent = Q_NULLPTR);
+    ConnectToServer(QObject *parent = Q_NULLPTR);
 
-     static ConnectToServer *server;
-     static QMutex *mutex;
+    static ConnectToServer *server;
+    static QMutex *mutex;
 
 };
 

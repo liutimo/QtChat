@@ -34,6 +34,8 @@ void recvMsg(int fd)
 	case REQUESTLOGIN:
 		handleLoginMsg(fd, msg);
 		break;
+	case HEARTBEAT:
+		handleHeartBeatMsg(fd);
 	default:
 		break;
 	}
@@ -46,8 +48,6 @@ void handleLoginMsg(int fd, Msg *msg)
 {
 	LoginMsg lmsg;
 	memcpy(&lmsg, msg->data, msg->len);
-
-//	printf("userid:%s\n password:%s\n", lmsg.userid, lmsg.password);
 
 	init_mysql();
 	
@@ -75,4 +75,9 @@ void handleLoginMsg(int fd, Msg *msg)
 	close_mysql();
 	
 	sendResponseLoginMsg(fd, &r_msg);
+}
+
+void handleHeartBeatMsg(int fd)
+{
+	sendResponseHeartBeatMsg(fd);
 }

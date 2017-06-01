@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QStyle>
 #include <QToolButton>
+#include <QStackedWidget>
 #include <QMenu>
 
 MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
@@ -64,7 +65,16 @@ void MainWidget::init()
     tb_last->setObjectName("tb_last");
 
 
-    lw_friendlist = new ListWidget(this);
+    stackwidget = new QStackedWidget(this);
+
+
+    ListWidget *friendList = new ListWidget;
+    ListWidget *groupList = new ListWidget;
+    ListWidget *recentList = new ListWidget;
+
+    stackwidget->addWidget(friendList);
+    stackwidget->addWidget(groupList);
+    stackwidget->addWidget(recentList);
 
     connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
     connect(tb_contact, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
@@ -103,8 +113,8 @@ void MainWidget::resizeEvent(QResizeEvent *event)
     tb_last->resize(width() / 3, 30);
     tb_last->move(width() / 3 * 2, 153);
 
-    lw_friendlist->resize(width(), height() - 213);
-    lw_friendlist->move(0, 183);
+    stackwidget->resize(width(), height() - 213);
+    stackwidget->move(0, 183);
 
     le_serach->resize(width(), 30);
 }
@@ -173,4 +183,13 @@ void MainWidget::changSelectedButton()
     tb_contact->style()->polish(tb_contact);
     tb_group->style()->polish(tb_group);
     tb_last->style()->polish(tb_last);
+
+    if(tb_sender == tb_contact)
+        stackwidget->setCurrentIndex(0);
+    else if(tb_sender == tb_group)
+        stackwidget->setCurrentIndex(1);
+    else
+        stackwidget->setCurrentIndex(2);
+
+
 }

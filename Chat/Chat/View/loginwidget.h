@@ -34,6 +34,8 @@ class QCheckBox;
 class HeadIcon;
 class QComboBox;
 class ConnectToServer;
+class QTimer;
+class LoginStatusBar;
 
 
 class LoginWidget : public BasicWidget
@@ -43,14 +45,22 @@ public:
     LoginWidget(QWidget *parent = Q_NULLPTR);
 
 
+protected:
+    void timerEvent(QTimerEvent *event);
+
+
 private:
     void init();
     void loadSetting();
-
+    void hideStatusBar();
+    void showStatusBar(const QString &text);
 private slots:
     void addSetting(int status);
     void btn_login_clicked();
     void loginStatus(LoginStatus);
+    void recvHeartBeat();
+
+    void hide_status();
 
 private:
     QPushButton *btn_login;
@@ -61,6 +71,12 @@ private:
     QCheckBox *cb_autologin;
 
     ConnectToServer *server;
+
+    QTimer *timer;
+    int  i = 0;
+    HeartBeatMsg msg;
+
+    LoginStatusBar *loginStatusBar;
 };
 
 #endif // LOGINWIDGET_H

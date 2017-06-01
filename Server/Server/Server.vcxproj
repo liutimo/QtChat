@@ -62,11 +62,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\Linux\include\c++\4.9;C:\Program Files %28x86%29\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\Linux\include;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\Linux\include\usr;C:\Program Files %28x86%29\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\Linux\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="cJSON.c" />
     <ClCompile Include="database.c" />
     <ClCompile Include="error.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="main1.c" />
     <ClCompile Include="onlinehashtable.c" />
     <ClCompile Include="recvfromclient.c" />
     <ClCompile Include="sendtoclient.c" />
@@ -75,6 +79,7 @@
     <ClCompile Include="utility.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cJSON.h" />
     <ClInclude Include="database.h" />
     <ClInclude Include="error.h" />
     <ClInclude Include="marco.h" />

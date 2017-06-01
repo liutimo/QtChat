@@ -10,6 +10,12 @@ typedef enum _MsgType {
 	RESPONSELOGIN			//告知客户端登录状态
 }MsgType;
 
+
+//心跳包.  request和response都使用这个结构
+typedef struct _HeartBackMsg {
+	char status;				//确定为 'a';
+}HeartBeatMsg;
+
 //登录状态
 typedef enum _LoginStatus {
 	LOGINSUCCESS = 0,       //成功登录

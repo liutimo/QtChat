@@ -10,9 +10,11 @@
     <Filter Include="网络">
       <UniqueIdentifier>{6fade6cf-6705-4040-ba24-94e5940329ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CJson">
+      <UniqueIdentifier>{96cf4b99-32e3-4635-a35a-21af440856e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c" />
     <ClCompile Include="database.c">
       <Filter>数据库</Filter>
     </ClCompile>
@@ -35,6 +37,11 @@
     <ClCompile Include="onlinehashtable.c">
       <Filter>数据结构</Filter>
     </ClCompile>
+    <ClCompile Include="cJSON.c">
+      <Filter>CJson</Filter>
+    </ClCompile>
+    <ClCompile Include="main1.c" />
+    <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database.h">
@@ -62,6 +69,9 @@
     <ClInclude Include="marco.h" />
     <ClInclude Include="onlinehashtable.h">
       <Filter>数据结构</Filter>
+    </ClInclude>
+    <ClInclude Include="cJSON.h">
+      <Filter>CJson</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

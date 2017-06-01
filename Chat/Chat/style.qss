@@ -229,3 +229,19 @@ QScrollBar::sub-line:vertical {
     subcontrol-position: top;
     subcontrol-origin: margin;
 }
+
+/*登录框状态显示栏*/
+QToolButton#btn_hide:hover
+{
+    border-image:url(:/Resource/loginwidget/simpleexceptionframe_close_hover.png);
+}
+
+QToolButton#btn_hide:pressed
+{
+    border-image:url(:/Resource/loginwidget/simpleexceptionframe_close_press.png);
+}
+
+QToolButton#btn_hide
+{
+    border-image:url(:/Resource/loginwidget/simpleexceptionframe_close.png);
+}

@@ -20,7 +20,7 @@ ConnectToServer* ConnectToServer::getInstance()
 {
     mutex->lock();
 
-    if(server == NULL)
+    if(server == NULL || !server->isValid())
         server = new ConnectToServer();
 
     mutex->unlock();
@@ -28,37 +28,50 @@ ConnectToServer* ConnectToServer::getInstance()
     return server;
 }
 
-
-void ConnectToServer::send(Msg *msg, ssize_t length)
+void ConnectToServer::closeServer()
 {
-    Request r;
-    r.len = length;
+    this->close();
+    server = NULL;
+}
 
-    //首先发送一个包，告知服务器后面发送的数据的长度
-    if( -1 == write((char *)&r, sizeof(r)))
+
+void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
+{
+    mutex->lock();
+    Msg *msg = (Msg*)new char[sizeof(Msg) + size];
+
+    memset(msg, 0, sizeof(Msg) + size);
+
+    msg->type = msgtype;
+    msg->len = size;
+
+    memcpy(msg->data, data, msg->len);
+
+    Request r;
+    r.len = size + sizeof(Msg);
+
+    if( -1 == write((char *)&r, sizeof(r))) {
         qDebug() << "发送消息失败";
-    if (-1 == write((char *)msg, length))
+        delete msg;
+        return;
+    }
+    if (-1 == write((char *)msg, r.len))
          qDebug() << "发送消息失败";
 
-}
-
-void ConnectToServer::sendLoginMsg(LoginMsg loginmsg)
-{
-    Msg *msg = (Msg*)new char[sizeof(Msg) + sizeof(LoginMsg)];
-
-    memset(msg, 0, sizeof(Msg) + sizeof(LoginMsg));
-
-    msg->type = REQUESTLOGIN;
-    msg->len = sizeof(LoginMsg);
-
-    memcpy(msg->data, &loginmsg, msg->len);
-
-    send(msg, sizeof(Msg) + sizeof(LoginMsg));
-
     delete msg;
+    mutex->unlock();
+
 }
 
+void ConnectToServer::sendLoginMsg(LoginMsg *loginmsg)
+{
+    send(REQUESTLOGIN, (char*)loginmsg, sizeof(LoginMsg));
+}
 
+void ConnectToServer::sendHeartBeatMsg(HeartBeatMsg *hearteabtmsg)
+{
+    send(HEARTBEAT, (char*)hearteabtmsg, sizeof(HeartBeatMsg));
+}
 
 
 /*****************************接受服务器发来的消息**************************************/
@@ -68,7 +81,6 @@ void ConnectToServer::recv()
     QByteArray bytearray = this->readAll();
     Msg *msg = (Msg*)bytearray.data();
 
-    qDebug() << "收到服务器消息";
     switch (msg->type) {
     case RESPONSELOGIN: {
         ResponseLoginMsg *rlm = new ResponseLoginMsg;
@@ -77,6 +89,8 @@ void ConnectToServer::recv()
         delete rlm;
         }
         break;
+    case HEARTBEAT:
+        emit responseHeartBeat();
     default:
         break;
     }
