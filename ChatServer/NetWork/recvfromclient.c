@@ -1,6 +1,6 @@
 #include "recvfromclient.h"
 #include "sendtoclient.h"
-#include "utility.h"
+#include "Utility/utility.h"
 #include "msgstructure.h"
 #include "DataBase/database.h"
 #include "error.h"
@@ -34,6 +34,8 @@ void recvMsg(int fd)
 	case REQUESTLOGIN:
 		handleLoginMsg(fd, msg);
 		break;
+	case HEARTBEAT:
+		handleHeartBeatMsg(fd);
 	default:
 		break;
 	}
@@ -45,9 +47,8 @@ void recvMsg(int fd)
 void handleLoginMsg(int fd, Msg *msg)
 {
 	LoginMsg lmsg;
+    bool loginSuccess = false;
 	memcpy(&lmsg, msg->data, msg->len);
-
-//	printf("userid:%s\n password:%s\n", lmsg.userid, lmsg.password);
 
 	init_mysql();
 	
@@ -62,6 +63,7 @@ void handleLoginMsg(int fd, Msg *msg)
 		r_msg.ls = LOGINUNKNOW;
 		break;
 	case DATABASE_USER_CORRECT:
+        loginSuccess = true;
 		r_msg.ls = LOGINSUCCESS;
 		//维持在线状态需要做的事
 
@@ -72,7 +74,16 @@ void handleLoginMsg(int fd, Msg *msg)
 		addOnlineUser(&user);
 		break;
 	}
-	close_mysql();
 	
 	sendResponseLoginMsg(fd, &r_msg);
+
+    if (loginSuccess)
+        sendResponseFriendList(fd, get_friendlist_json(lmsg.userid));
+
+    close_mysql();
+}
+
+void handleHeartBeatMsg(int fd)
+{
+	sendResponseHeartBeatMsg(fd);
 }

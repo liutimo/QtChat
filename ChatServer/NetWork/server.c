@@ -3,6 +3,7 @@
 #include "marco.h"
 
 
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -10,6 +11,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>    //sockaddr_in
 #include <errno.h>
+
+
 
 
 int init()
@@ -38,7 +41,7 @@ int init()
 
 void start(int sfd, struct pollfd *fds, nfds_t *size)
 {
-    printf("waiting user connect...\n");
+    printf("wait user connect...\n");
 	
 	char info[1024];
 	for (; ;) {
@@ -48,7 +51,7 @@ void start(int sfd, struct pollfd *fds, nfds_t *size)
 		int sock = accept(sfd, (struct sockaddr*)&client, &len);
 
 		if (sock > 0) {
-            sprintf(info, "accept connection from %s\n", inet_ntoa(client.sin_addr));
+            sprintf(info, "accept connect from %s\n", inet_ntoa(client.sin_addr));
 			write(STDOUT_FILENO, info, strlen(info) + 1);
 
 			fds[*size].fd = sock;

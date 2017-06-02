@@ -9,16 +9,14 @@ include (NetWork/NetWork.pri)
 include (DataBase/DataBase.pri)
 include (DataStructure/DataStructure.pri)
 include (thread/thread.pri)
-
+include (Utility/Utility.pri)
 
 HEADERS += \
-    utility.h \
     error.h
 
 
 SOURCES += \
     main.c \
-    utility.c \
     error.c
 
 LIBS+=\

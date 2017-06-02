@@ -1,4 +1,4 @@
-﻿#ifndef MSGSTRUCTURE_H
+#ifndef MSGSTRUCTURE_H
 #define MSGSTRUCTURE_H
 
 #include "marco.h"
@@ -7,7 +7,8 @@
 typedef enum _MsgType {
     HEARTBEAT = 0,			//心跳包
     REQUESTLOGIN,			//请求登陆
-    RESPONSELOGIN			//告知客户端登录状态
+    RESPONSELOGIN,			//告知客户端登录状态
+    RESPONSEFRIENDLIST      //好友列表
 }MsgType;
 
 
@@ -52,4 +53,11 @@ typedef struct _LoginMsg {
 typedef struct _ResponseLoginMsg {
     LoginStatus ls;				//登录状态
 }ResponseLoginMsg;
+
+//friendlist response
+typedef struct _ResponseFriendList {
+    long len;
+    char friendlist[0];
+}ResponseFriendList;
+
 #endif // MSGSTRUCTURE_H

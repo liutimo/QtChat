@@ -1,4 +1,4 @@
-﻿#ifndef CONNECTTOSERVER_H
+#ifndef CONNECTTOSERVER_H
 #define CONNECTTOSERVER_H
 
 #include <QMutex>
@@ -24,6 +24,8 @@ protected:
 signals:
     void loginStatus(LoginStatus s);
     void responseHeartBeat();
+    void responseFriendList(QByteArray);
+
 private:
     ConnectToServer(QObject *parent = Q_NULLPTR);
 

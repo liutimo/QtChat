@@ -39,6 +39,8 @@ void print_error_mysql(const char *msg);
 //判断用户id和密码是否匹配
 int login_check_mysql(const char *userid, const char *password);
 
+//get friendlist with json
+char *get_friendlist_json(const char *userid);
 
 
 #endif // !DATABASE_H

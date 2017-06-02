@@ -1,4 +1,4 @@
-﻿/**
+/**
 *
 *----------Dragon be here!----------/
 * 　　　┏┓　　　┏┓
@@ -28,6 +28,8 @@
 #include "basicwidget.h"
 #include "NetWork/msgstructure.h"
 
+#include <QAbstractSocket>
+
 class QPushButton;
 class QLineEdit;
 class QCheckBox;
@@ -54,13 +56,14 @@ private:
     void loadSetting();
     void hideStatusBar();
     void showStatusBar(const QString &text);
+
 private slots:
     void addSetting(int status);
     void btn_login_clicked();
     void loginStatus(LoginStatus);
     void recvHeartBeat();
-
     void hide_status();
+    void socketError(QAbstractSocket::SocketError socketError);
 
 private:
     QPushButton *btn_login;

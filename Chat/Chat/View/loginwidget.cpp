@@ -1,4 +1,4 @@
-﻿#include "loginwidget.h"
+#include "loginwidget.h"
 #include "mainwidget.h"
 #include "BasicControls/headicon.h"
 #include "BasicControls/loginstatusbar.h"
@@ -88,6 +88,7 @@ void LoginWidget::init()
     /*登陆状态*/
     connect(server, &ConnectToServer::connected, [](){qDebug() << "connected;";});
     connect(server, &ConnectToServer::loginStatus, this, &LoginWidget::loginStatus);
+    connect(server, &ConnectToServer::responseHeartBeat, this, &LoginWidget::recvHeartBeat);
 }
 
 void LoginWidget::addSetting(int status)
@@ -213,4 +214,9 @@ void LoginWidget::timerEvent(QTimerEvent *event)
         server->sendHeartBeatMsg(&msg);
     }
     event->accept();
+}
+
+void LoginWidget::socketError(QAbstractSocket::SocketError socketError)
+{
+
 }

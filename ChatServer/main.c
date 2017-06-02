@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <wait.h>
 #include <signal.h>
 #include <unistd.h>
@@ -14,7 +14,7 @@
 #include "thread/threadhandle.h"
 #include "DataStructure/onlinehashtable.h"
 
-//鍏ㄥ眬
+//闁稿繈鍔岄惇锟�
 int fd;
 
 struct pollfd pollfds[LISTENMAXNUM];
@@ -51,6 +51,8 @@ int main()
     start(fd, pollfds, &size);
 
     pthread_join(pid, NULL);
+
+
 
     return 0;
 }

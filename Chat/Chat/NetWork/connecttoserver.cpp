@@ -1,4 +1,4 @@
-﻿#include "connecttoserver.h"
+#include "connecttoserver.h"
 #include "marco.h"
 
 #include <QDebug>
@@ -8,8 +8,8 @@ ConnectToServer::ConnectToServer(QObject *parent) : QTcpSocket(parent)
     connectToHost(IP, PORT);
 
     connect(this, &ConnectToServer::readyRead, this, &ConnectToServer::recv);
-    connect(this, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
-          [=](QAbstractSocket::SocketError socketError){ qDebug() << socketError; });
+//    connect(this, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
+//          [=](QAbstractSocket::SocketError socketError){ qDebug() << socketError; });
 }
 
 ConnectToServer* ConnectToServer::server = NULL;
@@ -91,9 +91,14 @@ void ConnectToServer::recv()
         break;
     case HEARTBEAT:
         emit responseHeartBeat();
+        break;
+    case RESPONSEFRIENDLIST: {
+        qDebug() << "recevice friendlist";
+        ResponseFriendList *rf = (ResponseFriendList*)new char(msg->len);
+        memcpy(rf, msg->data, msg->len);
+        emit responseFriendList(QByteArray(rf->friendlist));
+    }
     default:
         break;
     }
-
-    delete msg;
 }

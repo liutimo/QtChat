@@ -4,6 +4,7 @@
 #include "BasicControls/headicon.h"
 #include "BasicControls/lineedit.h"
 #include "BasicControls/listwidget.h"
+#include "NetWork/connecttoserver.h"
 
 #include <QPushButton>
 #include <QResizeEvent>
@@ -14,6 +15,10 @@
 #include <QToolButton>
 #include <QStackedWidget>
 #include <QMenu>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonParseError>
 
 MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     skinType(PURECOLOR),
@@ -80,6 +85,8 @@ void MainWidget::init()
     connect(tb_contact, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
     connect(tb_group, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
     connect(tb_last, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
+
+    connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
 }
 
 void MainWidget::loadSetting()
@@ -190,6 +197,33 @@ void MainWidget::changSelectedButton()
         stackwidget->setCurrentIndex(1);
     else
         stackwidget->setCurrentIndex(2);
+}
+
+void MainWidget::receiveFriendList(QByteArray bytearray)
+{
+   parseFriend(bytearray);
+}
+
+QMap<QString, QVector<QPair<QString, QString>>> MainWidget::parseFriend(const QByteArray& bytearray)
+{
+
+    QMap<QString, QVector<QPair<QString, QString>>> friendmap;
+
+    QJsonParseError error;
+    QJsonDocument document = QJsonDocument::fromJson(bytearray, &error);
+
+    if(!document.isNull())
+    {
+        for(auto a = document.object().begin(); a != document.object().end(); ++a)
+        {
+            qDebug() << document.object().value("Í¬ÊÂ").toObject().keys();
 
 
+        }
+    }
+    else
+        qDebug() << error.errorString();
+
+
+    return friendmap;
 }

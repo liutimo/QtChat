@@ -34,12 +34,18 @@ private slots:
     void changeImageSkin(const QString &);
     void showSkinManageWidget();
     void changSelectedButton();
+
+    void receiveFriendList(QByteArray);
 private:
     typedef enum _SkinType{
         PURECOLOR = 0,          //纯色
         LOCALIMAGE,             //本地图片
         NETWORKIMAGE            //网络图片
     }SkinType;
+
+
+    QMap<QString, QVector<QPair<QString, QString>>> parseFriend(const QByteArray&);
+
 
     //标题栏按钮
     QPushButton *btn_mini;

@@ -34,7 +34,7 @@ ssize_t writen(int filedes, const void *buff, size_t nbytes)
 	ptr = buff;
 	nleft = nbytes;
 	while (nleft > 0) {
-		if ((nwritten == write(filedes, ptr, nleft)) <= 0) {
+        if ((nwritten = write(filedes, ptr, nleft)) <= 0) {
 			if (nwritten < 0 && errno == EINTR)
 				nwritten = 0;
 			else
