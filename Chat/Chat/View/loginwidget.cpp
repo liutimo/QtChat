@@ -74,7 +74,7 @@ void LoginWidget::init()
     connect(cb_autologin, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
     connect(btn_login, &QPushButton::clicked, this, &LoginWidget::btn_login_clicked);
     connect(server, &ConnectToServer::connected, [](){qDebug() << "connected;";});
-    connect(server, &ConnectToServer::loginStatus, this, loginStatus);
+    connect(server, &ConnectToServer::loginStatus, this, &LoginWidget::loginStatus);
 }
 
 void LoginWidget::addSetting(int status)

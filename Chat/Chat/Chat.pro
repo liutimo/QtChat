@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Chat
 TEMPLATE = app
-include (view/view.pri)
+include (View/view.pri)
 include (BasicControls/BasicControls.pri)
 include (DataBase/DataBase.pri)
 include (Setting/Setting.pri)

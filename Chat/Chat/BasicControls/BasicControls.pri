@@ -4,7 +4,6 @@ HEADERS += \
     $$PWD/purecolorlabel.h \
     $$PWD/imageskinlabel.h \
     $$PWD/lineedit.h \
-    $$PWD/MyToolButton.h \
     $$PWD/listviewitemwidget.h \
     $$PWD/listwidget.h
 
@@ -14,6 +13,5 @@ SOURCES += \
     $$PWD/purecolorlabel.cpp \
     $$PWD/imageskinlabel.cpp \
     $$PWD/lineedit.cpp \
-    $$PWD/MyToolButton.cpp \
     $$PWD/listviewitemwidget.cpp \
     $$PWD/listwidget.cpp

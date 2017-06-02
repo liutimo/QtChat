@@ -1,4 +1,4 @@
-﻿#include "widget.h"
+#include "widget.h"
 #include "View/loginwidget.h"
 #include "DataBase/database.h"
 #include "BasicControls/headicon.h"
@@ -18,9 +18,9 @@ int main(int argc, char *argv[])
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
     //qDebug() << f.readAll();
-    //LoginWidget w;
+    LoginWidget w;
     //ListWidget w;
-    MainWidget w;
+    //MainWidget w;
     w.show();
 
     return a.exec();
