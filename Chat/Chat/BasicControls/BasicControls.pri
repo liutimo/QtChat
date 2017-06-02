@@ -5,7 +5,8 @@ HEADERS += \
     $$PWD/imageskinlabel.h \
     $$PWD/lineedit.h \
     $$PWD/listviewitemwidget.h \
-    $$PWD/listwidget.h
+    $$PWD/listwidget.h \
+    $$PWD/loginstatusbar.h
 
 SOURCES += \
     $$PWD/headicon.cpp \
@@ -14,4 +15,5 @@ SOURCES += \
     $$PWD/imageskinlabel.cpp \
     $$PWD/lineedit.cpp \
     $$PWD/listviewitemwidget.cpp \
-    $$PWD/listwidget.cpp
+    $$PWD/listwidget.cpp \
+    $$PWD/loginstatusbar.cpp

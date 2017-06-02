@@ -6,22 +6,29 @@
 #include <string.h>
 #include <stdlib.h>
 
-void sendMsg(int fd, Msg *msg, ssize_t msgsize)
+void sendMsg(int fd, MsgType msgtype, char *data, ssize_t size)
 {
-	writen(fd, (void*)msg, msgsize);
+	Msg *msg = (Msg*)malloc(sizeof(Msg) + size);
+
+	msg->type = msgtype;
+	msg->len = size;
+
+	memcpy(msg->data, data, msg->len);
+
+	writen(fd, (void*)msg, size + sizeof(Msg));
+
+	free(msg);
 }
 
+void sendResponseHeartBeatMsg(int fd)
+{
+	HeartBeatMsg heartbeatmsg;
+	heartbeatmsg.status = 'a';
+
+	sendMsg(fd, HEARTBEAT, &heartbeatmsg, sizeof(HeartBeatMsg));
+}
 
 void sendResponseLoginMsg(int fd, ResponseLoginMsg *r_msg)
 {
-	Msg *msg = (Msg*)malloc(sizeof(Msg) + sizeof(ResponseLoginMsg));
-
-	msg->type = RESPONSELOGIN;
-	msg->len = sizeof(ResponseLoginMsg);
-
-	memcpy(msg->data, (char*)r_msg, msg->len);
-
-	sendMsg(fd, msg, sizeof(Msg) + msg->len);
-
-	free(msg);
+	sendMsg(fd,RESPONSELOGIN, r_msg, sizeof(Msg) + sizeof(ResponseLoginMsg));
 }

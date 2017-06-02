@@ -11,7 +11,7 @@ class QPushButton;
 class HeadIcon;
 class LineEdit;
 class QToolButton;
-class ListWidget;
+class QStackedWidget;
 
 class MainWidget : public BasicWidget
 {
@@ -60,8 +60,8 @@ private:
     QToolButton *tb_group;      //群
     QToolButton *tb_last;       //最近聊天
 
-    //好友列表
-    ListWidget *lw_friendlist;
+    QStackedWidget *stackwidget;
+
 };
 
 #endif // MAINWIDGET_H

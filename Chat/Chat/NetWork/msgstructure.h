@@ -10,11 +10,18 @@ typedef enum _MsgType {
     RESPONSELOGIN			//告知客户端登录状态
 }MsgType;
 
+
+//心跳包.  request和response都使用这个结构
+typedef struct _HeartBackMsg {
+    char status;				//确定为 'a';
+}HeartBeatMsg;
+
 //登录状态
 typedef enum _LoginStatus {
     LOGINSUCCESS = 0,       //成功登录
     LOGINPWERROR,			//密码错误
-    LOGINUNKNOW				//未知用户登录
+    LOGINUNKNOW,		    //未知用户登录
+    LOGINREPEAT             //重复登陆
 }LoginStatus;
 
 //为了避免粘包，发送这个结构体来告知后面的数据的长度

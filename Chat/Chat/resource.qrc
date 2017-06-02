@@ -63,5 +63,9 @@
         <file>Resource/mainwidget/icon_last_selected.png</file>
         <file>Resource/mainwidget/arrowdow.png</file>
         <file>Resource/mainwidget/arrowright.png</file>
+        <file>Resource/loginwidget/i.png</file>
+        <file>Resource/loginwidget/simpleexceptionframe_close.png</file>
+        <file>Resource/loginwidget/simpleexceptionframe_close_hover.png</file>
+        <file>Resource/loginwidget/simpleexceptionframe_close_press.png</file>
     </qresource>
 </RCC>

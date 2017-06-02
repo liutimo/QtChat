@@ -28,3 +28,4 @@ void ListViewItemWidget::resizeEvent(QResizeEvent *event)
     m_nickname->resize(width() - 80, height() - 10);
     m_nickname->move(40, 5);
 }
+

@@ -1,6 +1,6 @@
 ﻿#include "rwsetting.h"
 
-RWSetting::RWSetting()
+RWSetting::RWSetting(QObject *parent) : QObject(parent)
 {
     configSettings = new QSettings("my.ini", QSettings::IniFormat);
 }

@@ -7,13 +7,13 @@
 
 #include <unistd.h>
 
-ssize_t readn(int filedes, void *buff, ssize_t nbytes);
+ssize_t readn(int filedes, void *buff, size_t nbytes);
 
 
-ssize_t writen(int filedes, const void *buff, ssize_t nbytes);
+ssize_t writen(int filedes, const void *buff, size_t nbytes);
 
 
-ssize_t readline(int filedes, void *buff, ssize_t maxlen);
+ssize_t readline(int filedes, void *buff, size_t maxlen);
 
 
 #endif // !UTILITY_H

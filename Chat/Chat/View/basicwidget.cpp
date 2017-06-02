@@ -46,7 +46,6 @@ BasicWidget::~BasicWidget()
 void BasicWidget::mouseMoveEvent(QMouseEvent *e)
 {
     setOrientation(e);
-    qDebug() << pressed << adjustment;
 
     if (pressed) {
         QPoint p = e->globalPos();
