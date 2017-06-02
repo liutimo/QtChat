@@ -28,4 +28,7 @@ void ListViewItemWidget::resizeEvent(QResizeEvent *event)
     m_nickname->resize(width() - 80, height() - 10);
     m_nickname->move(40, 5);
 }
-
+void ListViewItemWidget::setUserinfo(const QString &username, const QString &signature)
+{
+    m_nickname->setText(QString("<b>%1</b> %2").arg(username, signature));
+}

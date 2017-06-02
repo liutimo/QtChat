@@ -1,0 +1,20 @@
+insert into user(userid, password) values('123456', 'dd5fef9c1c1da1394d6d34b248c51be2ad740840');
+insert into user(userid, password) values('123457', 'dd5fef9c1c1da1394d6d34b248c51be2ad740840');
+insert into user(userid, password) values('123458', 'dd5fef9c1c1da1394d6d34b248c51be2ad740840');
+insert into user(userid, password) values('123459', 'dd5fef9c1c1da1394d6d34b248c51be2ad740840');
+insert into user(userid, password) values('123460', 'dd5fef9c1c1da1394d6d34b248c51be2ad740840');
+
+
+
+
+insert into userinfo(userid, username, birthofdate, sex, personalizedsignature, mobile, mail) values('123456', '刘正', '1996/06/27', '男', '爱编程', '15367877419', '779564531@qq.com');
+insert into userinfo(userid, username, birthofdate, sex, personalizedsignature, mobile, mail) values('123457', 'test1', '1996/06/27', '男', '爱编程', '15367877419', '779564531@qq.com');
+insert into userinfo(userid, username, birthofdate, sex, personalizedsignature, mobile, mail) values('123458', '测试1', '1996/06/27', '男', '爱编程', '15367877419', '779564531@qq.com');
+insert into userinfo(userid, username, birthofdate, sex, personalizedsignature, mobile, mail) values('123459', 'ceshi1', '1996/06/27', '男', '爱编程', '15367877419', '779564531@qq.com');
+
+
+insert into friendlist(userid, friendid, remark, grouptype, infochanged) values('123456', '123457', '好友', '朋友', 0);
+insert into friendlist(userid, friendid, remark, grouptype, infochanged) values('123456', '123458', '亲人', '亲人', 0);
+insert into friendlist(userid, friendid, remark, grouptype, infochanged) values('123456', '123459', '同事', '同事', 0);
+
+

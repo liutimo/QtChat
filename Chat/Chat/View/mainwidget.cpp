@@ -4,7 +4,9 @@
 #include "BasicControls/headicon.h"
 #include "BasicControls/lineedit.h"
 #include "BasicControls/listwidget.h"
+#include "DataBase/database.h"
 #include "NetWork/connecttoserver.h"
+
 
 #include <QPushButton>
 #include <QResizeEvent>
@@ -201,29 +203,53 @@ void MainWidget::changSelectedButton()
 
 void MainWidget::receiveFriendList(QByteArray bytearray)
 {
-   parseFriend(bytearray);
+    parseFriend(bytearray);
+
+
 }
 
-QMap<QString, QVector<QPair<QString, QString>>> MainWidget::parseFriend(const QByteArray& bytearray)
+void MainWidget::parseFriend(const QByteArray& bytearray)
 {
-
     QMap<QString, QVector<QPair<QString, QString>>> friendmap;
+
+    QList<QVector<QString>> friends;
 
     QJsonParseError error;
     QJsonDocument document = QJsonDocument::fromJson(bytearray, &error);
 
     if(!document.isNull())
     {
-        for(auto a = document.object().begin(); a != document.object().end(); ++a)
+        if(document.isObject())
         {
-            qDebug() << document.object().value("Í¬ÊÂ").toObject().keys();
+            QJsonObject object = document.object();
 
+            //a is friends group by grouptype
+            for(auto name : object.keys())
+            {
+                QJsonArray array = object.value(name).toArray();
+                int size = array.size();
+                for(int i = 0; i < size; ++i)
+                {
+                    QVector<QString> onefriend;
+                    QString friendid = array.at(i).toObject().value("friendid").toString();
+                    QString username = array.at(i).toObject().value("username").toString();
+                    QString remark = array.at(i).toObject().value("remark").toString();
+                    QString grouptype = array.at(i).toObject().value("grouptype").toString();
+                    QString personalizedsignature = array.at(i).toObject().value("personalizedsignature").toString();
 
+                    onefriend.append(friendid);
+                    onefriend.append(username);
+                    onefriend.append(remark);
+                    onefriend.append(personalizedsignature);
+                    onefriend.append(grouptype);
+
+                    friends.append(onefriend);
+                }
+            }
         }
     }
     else
         qDebug() << error.errorString();
 
-
-    return friendmap;
+    DataBase::getInstance()->setFriendList(friends);
 }

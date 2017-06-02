@@ -11,8 +11,8 @@ void err_sys(const char *error)
 	fprintf(stderr, "%s\n", error);
 
 	/*ÇåÀí*/
-	if(fd > 0)
-		close(fd);
+    //if(fd > 0)
+        //close(fd);
 
-	exit(-1);
+    //sexit(-1);
 }

@@ -12,7 +12,7 @@ class ListViewItemWidget : public QWidget
     Q_OBJECT
 public:
     explicit ListViewItemWidget(QWidget *parent = 0);
-
+    void setUserinfo(const QString &username, const QString &signature);
 
 
 

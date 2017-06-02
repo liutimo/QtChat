@@ -80,6 +80,8 @@ void handleLoginMsg(int fd, Msg *msg)
     if (loginSuccess)
         sendResponseFriendList(fd, get_friendlist_json(lmsg.userid));
 
+    printf("%s\n", get_friendlist_json(lmsg.userid));
+
     close_mysql();
 }
 

@@ -43,22 +43,30 @@ json文件包括：
 5.好友id
 
 
-create tabl friendlist(
+create table friendlist(
 	userid char(10) not null,
 	friendid char(10) not null,
 	remark varchar(40),
 	grouptype varchar(20) not null,
-	infochanged int not null 			//1==true  0==false;
+	infochanged int not null,
 	primary key(userid, friendid),
-	foregin key(userid) references user(userid),
-	foregin key(friendid) references user(userid)
-	)
+	foreign key(userid) references user(userid),
+	foreign key(friendid) references user(userid)
+	);
 
 查询时候应该查询 friendlist表和userinfo表。
 获取好友信息
 
 当添加好友时先查询user表。
 在添加到friendlist
+
+
+
+
+查询某一个人的好友分组类别
+
+select distinct grouptype from friendlist where userid='123456';
+
 
 
 

@@ -1,4 +1,4 @@
-﻿#include "database.h"
+#include "database.h"
 
 #include <QDebug>
 
@@ -59,4 +59,63 @@ void DataBase::setLoaclUserInfo(const QString& userid, const QString &password)
         sql_query.prepare(QString("insert into localuserinfo(userid, userpw) values('%1', '%2')").arg(userid, password));
         sql_query.exec();
     }
+}
+
+void DataBase::setFriendList(QList<QVector<QString>> friends)
+{
+    QString sql = "insert into friendlist(friendid, username, remark, "
+                  "personalizedsignature, grouptype) values('%1', '%2', '%3', '%4', '%5')";
+
+    QSqlQuery sql_query;
+
+    for (QVector<QString> onefriend : friends)
+    {
+        sql_query.prepare(sql.arg(onefriend[0], onefriend[1], onefriend[2], onefriend[3], onefriend[4]));
+        sql_query.exec();
+    }
+}
+QList<QVector<QString>> DataBase::getFriendList()
+{
+    QList<QVector<QString>> friends;
+
+    QString sql = "select username, remark, grouptype, personalizedsignature from friendlist;";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+
+    while(sql_query.next())
+    {
+        QString username= sql_query.value(0).toString();
+        QString remarke = sql_query.value(1).toString();
+        QString grouptype = sql_query.value(2).toString();
+        QString personalizedsignature = sql_query.value(3).toString();
+
+        QVector<QString> oneFriend;
+        oneFriend.append(username);
+        oneFriend.append(remarke);
+        oneFriend.append(grouptype);
+        oneFriend.append(personalizedsignature);
+
+        friends.append(oneFriend);
+    }
+
+    return friends;
+}
+
+QStringList DataBase::getGroup()
+{
+    QStringList groups;
+    QString sql = "select distinct grouptype from friendlist;";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+
+    while(sql_query.next())
+    {
+        groups << sql_query.value(0).toString();
+    }
+
+    return groups;
 }

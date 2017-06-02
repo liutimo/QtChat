@@ -44,7 +44,7 @@ private:
     }SkinType;
 
 
-    QMap<QString, QVector<QPair<QString, QString>>> parseFriend(const QByteArray&);
+    void parseFriend(const QByteArray&);
 
 
     //标题栏按钮

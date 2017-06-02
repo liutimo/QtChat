@@ -1,5 +1,6 @@
 #include "listwidget.h"
 #include "listviewitemwidget.h"
+#include "DataBase/database.h"
 #include <QAction>
 #include <QIcon>
 
@@ -9,6 +10,34 @@ ListWidget::ListWidget(QWidget *parent) :
     setFocusPolicy(Qt::NoFocus);       // 去除item选中时的虚线边框
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//水平滚动条关闭
     initMenu();
+
+    QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
+    QStringList groups = DataBase::getInstance()->getGroup();
+
+    for (const QString &group : groups)
+    {
+        QListWidgetItem *newItem=new QListWidgetItem(QIcon(":/Resource/mainwidget/arrowright.png"),group);
+        newItem->setSizeHint(QSize(this->width(),25));
+        addItem(newItem);
+        groupMap.insert(newItem,newItem);
+        isHideMap.insert(newItem,true);
+    }
+
+    for (QVector<QString> oneFriend : friends)
+    {
+        ListViewItemWidget *buddy=new ListViewItemWidget();
+
+        if(oneFriend[1].isEmpty())
+        {
+            buddy->setUserinfo(oneFriend[0], oneFriend[3]);
+        }
+        else
+            buddy->setUserinfo(oneFriend[1], oneFriend[3]);
+
+        QListWidgetItem *newItem = new QListWidgetItem();
+        this->insertItem(1,newItem);
+        this->setItemWidget(newItem, buddy);
+    }
 }
 //初始化菜单
 void ListWidget::initMenu()

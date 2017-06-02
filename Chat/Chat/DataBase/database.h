@@ -1,4 +1,4 @@
-﻿#ifndef DATABASE_H
+#ifndef DATABASE_H
 #define DATABASE_H
 
 #include <QObject>
@@ -18,6 +18,11 @@ public:
     QPair<QString, QString> getLocalUserInfo();
     void setLoaclUserInfo(const QString& userid, const QString &password);
 
+    void setFriendList(QList<QVector<QString>> friends);
+    QList<QVector<QString>> getFriendList();
+
+
+    QStringList getGroup();
 
     static DataBase* getInstance();
 
