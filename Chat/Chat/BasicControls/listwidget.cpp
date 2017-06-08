@@ -11,33 +11,10 @@ ListWidget::ListWidget(QWidget *parent) :
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//水平滚动条关闭
     initMenu();
 
-    QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
-    QStringList groups = DataBase::getInstance()->getGroup();
+   QStringList groups = DataBase::getInstance()->getGroup();
+   QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
 
-    for (const QString &group : groups)
-    {
-        QListWidgetItem *newItem=new QListWidgetItem(QIcon(":/Resource/mainwidget/arrowright.png"),group);
-        newItem->setSizeHint(QSize(this->width(),25));
-        addItem(newItem);
-        groupMap.insert(newItem,newItem);
-        isHideMap.insert(newItem,true);
-    }
-
-    for (QVector<QString> oneFriend : friends)
-    {
-        ListViewItemWidget *buddy=new ListViewItemWidget();
-
-        if(oneFriend[1].isEmpty())
-        {
-            buddy->setUserinfo(oneFriend[0], oneFriend[3]);
-        }
-        else
-            buddy->setUserinfo(oneFriend[1], oneFriend[3]);
-
-        QListWidgetItem *newItem = new QListWidgetItem();
-        this->insertItem(1,newItem);
-        this->setItemWidget(newItem, buddy);
-    }
+   setList(friends, groups);
 }
 //初始化菜单
 void ListWidget::initMenu()
@@ -186,4 +163,39 @@ void ListWidget::slotRenameEditFshed()
         currentItem->setText(groupNameEdit->text());  //更新组名
     groupNameEdit->setText("");
     groupNameEdit->hide();  //隐藏重命名编辑框
+}
+
+void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
+{
+    for(int i = 0; i < groups.size(); ++i)
+    {
+        QString group = groups.at(i);
+
+        QListWidgetItem *newItem=new QListWidgetItem(QIcon(":/Resource/mainwidget/arrowright.png"),group);
+        newItem->setSizeHint(QSize(this->width(),25));
+        this->addItem(newItem);
+
+        groupMap.insert(newItem,newItem);
+        isHideMap.insert(newItem,true);
+
+        groupItemIndexMap.insert(group, i);
+    }
+
+    for(QVector<QString> onefriend : friends)
+    {
+        ListViewItemWidget *frienditem=new ListViewItemWidget();
+        frienditem->setUserinfo(onefriend.at(0), onefriend.at(3));
+
+        QListWidgetItem *newItem = new QListWidgetItem();
+        this->insertItem(groupItemIndexMap.value(onefriend.at(2)) + 1,newItem);
+        this->setItemWidget(newItem, frienditem);
+        groupMap.insert(newItem,currentItem);   //加进容器，key为好友，value为组
+
+
+        QMap<QString, int>::const_iterator iter = groupItemIndexMap.find(onefriend.at(2));
+        for(; iter != groupItemIndexMap.cend(); ++iter)
+        {
+            groupItemIndexMap[iter.key()] = iter.value() + 1;
+        }
+    }
 }

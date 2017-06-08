@@ -203,15 +203,12 @@ void MainWidget::changSelectedButton()
 
 void MainWidget::receiveFriendList(QByteArray bytearray)
 {
+
     parseFriend(bytearray);
-
-
 }
 
 void MainWidget::parseFriend(const QByteArray& bytearray)
 {
-    QMap<QString, QVector<QPair<QString, QString>>> friendmap;
-
     QList<QVector<QString>> friends;
 
     QJsonParseError error;

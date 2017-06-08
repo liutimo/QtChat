@@ -1,4 +1,6 @@
-﻿#include "View/loginwidget.h"
+#include "View/loginwidget.h"
+
+#include "View/mainwidget.h"
 #include <QApplication>
 #include <QFile>
 #include <QDebug>
@@ -13,6 +15,10 @@ int main(int argc, char *argv[])
     a.setStyleSheet(f.readAll());
 
     LoginWidget w;
+
+    //MainWidget w;
+
+
     w.show();
 
     return a.exec();

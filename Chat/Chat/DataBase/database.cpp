@@ -19,7 +19,7 @@ DataBase* DataBase::getInstance()
 
     if(instance == NULL)
     {
-        instance = new DataBase;
+        instance = new DataBase();
     }
 
     mutex->unlock();
@@ -70,8 +70,10 @@ void DataBase::setFriendList(QList<QVector<QString>> friends)
 
     for (QVector<QString> onefriend : friends)
     {
-        sql_query.prepare(sql.arg(onefriend[0], onefriend[1], onefriend[2], onefriend[3], onefriend[4]));
-        sql_query.exec();
+        QString s = sql.arg(onefriend[0], onefriend[1], onefriend[2], onefriend[3], onefriend[4]);
+        qDebug() << s;
+        sql_query.prepare(s);
+        //sql_query.exec();
     }
 }
 QList<QVector<QString>> DataBase::getFriendList()

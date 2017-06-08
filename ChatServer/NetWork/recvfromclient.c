@@ -24,9 +24,10 @@ void recvMsg(int fd)
 
 	buf = (char *)malloc(sizeof(char) * length);
 
-	if (readn(fd, buf, length) != length)
-		err_sys("¶ÁÈ¡ÏûÏ¢Ê§°Ü");
-	
+    if (readn(fd, buf, length) != length){
+        err_sys("read message failed");
+        return;
+    }
 	Msg *msg = (Msg*)buf;
 
 	switch (msg->type)

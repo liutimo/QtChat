@@ -67,5 +67,10 @@
         <file>Resource/loginwidget/simpleexceptionframe_close.png</file>
         <file>Resource/loginwidget/simpleexceptionframe_close_hover.png</file>
         <file>Resource/loginwidget/simpleexceptionframe_close_press.png</file>
+        <file>Resource/mainwidget/deluser.png</file>
+        <file>Resource/mainwidget/name.png</file>
+        <file>Resource/mainwidget/sendmsg.png</file>
+        <file>Resource/mainwidget/msgmgr.png</file>
+        <file>Resource/mainwidget/moveuser.png</file>
     </qresource>
 </RCC>
