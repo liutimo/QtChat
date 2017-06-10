@@ -3,10 +3,15 @@
 #include "BasicControls/pushbutton.h"
 #include "BasicControls/headicon.h"
 
+#include <NetWork/connecttoserver.h>
+
 #include <QPushButton>
 #include <QLabel>
 #include <QPainter>
 #include <QTextEdit>
+#include <QDebug>
+#include <QTextObject>
+
 ChatWidget::ChatWidget(QWidget *parent) : BasicWidget(parent)
 {
     widgetIcon->hide();
@@ -45,6 +50,7 @@ void ChatWidget::init()
 
     textedit = new QTextEdit(this);
     textedit->setHtml("<img width=\"100px\" height=\"100px\" src=\"/home/liuzheng/Pictures/timg.jpg\"/>");
+    textedit->setReadOnly(true);
 
 
     chatinput = new ChatInput(this);
@@ -67,6 +73,7 @@ void ChatWidget::resizeEvent(QResizeEvent *event)
     textedit->resize(width(), height() - 240);
     textedit->move(0, 45);
 
+
     chatinput->resize(width() , 200);
     chatinput->move(0, height() - 200);
 }
@@ -78,5 +85,58 @@ void ChatWidget::paintEvent(QPaintEvent *event)
 
 void ChatWidget::setMessage(const QString &msg)
 {
-     textedit->setHtml(msg);
+
+    RequestForwordMessageMsg *rmsg = (RequestForwordMessageMsg*)new char[sizeof(RequestForwordMessageMsg) + msg.size()];
+
+    QString s(msg);
+
+
+    strcpy(rmsg->friendid, "123456");
+    rmsg->length = msg.size();
+    memcpy(rmsg->message, msg.toUtf8().data(), msg.size());
+
+    qDebug() << "===" << msg.size();
+    qDebug() << ">>>" << msg.toUtf8().data();
+    qDebug() << "<<<" << rmsg->message;
+
+    ConnectToServer::getInstance()->sendRequestForwordMessageMsg(rmsg);
+
+    qDebug() << msg;
+
+    textedit->setHtml(msg);
+    QTextBlock::iterator it;
+
+    QTextBlock block = textedit->document()->begin();
+    while(block.isValid())
+    {
+        for(it = block.begin(); !(it.atEnd());)
+        {
+            QTextFragment currentFragment = it.fragment();
+            QTextImageFormat newImageFormat = currentFragment.charFormat().toImageFormat();
+
+            if(newImageFormat.isValid())
+            {
+                ++it;
+                qDebug() << "image";
+                continue;
+            }
+            if(currentFragment.isValid())
+            {
+                ++it;
+                int pos = currentFragment.position();
+                QString strText = currentFragment.text();
+                for(int i = 0; i < strText.length(); ++i)
+                {
+                    QTextCharFormat fmt;
+                    fmt.setForeground(QColor(qrand() % 255, qrand() % 255, qrand() % 255));
+                    QTextCursor helper = textedit->textCursor();
+                    helper.setPosition(pos++);
+                    helper.setPosition(pos, QTextCursor::KeepAnchor);
+                    helper.setCharFormat(fmt);
+                }
+            }
+
+        }
+        block = block.next();
+    }
 }

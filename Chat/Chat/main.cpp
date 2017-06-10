@@ -6,17 +6,20 @@
 #include <QApplication>
 #include <QFile>
 #include <QDebug>
-
+#include <QTextCodec>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QTextCodec *codec = QTextCodec::codecForName("System");    //获取系统编码
+    QTextCodec::setCodecForLocale(codec);
+
 
     QFile f(":/style.qss");
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
 
-//    ChatWidget w;
+  //  ChatWidget w;
 
     LoginWidget w;
     w.show();

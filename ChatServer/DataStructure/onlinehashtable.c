@@ -44,8 +44,22 @@ void delOnlineUser(const int fd)
 		return;
 }
 
+char* findOnlineUserWithFd(const int fd)
+{
+    OnlineUserLinklist* current = head->next;
+    while (current && fd != current->user.fd)
+    {
+        current = current->next;
+    }
+
+    if (current)
+        return current->user.userid;
+    else
+        return NULL;
+}
+
 //根据用户id 查找在线用户列表。如果在线返回fd。
-int findOnlineUser(const char *userid)
+int findOnlineUserWithUid(const char *userid)
 {
 	OnlineUserLinklist* current = head->next;
 	while (current && strcmp(current->user.userid, userid) != 0)
@@ -56,5 +70,5 @@ int findOnlineUser(const char *userid)
 	if (current)
         return current->user.fd;
 	else
-        return -1s;
+        return -1;
 }

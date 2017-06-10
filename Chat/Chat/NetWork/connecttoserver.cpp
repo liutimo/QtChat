@@ -2,7 +2,7 @@
 #include "marco.h"
 
 #include <QDebug>
-
+#include <QThread>
 ConnectToServer::ConnectToServer(QObject *parent) : QTcpSocket(parent)
 {
     connectToHost(IP, PORT);
@@ -73,6 +73,10 @@ void ConnectToServer::sendHeartBeatMsg(HeartBeatMsg *hearteabtmsg)
     send(HEARTBEAT, (char*)hearteabtmsg, sizeof(HeartBeatMsg));
 }
 
+void ConnectToServer::sendRequestForwordMessageMsg(RequestForwordMessageMsg *msg)
+{
+    send(REQUESTFORWORDMESSAGE, (char *)msg, sizeof(REQUESTFORWORDMESSAGE) + msg->length);
+}
 
 /*****************************接受服务器发来的消息**************************************/
 
@@ -93,7 +97,6 @@ void ConnectToServer::recv()
         emit responseHeartBeat();
         break;
     case RESPONSEFRIENDLIST: {
-        qDebug() << "recevice friendlist";
         ResponseFriendList *rf = (ResponseFriendList*)new char(msg->len);
         memcpy(rf, msg->data, msg->len);
         emit responseFriendList(QByteArray(rf->friendlist));

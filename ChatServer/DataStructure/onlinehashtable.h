@@ -39,8 +39,8 @@ void addOnlineUser(OnlineUser *user);
 void delOnlineUser(const int fd);
 
 //根据用户id 查找在线用户列表。如果在线返回ture。
-bool findOnlineUser(const char *userid);
-
+int findOnlineUserWithUid(const char *userid);
+char* findOnlineUserWithFd(const int fd);
 
 
 #endif // !ONLINEHASHTABLE_H

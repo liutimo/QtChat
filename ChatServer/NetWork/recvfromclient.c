@@ -4,9 +4,11 @@
 #include "msgstructure.h"
 #include "DataBase/database.h"
 #include "error.h"
+#include "forward.h"
 #include "DataStructure/onlinehashtable.h"
 #include <sys/epoll.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
@@ -55,6 +57,10 @@ void recvMsg(int fd)
         break;
     case HEARTBEAT:
         handleHeartBeatMsg(fd);
+        break;
+    case REQUESTFORWORDMESSAGE:
+        handleForwordMessageMsg(fd, msg);
+        break;
     default:
         break;
     }
@@ -115,4 +121,39 @@ void handleExitMsg(int fd)
     ev.events = EPOLLIN|EPOLLET;
     epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
     close(fd);
+}
+
+void handleForwordMessageMsg(int fd, Msg *msg)
+{
+    RequestForwordMessageMsg *fmsg = (RequestForwordMessageMsg*)malloc(msg->len * sizeof(char));
+    memcpy(fmsg, msg->data, msg->len);
+
+
+    char *message = (char*)malloc(fmsg->length * sizeof(char));
+
+    strcpy(message, fmsg->message);
+
+    int friend_fd = findOnlineUserWithUid(fmsg->friendid);
+
+    printf("received userid %s\n", fmsg->friendid);
+    printf("received %d\n", fmsg->length);
+
+    for(int i = 0; i < fmsg->length; ++i)
+    {
+        printf("%c", message[i]);
+    }
+
+    if(friend_fd == -1)
+    {
+        //store message to database;
+    }
+    else if(friend_fd > 0)
+    {
+        //forward
+        forwardmessage(fd, friend_fd, message);
+    }
+
+
+    free(message);
+    free(fmsg);
 }

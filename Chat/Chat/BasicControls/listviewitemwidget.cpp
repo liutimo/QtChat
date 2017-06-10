@@ -15,10 +15,11 @@ void ListViewItemWidget::init()
     m_headicon = new HeadIcon(this);
     m_headicon->resize(30, 30);
     m_headicon->setPixmap(QPixmap(":/timg (1).jpg"));
+
     m_nickname = new QLabel(this);
     m_nickname->setTextFormat(Qt::RichText);
 
-    m_nickname->setText("<b>我是昵称</b> 我是个性签名啊！！！！");
+    //m_nickname->setText("<b>我是昵称</b> 我是个性签名啊！！！！");
 }
 
 void ListViewItemWidget::resizeEvent(QResizeEvent *event)

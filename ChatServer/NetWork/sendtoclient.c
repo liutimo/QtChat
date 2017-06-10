@@ -42,3 +42,8 @@ void sendResponseFriendList(int fd, const char *list)
 
     sendMsg(fd, RESPONSEFRIENDLIST, f, sizeof(Msg) + sizeof(ResponseFriendList) + strlen(list));
 }
+
+void sendMessage(int fd, ReceivedMessageMsg *msg)
+{
+    sendMsg(fd, RECEIVEDMESSAGE, msg, sizeof(Msg) + sizeof(ReceivedMessageMsg) + msg->length);
+}

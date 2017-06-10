@@ -43,6 +43,7 @@ void ChatInput::init()
 
     te_message = new QTextEdit(this);
 
+
     btn_chat_input_send = new QToolButton(this);
     btn_chat_input_send->setText("Send");
     connect(btn_chat_input_send, &QToolButton::clicked, this, &ChatInput::btn_send_clicked);
@@ -107,7 +108,6 @@ void ChatInput::addIcon(QString path)
 
     show();
     this->activateWindow();
-
     te_message->setFocus();
 }
 
@@ -125,4 +125,3 @@ void ChatInput::btn_send_clicked()
 {
     emit sendMsg(te_message->toHtml());
 }
-

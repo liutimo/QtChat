@@ -9,7 +9,9 @@ typedef enum _MsgType {
     REQUESTLOGIN,			//请求登陆
     RESPONSELOGIN,			//告知客户端登录状态
     RESPONSEFRIENDLIST,     //好友列表
-    EXIT
+    EXIT,
+    REQUESTFORWORDMESSAGE,  //请求服务器转发消息
+    RECEIVEDMESSAGE
 }MsgType;
 
 
@@ -60,5 +62,22 @@ typedef struct _ResponseFriendList {
     long len;
     char friendlist[0];
 }ResponseFriendList;
+
+typedef struct _ExitMsg {
+
+}ExitMsg;
+
+
+typedef struct _RequestForwordMessageMsg {
+    char friendid[USERIDMAXLEN];
+    long length;
+    char message[0];
+}RequestForwordMessageMsg;
+
+typedef struct _ReceivedMessageMsg {
+    char friendid[USERIDMAXLEN];
+    long length;
+    char message[0];
+}ReceivedMessageMsg;
 
 #endif // MSGSTRUCTURE_H

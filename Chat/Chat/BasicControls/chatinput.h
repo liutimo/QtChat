@@ -20,6 +20,7 @@ public slots:
 private slots:
     void showIcons();
     void addIcon(QString path);
+
 private:
     void init();
 

@@ -17,7 +17,8 @@ void sendResponseLoginMsg(int fd, ResponseLoginMsg *msg);
 //send friendlist
 void sendResponseFriendList(int fd, const char*);
 
-
+//sendMessage
+void sendMessage(int fd, ReceivedMessageMsg *msg);
 
 
 //发生异常时需要发送的消息

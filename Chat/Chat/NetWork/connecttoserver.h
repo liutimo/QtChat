@@ -17,6 +17,7 @@ public:
     void send(MsgType msgtype, char *data, ssize_t size);
     void sendLoginMsg(LoginMsg *loginmsg);
     void sendHeartBeatMsg(HeartBeatMsg *hearteabtmsg);
+    void sendRequestForwordMessageMsg(RequestForwordMessageMsg *msg);
 
 protected:
     void recv();

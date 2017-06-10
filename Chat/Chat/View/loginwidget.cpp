@@ -1,5 +1,6 @@
 #include "loginwidget.h"
 #include "mainwidget.h"
+#include "chatwidget.h"
 #include "BasicControls/headicon.h"
 #include "BasicControls/loginstatusbar.h"
 #include "Setting/rwsetting.h"
@@ -169,15 +170,17 @@ void LoginWidget::loginStatus(LoginStatus ls)
     case LOGINSUCCESS:
     {
         hide();
-
+        QThread::sleep(1);
         MainWidget *w = new MainWidget();
+       // ChatWidget *w = new ChatWidget();
         w->show();
 
-        startTimer(2000);
+       // startTimer(2000);
 
         break;
     }
     case LOGINPWERROR:
+        break;
     case LOGINUNKNOW:
     {
         showStatusBar("密码错误，请重新输入密码!");
