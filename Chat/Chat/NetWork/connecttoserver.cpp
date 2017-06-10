@@ -38,9 +38,11 @@ void ConnectToServer::closeServer()
 void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
 {
     mutex->lock();
-    Msg *msg = (Msg*)new char[sizeof(Msg) + size];
+    int memsize = (sizeof(Msg) + size) *sizeof(char);
+    char *buf = new char[memsize];
+    Msg *msg = (Msg*)buf;
 
-    memset(msg, 0, sizeof(Msg) + size);
+    memset(msg, 0, memsize);
 
     msg->type = msgtype;
     msg->len = size;
@@ -52,15 +54,15 @@ void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
 
     if( -1 == write((char *)&r, sizeof(r))) {
         qDebug() << "发送消息失败";
-        delete msg;
+        delete []buf;
         return;
     }
     if (-1 == write((char *)msg, r.len))
          qDebug() << "发送消息失败";
 
-    delete msg;
-    mutex->unlock();
+    delete []buf;
 
+    mutex->unlock();
 }
 
 void ConnectToServer::sendLoginMsg(LoginMsg *loginmsg)
@@ -97,9 +99,12 @@ void ConnectToServer::recv()
         emit responseHeartBeat();
         break;
     case RESPONSEFRIENDLIST: {
-        ResponseFriendList *rf = (ResponseFriendList*)new char(msg->len);
+        char *buf = new char[msg->len];
+        ResponseFriendList *rf = (ResponseFriendList*)buf;
         memcpy(rf, msg->data, msg->len);
         emit responseFriendList(QByteArray(rf->friendlist));
+//        qDebug() << rf->len;
+        delete []buf;
     }
     default:
         break;

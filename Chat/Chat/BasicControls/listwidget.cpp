@@ -117,7 +117,8 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
     {
         QString group = groups.at(i);
 
-        QListWidgetItem *newItem=new QListWidgetItem(QIcon(":/Resource/mainwidget/arrowright.png"),group);
+        QListWidgetItem *newItem=new QListWidgetItem(group);
+        //newItem->setIcon(QIcon(":/Resource/mainwidget/arrowright.png"));
         newItem->setSizeHint(QSize(this->width(),25));
         this->addItem(newItem);
 
@@ -144,4 +145,5 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
             groupItemIndexMap[iter.key()] = iter.value() + 1;
         }
     }
+
 }

@@ -36,6 +36,7 @@ MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
 
     setWidgetTitle("这是一个主窗口");
 
+    qDebug() << "MainWidget init ok!";
 }
 
 void MainWidget::init()
@@ -76,12 +77,12 @@ void MainWidget::init()
 
 
     ListWidget *friendList = new ListWidget;
-    ListWidget *groupList = new ListWidget;
-    ListWidget *recentList = new ListWidget;
+    //ListWidget *groupList = new ListWidget;
+    //ListWidget *recentList = new ListWidget;
 
     stackwidget->addWidget(friendList);
-    stackwidget->addWidget(groupList);
-    stackwidget->addWidget(recentList);
+    stackwidget->addWidget(new QLabel("Test1"));
+    stackwidget->addWidget(new QLabel("Test2"));
 
     connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
     connect(tb_contact, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
@@ -209,7 +210,10 @@ void MainWidget::receiveFriendList(QByteArray bytearray)
     QStringList groups = DataBase::getInstance()->getGroup();
     QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
 
-    static_cast<ListWidget*>(stackwidget->widget(0))->setList(friends, groups);
+    ListWidget* listwidget = dynamic_cast<ListWidget*>(stackwidget->widget(0));
+
+    listwidget->setList(friends, groups);
+    emit loadFinished();
 }
 
 void MainWidget::parseFriend(const QByteArray& bytearray)
@@ -253,5 +257,5 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
     else
         qDebug() << error.errorString();
 
-    DataBase::getInstance()->setFriendList(friends);
+    //    DataBase::getInstance()->setFriendList(friends);
 }

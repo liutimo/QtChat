@@ -20,7 +20,8 @@
 #include <QTimerEvent>
 
 
-LoginWidget::LoginWidget(QWidget *parent) : BasicWidget(parent)
+LoginWidget::LoginWidget(QWidget *parent) : BasicWidget(parent),
+    mainwidget(NULL)
 {
     //设置大小不可变
     setAdjustmentSize(false);
@@ -169,14 +170,13 @@ void LoginWidget::loginStatus(LoginStatus ls)
     {
     case LOGINSUCCESS:
     {
-        hide();
         QThread::sleep(1);
-        MainWidget *w = new MainWidget();
-       // ChatWidget *w = new ChatWidget();
-        w->show();
 
-       // startTimer(2000);
+        mainwidget = new MainWidget();
+        connect(mainwidget, &MainWidget::loadFinished, this, &LoginWidget::showMainWidget);
 
+        //startTimer(2000);
+        qDebug() << "MainWidget show ok!";
         break;
     }
     case LOGINPWERROR:
@@ -214,7 +214,7 @@ void LoginWidget::timerEvent(QTimerEvent *event)
     else
     {
         i++;
-        server->sendHeartBeatMsg(&msg);
+        ConnectToServer::getInstance()->sendHeartBeatMsg(&msg);
     }
     event->accept();
 }
@@ -222,4 +222,12 @@ void LoginWidget::timerEvent(QTimerEvent *event)
 void LoginWidget::socketError(QAbstractSocket::SocketError socketError)
 {
 
+}
+void LoginWidget::showMainWidget()
+{
+
+    hide();
+    if(mainwidget != NULL)
+        mainwidget->show();
+    qDebug() << "mainwidget load success";
 }

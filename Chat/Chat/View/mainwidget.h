@@ -28,7 +28,7 @@ private:
     void loadSetting();
 signals:
     void changeBackGround(QColor color);
-
+    void loadFinished();
 private slots:
     void changePureColorSkin(QColor );
     void changeImageSkin(const QString &);

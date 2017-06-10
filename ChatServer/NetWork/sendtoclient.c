@@ -8,7 +8,10 @@
 
 void sendMsg(int fd, MsgType msgtype, char *data, ssize_t size)
 {
-	Msg *msg = (Msg*)malloc(sizeof(Msg) + size);
+    //Msg *msg = (Msg*)malloc(sizeof(Msg) + size);
+
+    char *buf = malloc(sizeof(char) * (sizeof(Msg) + size));
+    Msg *msg = (Msg*)buf;
 
 	msg->type = msgtype;
 	msg->len = size;
@@ -30,20 +33,23 @@ void sendResponseHeartBeatMsg(int fd)
 
 void sendResponseLoginMsg(int fd, ResponseLoginMsg *r_msg)
 {
-	sendMsg(fd,RESPONSELOGIN, r_msg, sizeof(Msg) + sizeof(ResponseLoginMsg));
+    sendMsg(fd,RESPONSELOGIN, r_msg, sizeof(ResponseLoginMsg));
 }
 
 void sendResponseFriendList(int fd, const char *list)
 {
-    ResponseFriendList *f = (ResponseFriendList*)malloc(sizeof(ResponseFriendList) + strlen(list));
+    ResponseFriendList *f = (ResponseFriendList*)malloc(sizeof(ResponseFriendList) + strlen(list) + 1);
 
-    f->len = strlen(list);
+    f->len = strlen(list) + 1;
+
+    printf("%d\n", f->len);
+
     memcpy(f->friendlist, list, f->len);
 
-    sendMsg(fd, RESPONSEFRIENDLIST, f, sizeof(Msg) + sizeof(ResponseFriendList) + strlen(list));
+    sendMsg(fd, RESPONSEFRIENDLIST, f, sizeof(ResponseFriendList) + f->len);
 }
 
 void sendMessage(int fd, ReceivedMessageMsg *msg)
 {
-    sendMsg(fd, RECEIVEDMESSAGE, msg, sizeof(Msg) + sizeof(ReceivedMessageMsg) + msg->length);
+    sendMsg(fd, RECEIVEDMESSAGE, msg, sizeof(ReceivedMessageMsg) + msg->length);
 }

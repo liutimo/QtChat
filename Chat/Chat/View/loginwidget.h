@@ -38,7 +38,7 @@ class QComboBox;
 class ConnectToServer;
 class QTimer;
 class LoginStatusBar;
-
+class MainWidget;
 
 class LoginWidget : public BasicWidget
 {
@@ -64,7 +64,7 @@ private slots:
     void recvHeartBeat();
     void hide_status();
     void socketError(QAbstractSocket::SocketError socketError);
-
+    void showMainWidget();
 private:
     QPushButton *btn_login;
     QComboBox *cb_username;
@@ -80,6 +80,8 @@ private:
     HeartBeatMsg msg;
 
     LoginStatusBar *loginStatusBar;
+
+    MainWidget *mainwidget;
 };
 
 #endif // LOGINWIDGET_H

@@ -1,4 +1,4 @@
-﻿#include "rwsetting.h"
+#include "rwsetting.h"
 
 RWSetting::RWSetting(QObject *parent) : QObject(parent)
 {
@@ -7,7 +7,7 @@ RWSetting::RWSetting(QObject *parent) : QObject(parent)
 
 RWSetting::~RWSetting()
 {
-    delete configSettings;
+
 }
 
 QSettings *RWSetting::getSetting()

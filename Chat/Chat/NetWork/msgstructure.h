@@ -59,7 +59,7 @@ typedef struct _ResponseLoginMsg {
 
 //friendlist response
 typedef struct _ResponseFriendList {
-    long len;
+    int len;
     char friendlist[0];
 }ResponseFriendList;
 

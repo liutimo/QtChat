@@ -19,7 +19,7 @@ void ListViewItemWidget::init()
     m_nickname = new QLabel(this);
     m_nickname->setTextFormat(Qt::RichText);
 
-    //m_nickname->setText("<b>我是昵称</b> 我是个性签名啊！！！！");
+    m_nickname->setText("<b>我是昵称</b> 我是个性签名啊！！！！");
 }
 
 void ListViewItemWidget::resizeEvent(QResizeEvent *event)
@@ -31,5 +31,5 @@ void ListViewItemWidget::resizeEvent(QResizeEvent *event)
 }
 void ListViewItemWidget::setUserinfo(const QString &username, const QString &signature)
 {
-    m_nickname->setText(QString("<b>%1</b> %2").arg(username, signature));
+    //m_nickname->setText(QString("<em>%1</em> %2").arg(username, signature));
 }

@@ -56,10 +56,10 @@ void recvMsg(int fd)
         handleLoginMsg(fd, msg);
         break;
     case HEARTBEAT:
-        handleHeartBeatMsg(fd);
+        //handleHeartBeatMsg(fd);
         break;
     case REQUESTFORWORDMESSAGE:
-        handleForwordMessageMsg(fd, msg);
+        //shandleForwordMessageMsg(fd, msg);
         break;
     default:
         break;
