@@ -8,7 +8,8 @@ typedef enum _MsgType {
     HEARTBEAT = 0,			//心跳包
     REQUESTLOGIN,			//请求登陆
     RESPONSELOGIN,			//告知客户端登录状态
-    RESPONSEFRIENDLIST      //好友列表
+    RESPONSEFRIENDLIST,     //好友列表
+    EXIT
 }MsgType;
 
 
@@ -59,5 +60,9 @@ typedef struct _ResponseFriendList {
     long len;
     char friendlist[0];
 }ResponseFriendList;
+
+typedef struct _ExitMsg {
+
+}ExitMsg;
 
 #endif // MSGSTRUCTURE_H

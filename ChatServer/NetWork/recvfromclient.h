@@ -6,6 +6,8 @@ void recvMsg(int fd);
 
 void handleLoginMsg(int fd, Msg *msg);
 
-void handleHeartBeatMsg(int fg);
+void handleHeartBeatMsg(int fd);
+
+void handleExitMsg(int fd);
 #endif // !RECVFROMCLIENT_H
 

@@ -48,7 +48,7 @@ int main()
 
     pthread_create(&pid, NULL, pollhandle, NULL);
 
-    start(fd, pollfds, &size);
+    start(fd);
 
     pthread_join(pid, NULL);
 
