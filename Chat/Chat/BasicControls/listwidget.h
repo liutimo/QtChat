@@ -16,9 +16,11 @@ public:
 
 private:
     void initMenu();//初始化菜单
+
     QMenu *blankMenu;//点击空白上的菜单
     QMenu *groupMenu;//点击组上的菜单
     QMenu *personMenu;//点击人上的菜单
+    QMenu *movetoMenu;
 
     QMap<QListWidgetItem*,QListWidgetItem*> groupMap;   // 组容器 - key:项 value:组
     QMap<QListWidgetItem*,bool> isHideMap;//用来判断该组是否隐藏了
@@ -30,12 +32,6 @@ private:
 signals:
 
 public slots:
-    void slotAddGroup();   //添加组
-    void slotDelGroup();   //删除组
-    void slotAddBuddy();   //添加好友
-    void slotDelBuddy();   //删除好友
-    void slotRename();     //重命名组
-    void slotRenameEditFshed();//命名完成
 
 };
 #endif // ListWidget_H

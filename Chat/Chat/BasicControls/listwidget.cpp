@@ -3,6 +3,7 @@
 #include "DataBase/database.h"
 #include <QAction>
 #include <QIcon>
+#include <QDebug>
 
 ListWidget::ListWidget(QWidget *parent) :
     QListWidget(parent)
@@ -11,10 +12,9 @@ ListWidget::ListWidget(QWidget *parent) :
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//水平滚动条关闭
     initMenu();
 
-   QStringList groups = DataBase::getInstance()->getGroup();
-   QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
 
-   setList(friends, groups);
+
+   qDebug() << "set friend list...........";
 }
 //初始化菜单
 void ListWidget::initMenu()
@@ -23,12 +23,27 @@ void ListWidget::initMenu()
     blankMenu = new QMenu();
     groupMenu = new QMenu();
     personMenu = new QMenu();
+    movetoMenu = new QMenu("移动好友至", this);
+    movetoMenu->setIcon(QIcon(":/Resource/mainwidget/moveuser.png"));
     groupNameEdit=new QLineEdit();
+
     QAction *addGroup = new QAction("添加分组", this);
     QAction *delGroup = new QAction("删除该组", this);
     QAction *rename = new QAction("重命名", this);
-    QAction *addBuddy = new QAction("添加好友",this);
-    QAction *delBuddy = new QAction("删除好友", this);
+
+
+    QAction *sendMsg = new QAction(QIcon(":/Resource/mainwidget/sendmsg.png"), "发送即时消息", this);
+    QAction *showinfo = new QAction(QIcon(":/Resource/mainwidget/msgmgr.png"), "查看资料",this);
+    QAction *updateremark = new QAction(QIcon(":/Resource/mainwidget/name.png"), "修改备注", this);
+   // QAction *moveto = new QAction();
+    QAction *del = new QAction(QIcon(":/Resource/mainwidget/deluser.png"), "删除好友", this);
+
+    for(QString group : DataBase::getInstance()->getGroup())
+    {
+        QAction *action = new QAction(group, this);
+        movetoMenu->addAction(action);
+    }
+
     //设置：
     groupNameEdit->setParent(this);  //设置父类
     groupNameEdit->hide(); //设置初始时隐藏
@@ -37,15 +52,12 @@ void ListWidget::initMenu()
     blankMenu->addAction(addGroup);
     groupMenu->addAction(delGroup);
     groupMenu->addAction(rename);
-    groupMenu->addAction(addBuddy);
-    personMenu->addAction(delBuddy);
-    //信息槽：
-    connect(groupNameEdit,SIGNAL(editingFinished()),this,SLOT(slotRenameEditFshed()));
-    connect(addGroup,SIGNAL(triggered()),this,SLOT(slotAddGroup()));
-    connect(delGroup,SIGNAL(triggered()),this,SLOT(slotDelGroup()));
-    connect(rename,SIGNAL(triggered()),this,SLOT(slotRename()));
-    connect(addBuddy,SIGNAL(triggered()),this,SLOT(slotAddBuddy()));
-    connect(delBuddy,SIGNAL(triggered()),this,SLOT(slotDelBuddy()));
+
+    personMenu->addAction(sendMsg);
+    personMenu->addAction(showinfo);
+    personMenu->addAction(updateremark);
+    personMenu->addMenu(movetoMenu);
+    personMenu->addAction(del);
 }
 //鼠标点击事件
 void ListWidget::mousePressEvent(QMouseEvent *event)
@@ -97,72 +109,6 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *event)
         groupMenu->exec(QCursor::pos());
     else                                            //否则点击到的是好友
         personMenu->exec(QCursor::pos());
-}
-//添加组
-void ListWidget::slotAddGroup()
-{
-    QListWidgetItem *newItem=new QListWidgetItem(QIcon(":/Resource/mainwidget/arrowright.png"),"未命名");    //创建一个Item
-    newItem->setSizeHint(QSize(this->width(),25));//设置宽度、高度
-    this->addItem(newItem);         //加到QListWidget中
-    groupMap.insert(newItem,newItem);//加到容器groupMap里，key和value都为组
-    isHideMap.insert(newItem,true);  //设置该组隐藏状态
-    groupNameEdit->raise();
-    groupNameEdit->setText(tr("未命名")); //设置默认内容
-    groupNameEdit->selectAll();        //设置全选
-    groupNameEdit->setGeometry(this->visualItemRect(newItem).left()+15,this->visualItemRect(newItem).top()+1,this->visualItemRect(newItem).width(),this->visualItemRect(newItem).height()-2);//出现的位置
-    groupNameEdit->show();              //显示
-    groupNameEdit->setFocus();          //获取焦点
-    currentItem = newItem;     // 因为要给group命名，所以当前的currentItem设为该group
-}
-//删除组
-void ListWidget::slotDelGroup()
-{
-    foreach(QListWidgetItem* item, groupMap.keys(currentItem))  //遍历该组的所有好友和自身的组
-    {
-        groupMap.remove(item);   //移除
-        delete item;   //删除
-    }
-    isHideMap.remove(currentItem); //移除
-}
-//重命名
-void ListWidget::slotRename()
-{
-    groupNameEdit->raise();
-    groupNameEdit->setGeometry(this->visualItemRect(currentItem).left()+15,this->visualItemRect(currentItem).top()+1,this->visualItemRect(currentItem).width(),this->visualItemRect(currentItem).height()-2);//出现的位置
-    groupNameEdit->setText(currentItem->text());   //获取该组名内容
-    groupNameEdit->show();                        //显示
-    groupNameEdit->selectAll();                   //全选
-    groupNameEdit->setFocus();                        //获取焦点
-}
-//添加好友，主要是为了测试功能，实际工程里可以改成动态读取数据库进行添加好友
-void ListWidget::slotAddBuddy()
-{
-    ListViewItemWidget *buddy=new ListViewItemWidget();   //创建一个自己定义的信息类
-
-    QList<QListWidgetItem*> tem = groupMap.keys(currentItem);//当前组对应的项（包括组本身和好友）复制给tem
-    //关键代码
-    QListWidgetItem *newItem = new QListWidgetItem();       //创建一个newItem
-    this->insertItem(row(currentItem)+tem.count(),newItem); //将该newItem插入到后面
-    this->setItemWidget(newItem, buddy); //将buddy赋给该newItem
-    groupMap.insert(newItem,currentItem);   //加进容器，key为好友，value为组
-    if(isHideMap.value(currentItem))          //如果该组是隐藏，则加进去的好友设置为隐藏
-        newItem->setHidden(true);
-    else                                      //否则，该好友设置为显示
-        newItem->setHidden(false);
-}
-//删除好友
-void ListWidget::slotDelBuddy()
-{
-    groupMap.remove(currentItem);  //移除该好友
-    delete currentItem;            //删除
-}
-//重命名完成
-void ListWidget::slotRenameEditFshed()
-{
-    if(groupNameEdit->text()!=NULL)      //如果重命名编辑框不为空
-        currentItem->setText(groupNameEdit->text());  //更新组名
-    groupNameEdit->setText("");
-    groupNameEdit->hide();  //隐藏重命名编辑框
 }
 
 void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)

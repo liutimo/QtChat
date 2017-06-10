@@ -1,5 +1,7 @@
+#include "BasicControls/chatinput.h"
+#include "BasicControls/facewidget.h"
 #include "View/loginwidget.h"
-
+#include "View/chatwidget.h"
 #include "View/mainwidget.h"
 #include <QApplication>
 #include <QFile>
@@ -14,12 +16,9 @@ int main(int argc, char *argv[])
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
 
+//    ChatWidget w;
+
     LoginWidget w;
-
-    //MainWidget w;
-
-
     w.show();
-
     return a.exec();
 }

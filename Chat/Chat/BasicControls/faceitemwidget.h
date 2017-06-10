@@ -3,13 +3,13 @@
 
 #include <QLabel>
 
-class MyEmotionItemWidget : public QLabel
+class FaceItemWidget : public QLabel
 {
 	Q_OBJECT
 
 public:
-	MyEmotionItemWidget(QString fileName, QSize emotionMoiveSize);
-	~MyEmotionItemWidget();
+    FaceItemWidget(QString fileName, QSize emotionMoiveSize);
+    ~FaceItemWidget();
 
 private:
 	void enterEvent(QEvent *event);

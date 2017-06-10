@@ -1,17 +1,31 @@
 #ifndef BUBBLE_H
 #define BUBBLE_H
 
-#include <QWidget>
+#include <QLabel>
 
-class Bubble : public QWidget
+class Bubble :
+    public QLabel
 {
     Q_OBJECT
 public:
-    explicit Bubble(QWidget *parent = 0);
+    typedef enum _BubbleOrientation
+    {
+        Left = 0,
+        Right = 1
+    }BubbleOrientation;
 
-signals:
+    Bubble(QWidget *parent = 0);
+    ~Bubble();
 
-public slots:
+    void setBubbleOrientatio(BubbleOrientation orientation);
+    void setText(const QString &text);
+
+protected:
+    void paintEvent(QPaintEvent *event);
+
+private:
+    BubbleOrientation orientation;
 };
+
 
 #endif // BUBBLE_H

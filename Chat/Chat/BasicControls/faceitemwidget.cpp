@@ -1,8 +1,8 @@
-#include "myemotionitemwidget.h"
+#include "faceitemwidget.h"
 #include <QMovie>
 #include <QDebug>
 
-MyEmotionItemWidget::MyEmotionItemWidget(QString fileName , QSize emotionMoiveSize)
+FaceItemWidget::FaceItemWidget(QString fileName , QSize emotionMoiveSize)
 	: QLabel(NULL)
 {
 	//首先构造函数中进行初始化;
@@ -16,26 +16,26 @@ MyEmotionItemWidget::MyEmotionItemWidget(QString fileName , QSize emotionMoiveSi
 	iconMovie->stop();
 	setStyleSheet("QLabel:hover{border: 1px solid rgb(111, 156, 207);\
 								color: rgb(2, 65, 132);\
-								background: rgba(255, 255, 255, 200);}");
+                                background: rgba(255, 255, 255, 200);}");
 }
 
-MyEmotionItemWidget::~MyEmotionItemWidget()
+FaceItemWidget::~FaceItemWidget()
 {}
 
 // 鼠标进入Label事件
-void MyEmotionItemWidget::enterEvent(QEvent* event)
+void FaceItemWidget::enterEvent(QEvent* event)
 {
 	QMovie* movie = this->movie();
 	movie->start();
 	setContentsMargins(4, 2, 2, 4);
-	return __super::enterEvent(event);
+    QLabel::enterEvent(event);
 }
 // 鼠标离开Label事件
-void MyEmotionItemWidget::leaveEvent(QEvent* event)
+void FaceItemWidget::leaveEvent(QEvent* event)
 {
 	QMovie* movie = this->movie();
 	movie->jumpToFrame(0);
 	movie->stop();
 	setContentsMargins(3, 3, 3, 3);
-	return __super::leaveEvent(event);
+    QLabel::leaveEvent(event);
 }

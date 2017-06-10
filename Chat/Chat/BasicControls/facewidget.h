@@ -4,13 +4,13 @@
 #include <QWidget>
 #include <QTableWidget>
 
-class MyEmotionWidget : public QTableWidget
+class FaceWidget : public QTableWidget
 {
 	Q_OBJECT
 
 public:
-	MyEmotionWidget(QWidget *parent = 0);
-	~MyEmotionWidget();
+    FaceWidget(QWidget *parent = 0);
+    ~FaceWidget();
 
 	void setRowAndColumn(int row , int column);
 	void setEmotionSize(QSize emotionSize);
@@ -18,17 +18,21 @@ public:
 	void setMaxRow(int maxRow);
 	void addEmotionItem(QString fileName, QString toolTip = "");
 
-	void initTableWidget();
+    void initTableWidget();
 
 	void showDynamicEmotion(QPoint cursorPos);
 private:
-	void loadStyleSheet();
-	void initWindow();
-	bool eventFilter(QObject *obj, QEvent *event);
-	bool nativeEvent(const QByteArray &eventType, void *message, long *result);
+    void loadStyleSheet();
 
+
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void focusOutEvent(QFocusEvent *event);
 private slots:
-	
+
+signals:
+    void selectOneIcon(QString path);
+
 private:
 
 	int m_preRow;

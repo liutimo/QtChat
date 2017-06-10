@@ -1,4 +1,4 @@
-﻿#include "basicwidget.h"
+#include "basicwidget.h"
 #include "skinmanagewidget.h"
 #include "BasicControls/pushbutton.h"
 

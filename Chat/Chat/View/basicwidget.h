@@ -1,4 +1,4 @@
-﻿/**
+/**
 *
 *----------Dragon be here!----------/
 * 　　　┏┓　　　┏┓
@@ -65,12 +65,13 @@ private:
     Orientation orientation; //记录8个方向
     QRect rect; //记录原始窗口大小
 
+    QColor backgroundColor;
+    QColor color;
 
+protected:
     QLabel *widgetIcon;
     QLabel *widgetTitle;
 
-    QColor backgroundColor;
-    QColor color;
 };
 
 #endif // BASICWIDGET_H

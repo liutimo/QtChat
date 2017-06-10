@@ -75,6 +75,8 @@ void DataBase::setFriendList(QList<QVector<QString>> friends)
         sql_query.prepare(s);
         //sql_query.exec();
     }
+
+    qDebug() << "?/";
 }
 QList<QVector<QString>> DataBase::getFriendList()
 {

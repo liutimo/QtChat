@@ -6,7 +6,11 @@ HEADERS += \
     $$PWD/lineedit.h \
     $$PWD/listviewitemwidget.h \
     $$PWD/listwidget.h \
-    $$PWD/loginstatusbar.h
+    $$PWD/loginstatusbar.h \
+    $$PWD/chatinput.h \
+    $$PWD/facewidget.h \
+    $$PWD/faceitemwidget.h \
+    $$PWD/bubble.h
 
 SOURCES += \
     $$PWD/headicon.cpp \
@@ -16,4 +20,8 @@ SOURCES += \
     $$PWD/lineedit.cpp \
     $$PWD/listviewitemwidget.cpp \
     $$PWD/listwidget.cpp \
-    $$PWD/loginstatusbar.cpp
+    $$PWD/loginstatusbar.cpp \
+    $$PWD/chatinput.cpp \
+    $$PWD/facewidget.cpp \
+    $$PWD/faceitemwidget.cpp \
+    $$PWD/bubble.cpp

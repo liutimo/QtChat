@@ -205,6 +205,11 @@ void MainWidget::receiveFriendList(QByteArray bytearray)
 {
 
     parseFriend(bytearray);
+
+    QStringList groups = DataBase::getInstance()->getGroup();
+    QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
+
+    static_cast<ListWidget*>(stackwidget->widget(0))->setList(friends, groups);
 }
 
 void MainWidget::parseFriend(const QByteArray& bytearray)
