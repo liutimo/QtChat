@@ -1,6 +1,7 @@
 #include "listwidget.h"
 #include "listviewitemwidget.h"
 #include "DataBase/database.h"
+#include <View/chatwidget.h>
 #include <QAction>
 #include <QIcon>
 #include <QDebug>
@@ -11,10 +12,6 @@ ListWidget::ListWidget(QWidget *parent) :
     setFocusPolicy(Qt::NoFocus);       // 去除item选中时的虚线边框
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//水平滚动条关闭
     initMenu();
-
-
-
-   qDebug() << "set friend list...........";
 }
 //初始化菜单
 void ListWidget::initMenu()
@@ -33,6 +30,8 @@ void ListWidget::initMenu()
 
 
     QAction *sendMsg = new QAction(QIcon(":/Resource/mainwidget/sendmsg.png"), "发送即时消息", this);
+    connect(sendMsg, &QAction::triggered, this, &ListWidget::listWidgetMenuTriggered);
+
     QAction *showinfo = new QAction(QIcon(":/Resource/mainwidget/msgmgr.png"), "查看资料",this);
     QAction *updateremark = new QAction(QIcon(":/Resource/mainwidget/name.png"), "修改备注", this);
    // QAction *moveto = new QAction();
@@ -118,7 +117,7 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         QString group = groups.at(i);
 
         QListWidgetItem *newItem=new QListWidgetItem(group);
-        //newItem->setIcon(QIcon(":/Resource/mainwidget/arrowright.png"));
+        newItem->setIcon(QIcon(":/Resource/mainwidget/arrowright.png"));
         newItem->setSizeHint(QSize(this->width(),25));
         this->addItem(newItem);
 
@@ -146,4 +145,10 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         }
     }
 
+}
+
+void ListWidget::listWidgetMenuTriggered()
+{
+    ChatWidget *w = new ChatWidget();
+    w->show();
 }

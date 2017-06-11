@@ -46,11 +46,11 @@ int main()
 
     fd = init();
 
-    pthread_create(&pid, NULL, pollhandle, NULL);
+//    pthread_create(&pid, NULL, pollhandle, NULL);
 
     start(fd);
 
-    pthread_join(pid, NULL);
+//    pthread_join(pid, NULL);
 
 
 

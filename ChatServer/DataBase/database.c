@@ -84,7 +84,7 @@ int login_check_mysql(const char *userid, const char *password)
 char *get_friendlist_json(const char *userid)
 {
 
-    cJSON *root;
+    cJSON *root = NULL;
 
     root = cJSON_CreateObject();
 
@@ -96,6 +96,7 @@ char *get_friendlist_json(const char *userid)
     sprintf(sql_getfriends, "select friendid, username, remark, grouptype, personalizedsignature from friendlist, userinfo "
                           "where friendlist.userid='%s' and friendid = userinfo.userid;", userid);
 
+    printf("%s\n", sql_getfriends);
     //get group
     if (execute_mysql(sql_getgroup) == -1)
         print_error_mysql(sql_getgroup);
@@ -112,6 +113,8 @@ char *get_friendlist_json(const char *userid)
         print_error_mysql(sql_getfriends);
 
     mysql_res = mysql_store_result(mysql);
+
+    printf("query count %d", mysql_affected_rows(mysql));
 
     //mysql_row[3] == frouptype
     while((mysql_row = mysql_fetch_row(mysql_res)) != NULL) {

@@ -8,14 +8,14 @@ ConnectToServer::ConnectToServer(QObject *parent) : QTcpSocket(parent)
     connectToHost(IP, PORT);
 
     connect(this, &ConnectToServer::readyRead, this, &ConnectToServer::recv);
-//    connect(this, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
-//          [=](QAbstractSocket::SocketError socketError){ qDebug() << socketError; });
+    //    connect(this, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
+    //          [=](QAbstractSocket::SocketError socketError){ qDebug() << socketError; });
 }
 
 ConnectToServer* ConnectToServer::server = NULL;
 QMutex* ConnectToServer::mutex = new QMutex();
 
-//单例模式
+//??????
 ConnectToServer* ConnectToServer::getInstance()
 {
     mutex->lock();
@@ -37,6 +37,9 @@ void ConnectToServer::closeServer()
 
 void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
 {
+
+
+
     mutex->lock();
     int memsize = (sizeof(Msg) + size) *sizeof(char);
     char *buf = new char[memsize];
@@ -50,15 +53,17 @@ void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
     memcpy(msg->data, data, msg->len);
 
     Request r;
-    r.len = size + sizeof(Msg);
+    r.len = memsize;
+
 
     if( -1 == write((char *)&r, sizeof(r))) {
-        qDebug() << "发送消息失败";
+        qDebug() << "??????????";
         delete []buf;
         return;
     }
+
     if (-1 == write((char *)msg, r.len))
-         qDebug() << "发送消息失败";
+        qDebug() << "??????????";
 
     delete []buf;
 
@@ -77,10 +82,10 @@ void ConnectToServer::sendHeartBeatMsg(HeartBeatMsg *hearteabtmsg)
 
 void ConnectToServer::sendRequestForwordMessageMsg(RequestForwordMessageMsg *msg)
 {
-    send(REQUESTFORWORDMESSAGE, (char *)msg, sizeof(REQUESTFORWORDMESSAGE) + msg->length);
+    send(REQUESTFORWORDMESSAGE, (char *)msg, sizeof(RequestForwordMessageMsg) + msg->length);
 }
 
-/*****************************接受服务器发来的消息**************************************/
+/*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
 {
@@ -93,7 +98,7 @@ void ConnectToServer::recv()
         memcpy(rlm, msg->data, sizeof(ResponseLoginMsg));
         emit loginStatus(rlm->ls);
         delete rlm;
-        }
+    }
         break;
     case HEARTBEAT:
         emit responseHeartBeat();
@@ -103,9 +108,19 @@ void ConnectToServer::recv()
         ResponseFriendList *rf = (ResponseFriendList*)buf;
         memcpy(rf, msg->data, msg->len);
         emit responseFriendList(QByteArray(rf->friendlist));
-//        qDebug() << rf->len;
         delete []buf;
+        break;
     }
+    case RECEIVEDMESSAGE: {
+        ReceivedMessageMsg *rmsg = (ReceivedMessageMsg*)new char[msg->len];
+        memcpy(rmsg, msg->data, msg->len);
+        qDebug() << rmsg->length << "  "  << msg->len;
+        char  *message = new char[rmsg->length + 1];
+        memcpy(message, rmsg->message, rmsg->length);
+        message[rmsg->length] = '\0';
+        qDebug() << message;
+        delete rmsg;
+        break;}
     default:
         break;
     }

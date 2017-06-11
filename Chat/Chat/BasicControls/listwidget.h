@@ -14,6 +14,9 @@ public:
     void contextMenuEvent(QContextMenuEvent*);//菜单事件，为了显示菜单
     void setList(QList<QVector<QString>>, QStringList);
 
+
+private slots:
+    void listWidgetMenuTriggered();
 private:
     void initMenu();//初始化菜单
 

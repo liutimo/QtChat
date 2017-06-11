@@ -90,20 +90,16 @@ void ChatWidget::setMessage(const QString &msg)
 
     QString s(msg);
 
+    qDebug() << msg.size();
 
-    strcpy(rmsg->friendid, "123456");
+    strcpy(rmsg->friendid, "123457");
     rmsg->length = msg.size();
-    memcpy(rmsg->message, msg.toUtf8().data(), msg.size());
-
-    qDebug() << "===" << msg.size();
-    qDebug() << ">>>" << msg.toUtf8().data();
-    qDebug() << "<<<" << rmsg->message;
+    strcpy(rmsg->message, msg.toStdString().c_str()/*, msg.size()*/);
 
     ConnectToServer::getInstance()->sendRequestForwordMessageMsg(rmsg);
 
-    qDebug() << msg;
-
-    textedit->setHtml(msg);
+    //textedit->setHtml(msg);
+    textedit->setText(s);
     QTextBlock::iterator it;
 
     QTextBlock block = textedit->document()->begin();

@@ -123,5 +123,5 @@ void ChatInput::focusOutEvent(QFocusEvent *event)
 
 void ChatInput::btn_send_clicked()
 {
-    emit sendMsg(te_message->toHtml());
+    emit sendMsg(te_message->toPlainText()/*toHtml()*/);
 }

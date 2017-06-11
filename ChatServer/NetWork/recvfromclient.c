@@ -44,22 +44,24 @@ void recvMsg(int fd)
         ev.data.fd = fd;
         ev.events = EPOLLIN|EPOLLET;
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
-        printf("client error occur \n");
+        printf("read data error\n");
         close(fd);
         return;
     }
-    Msg *msg = (Msg*)buf;
 
+
+    Msg *msg = (Msg*)buf;
+    printf("Request len = %d, read len = %d from client, msg.len=%d\n", length, len, msg->len);
     switch (msg->type)
     {
     case REQUESTLOGIN:
         handleLoginMsg(fd, msg);
         break;
     case HEARTBEAT:
-        //handleHeartBeatMsg(fd);
+        handleHeartBeatMsg(fd);
         break;
     case REQUESTFORWORDMESSAGE:
-        //shandleForwordMessageMsg(fd, msg);
+        handleForwordMessageMsg(fd, msg);
         break;
     default:
         break;
@@ -78,6 +80,8 @@ void handleLoginMsg(int fd, Msg *msg)
     init_mysql();
 
     ResponseLoginMsg r_msg;
+
+    printf("user %s logining...\n", lmsg.userid);
 
     switch (login_check_mysql(lmsg.userid, lmsg.password))
     {
@@ -130,18 +134,11 @@ void handleForwordMessageMsg(int fd, Msg *msg)
 
 
     char *message = (char*)malloc(fmsg->length * sizeof(char));
-
     strcpy(message, fmsg->message);
 
     int friend_fd = findOnlineUserWithUid(fmsg->friendid);
 
-    printf("received userid %s\n", fmsg->friendid);
-    printf("received %d\n", fmsg->length);
-
-    for(int i = 0; i < fmsg->length; ++i)
-    {
-        printf("%c", message[i]);
-    }
+    write(STDOUT_FILENO, fmsg->message, fmsg->length);
 
     if(friend_fd == -1)
     {

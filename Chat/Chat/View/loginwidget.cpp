@@ -139,7 +139,7 @@ void LoginWidget::btn_login_clicked()
     d->setLoaclUserInfo(cb_username->currentText(), le_password->text());
 
     LoginMsg *l = new LoginMsg();
-    strcpy(l->userid, "123456");
+    strcpy(l->userid, cb_username->currentText().toUtf8().data());
     strcpy(l->password, QCryptographicHash::hash(le_password->text().toUtf8(), QCryptographicHash::Sha1).toHex());      //对密码进行哈希加密
     server->sendLoginMsg(l);
 
@@ -225,7 +225,6 @@ void LoginWidget::socketError(QAbstractSocket::SocketError socketError)
 }
 void LoginWidget::showMainWidget()
 {
-
     hide();
     if(mainwidget != NULL)
         mainwidget->show();
