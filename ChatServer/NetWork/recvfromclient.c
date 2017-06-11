@@ -133,9 +133,9 @@ void handleForwordMessageMsg(int fd, Msg *msg)
     memcpy(fmsg, msg->data, msg->len);
 
 
-    char *message = (char*)malloc(fmsg->length * sizeof(char));
+    char *message = (char*)malloc(fmsg->length * sizeof(char) + 1);
     strcpy(message, fmsg->message);
-
+    message[fmsg->length * sizeof(char)] = '\0';
     int friend_fd = findOnlineUserWithUid(fmsg->friendid);
 
     write(STDOUT_FILENO, fmsg->message, fmsg->length);

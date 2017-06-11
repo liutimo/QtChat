@@ -1,15 +1,17 @@
 #include "forward.h"
 #include "sendtoclient.h"
+#include "msgstructure.h"
 #include "DataStructure/onlinehashtable.h"
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void forwardmessage(int fd, int friend_fd, const char *message)
 {
-    ssize_t length = sizeof(ReceivedMessageMsg) + strlen(message);
+    ssize_t length = sizeof(ReceivedMessageMsg) + strlen(message) + 1;
 
-    ReceivedMessageMsg *msg = (char*)malloc(sizeof(char) * length);
+    ReceivedMessageMsg *msg = (ReceivedMessageMsg*)malloc(sizeof(char) * length);
 
     char *userid = findOnlineUserWithFd(fd);
 
@@ -17,7 +19,7 @@ void forwardmessage(int fd, int friend_fd, const char *message)
 
     strcpy(msg->friendid, userid);
     msg->length = strlen(message);
-    memcpy(msg->message, message, strlen(message));
+    memcpy(msg->message, message, strlen(message) + 1);
 
     sendMessage(friend_fd, msg);
 

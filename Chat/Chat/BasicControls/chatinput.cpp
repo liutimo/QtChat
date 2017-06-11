@@ -123,5 +123,7 @@ void ChatInput::focusOutEvent(QFocusEvent *event)
 
 void ChatInput::btn_send_clicked()
 {
-    emit sendMsg(te_message->toPlainText()/*toHtml()*/);
+    QString message = te_message->toPlainText();
+    qDebug() << message << " size = " << message.size() << "     length=" << message.length();
+    emit sendMsg(message);
 }

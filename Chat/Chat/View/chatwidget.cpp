@@ -49,7 +49,6 @@ void ChatWidget::init()
     btn_chat_max->setObjectName("btn_chat_max");
 
     textedit = new QTextEdit(this);
-    textedit->setHtml("<img width=\"100px\" height=\"100px\" src=\"/home/liuzheng/Pictures/timg.jpg\"/>");
     textedit->setReadOnly(true);
 
 
@@ -85,54 +84,54 @@ void ChatWidget::paintEvent(QPaintEvent *event)
 
 void ChatWidget::setMessage(const QString &msg)
 {
+    qDebug() << msg << " size=" << msg.size() << " length="<<msg.length();
+    char *buf = new char[sizeof(RequestForwordMessageMsg) + msg.length()];
 
-    RequestForwordMessageMsg *rmsg = (RequestForwordMessageMsg*)new char[sizeof(RequestForwordMessageMsg) + msg.size()];
-
-    QString s(msg);
-
-    qDebug() << msg.size();
-
+    RequestForwordMessageMsg *rmsg = (RequestForwordMessageMsg*)buf;
     strcpy(rmsg->friendid, "123457");
-    rmsg->length = msg.size();
-    strcpy(rmsg->message, msg.toStdString().c_str()/*, msg.size()*/);
+    rmsg->length = msg.length();
+    memcpy(rmsg->message, msg.toUtf8().data(), msg.length());
+
+    qDebug() << rmsg->message;
 
     ConnectToServer::getInstance()->sendRequestForwordMessageMsg(rmsg);
 
-    //textedit->setHtml(msg);
-    textedit->setText(s);
+    delete []buf;
+
+    textedit->setText(msg);
     QTextBlock::iterator it;
 
     QTextBlock block = textedit->document()->begin();
-    while(block.isValid())
-    {
-        for(it = block.begin(); !(it.atEnd());)
-        {
-            QTextFragment currentFragment = it.fragment();
-            QTextImageFormat newImageFormat = currentFragment.charFormat().toImageFormat();
+//    while(block.isValid())
+//    {
+//        for(it = block.begin(); !(it.atEnd());)
+//        {
+//            QTextFragment currentFragment = it.fragment();
+//            QTextImageFormat newImageFormat = currentFragment.charFormat().toImageFormat();
 
-            if(newImageFormat.isValid())
-            {
-                ++it;
-                qDebug() << "image";
-                continue;
-            }
-            if(currentFragment.isValid())
-            {
-                ++it;
-                int pos = currentFragment.position();
-                QString strText = currentFragment.text();
-                for(int i = 0; i < strText.length(); ++i)
-                {
-                    QTextCharFormat fmt;
-                    fmt.setForeground(QColor(qrand() % 255, qrand() % 255, qrand() % 255));
-                    QTextCursor helper = textedit->textCursor();
-                    helper.setPosition(pos++);
-                    helper.setPosition(pos, QTextCursor::KeepAnchor);
-                    helper.setCharFormat(fmt);
-                }
-            }
+//            if(newImageFormat.isValid())
+//            {
+//                ++it;
+//                qDebug() << "image";
+//                continue;
+//            }
+//            if(currentFragment.isValid())
+//            {
+//                ++it;
+//                int pos = currentFragment.position();
+//                QString strText = currentFragment.text();
+//                for(int i = 0; i < strText.length(); ++i)
+//                {
+//                    QTextCharFormat fmt;
+//                    fmt.setForeground(QColor(qrand() % 255, qrand() % 255, qrand() % 255));
+//                    QTextCursor helper = textedit->textCursor();
+//                    helper.setPosition(pos++);
+//                    helper.setPosition(pos, QTextCursor::KeepAnchor);
+//                    helper.setCharFormat(fmt);
+//                }
+//            }
 
-        }
-        block = block.next();
-    }
+//        }
+//        block = block.next();
+//    }
 }
