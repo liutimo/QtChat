@@ -1,0 +1,75 @@
+用户表：
+用户ID、用户密码
+create table user(
+	userid char(10) unique not null primary key,
+	password varchar(130) not null);
+
+
+用户信息表；
+用户ID、用户昵称、出生日期、注册日期、性别、个性签名、手机、邮箱。
+
+create table userinfo(
+	userid char(10) not null,
+	username varchar(20) not null,
+	birthofdate date not null,
+	sex char(2),
+	personalizedsignature varchar(200),
+	mobile char(11),
+	mail varchar(30),
+	registertime timestamp not null default current_timestamp,
+	primary key(userid),
+	foreign key(userid) references user(userid)
+);
+
+怎么将用户和多个好友关联起来？？？
+1. 为每个用户增加一个属性。保存所有的好友ID。
+2. 创建一个额外的表。
+
+第一次尝试、采用一个额外的表。
+这个表包含的内容包括：
+1.  
+2. 用户id
+3. 好友id
+4. 好友分组
+5. 资料是否变更
+
+当客户端请求好友列表时。暂定发送JSON文件。
+
+json文件包括：
+1.好友头像(HTTP地址)
+2.好友昵称
+3.个性签名
+4.好友分组
+5.好友id
+
+
+create table friendlist(
+	userid char(10) not null,
+	friendid char(10) not null,
+	remark varchar(40),
+	grouptype varchar(20) not null,
+	infochanged int not null,
+	primary key(userid, friendid),
+	foreign key(userid) references user(userid),
+	foreign key(friendid) references user(userid)
+	);
+
+查询时候应该查询 friendlist表和userinfo表。
+获取好友信息
+
+当添加好友时先查询user表。
+在添加到friendlist
+
+
+
+
+查询某一个人的好友分组类别
+
+select distinct grouptype from friendlist where userid='123456';
+
+
+
+
+
+
+

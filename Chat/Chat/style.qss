@@ -1,0 +1,374 @@
+*{font-family:Microsoft YaHei;}
+
+/*标题栏字体*/
+QLabel#widgetTitle{
+    font: bold 12px ;
+    color: white;
+}
+/*关闭按钮*/
+QPushButton#btn_close
+{
+    border-image:url(:/Resource/btn_close_normal.png);
+}
+
+QPushButton#btn_close:hover
+{
+    border-image:url(:/Resource/btn_close_highlight.png);
+}
+
+QPushButton#btn_close:pressed
+{
+    border-image:url(:/Resource/btn_close_down.png);
+}
+/*最小化按钮*/
+QPushButton#btn_mini
+{
+    border-image:url(:/Resource/btn_mini_normal.png);
+}
+
+QPushButton#btn_mini:hover
+{
+    border-image:url(:/Resource/btn_mini_highlight.png);
+}
+
+QPushButton#btn_mini:pressed
+{
+    border-image:url(:/Resource/btn_mini_down.png);
+}
+/*换肤按钮*/
+QPushButton#btn_skin
+{
+    border-image:url(:/Resource/btn_skin_normal.png);
+}
+
+QPushButton#btn_skin:hover
+{
+    border-image:url(:/Resource/btn_Skin_highlight.png);
+}
+
+QPushButton#btn_skin:pressed
+{
+    border-image:url(:/Resource/btn_Skin_down.png);
+}
+/*添加本地资源按钮*/
+QToolButton#tbtn_selectImage
+{
+    border-image:url(:/Resource/skinmanage/addnormal.png);
+}
+
+QToolButton#tbtn_selectImage:hover
+{
+    border-image:url(:/Resource/skinmanage/addhover.png);
+}
+
+QToolButton#tbtn_selectImage:pressed
+{
+    border-image:url(:/Resource/skinmanage/adddown.png);
+}
+
+/*登录界面头像*/
+QLabel#hi_headicon:hover
+{
+    border-image:url(:/Resource/head/head_bkg_highlight_100.png);
+}
+
+/*主界面头像*/
+QLabel#mainwidget_headicon:hover
+{
+    border-image:url(:/Resource/head/head_bkg_highlight_64.png);
+}
+/*图片背景选择框*/
+QLabel#ImageSkinLabel:hover
+{
+    border-image:url(:/Resource/skinmanage/grou_main_search_frame.png);
+}
+
+/*搜索框*/
+QPushButton#main_search_btn_clear
+{
+    border-image:url(:/Resource/mainwidget/main_search_delnormal.png);
+}
+QPushButton#main_search_btn_clear:hover
+{
+    border-image:url(:/Resource/mainwidget/main_search_delhighlight.png);
+}
+
+QPushButton#main_search_btn_clear:pressed
+{
+    border-image:url(:/Resource/mainwidget/main_search_deldown.png);
+}
+
+/*主界面分类*/
+QToolButton#tb_contact
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_contacts_normal.png);
+}
+QToolButton#tb_contact:hover
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_contacts_hover.png);
+}
+QToolButton#tb_contact[selected="true"]
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: red;
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_contacts_selected.png);
+}
+
+
+
+QToolButton#tb_group
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_group_normal.png);
+}
+QToolButton#tb_group:hover
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_group_hover.png);
+}
+
+QToolButton#tb_group[selected="true"]
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: red;
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_group_selected.png);
+}
+
+
+QToolButton#tb_last
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_last_normal.png);
+}
+QToolButton#tb_last:hover
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: rgba(205, 205, 205, 200);
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_last_hover.png);
+}
+
+QToolButton#tb_last[selected="true"]
+{
+    border-bottom: 2px;
+    border-style: outset;
+    border-color: red;
+    background-color: rgba(255, 255, 255, 200);
+    image:url(:/Resource/mainwidget/icon_last_selected.png);
+}
+
+/*好友列表*/
+QListWidget{
+    background:white;
+    color:black;
+    border:none;
+    background-color: rgba(255, 255, 255, 175)
+}
+
+QListWidget::item{
+    border:none;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 175)
+}
+
+QListWidget::item:hover{
+    background:rgb(252,240,193)
+}
+
+QListWidget::item:selected{
+    background:rgb(252,233,161);
+    color:black;
+}
+
+QScrollBar:vertical {
+    background:transparent;
+    width:9px;
+    margin: 0px 0px 2px 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: rgb(195, 195, 195);
+    min-height: 20px;
+    border-radius: 3px;
+}
+
+QScrollBar::handle:vertical:hover{
+    background:rgba(0,0,0,30%);
+}
+
+QScrollBar::add-line:vertical {
+    height: 0px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+    height: 0px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+/*登录框状态显示栏*/
+QToolButton#btn_hide:hover
+{
+    border-image:url(:/Resource/loginwidget/simpleexceptionframe_close_hover.png);
+}
+
+QToolButton#btn_hide:pressed
+{
+    border-image:url(:/Resource/loginwidget/simpleexceptionframe_close_press.png);
+}
+
+QToolButton#btn_hide
+{
+    border-image:url(:/Resource/loginwidget/simpleexceptionframe_close.png);
+}
+
+
+/*聊天窗口 background-repeat:no-repeat;*/
+
+QWidget#chatinput
+{
+    border-top:3px solid blue;
+}
+
+QPushButton#btn_chat_settings
+{
+    border-image:url(:/Resource/chatwidget/aio_setting_normal.png);
+}
+QPushButton#btn_chat_settings:hover
+{
+    border-image:url(:/Resource/chatwidget/aio_setting_hover.png);
+}
+
+QPushButton#btn_chat_settings:pressed
+{
+    border-image:url(:/Resource/chatwidget/aio_setting_down.png);
+}
+
+
+QPushButton#btn_chat_close
+{
+    border-image:url(:/Resource/chatwidget/sysbtn_close_normal.png);
+}
+QPushButton#btn_chat_close:hover
+{
+    border-image:url(:/Resource/chatwidget/sysbtn_close_hover.png);
+}
+
+QPushButton#btn_chat_close:pressed
+{
+    border-image:url(:/Resource/chatwidget/sysbtn_close_down.png);
+}
+
+QPushButton#btn_chat_min
+{
+    border-image:url(:/Resource/chatwidget/sysbtn_min_normal.png);
+}
+QPushButton#btn_chat_min:hover
+{
+    border-image:url(:/Resource/chatwidget/sysbtn_min_hover.png);
+}
+
+QPushButton#btn_chat_min:pressed
+{
+    border-image:url(:/Resource/chatwidget/sysbtn_min_down.png);
+}
+
+QPushButton#btn_chat_max
+{
+    border-image:url(:/Resource/chatwidget/sysbtn_max_normal.png);
+}
+QPushButton#btn_chat_max:hover
+{
+    border-image:url(:/Resource/chatwidget/sysbtn_max_hover.png);
+}
+
+QPushButton#btn_chat_max:pressed
+{
+    border-image:url(:/Resource/chatwidget/sysbtn_max_down.png);
+}
+
+QToolButton#btn_chat_input_selectFont
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_font.png);
+}
+QToolButton#btn_chat_input_selectFont:hover
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_font_hover.png);
+}
+
+QToolButton#btn_chat_input_selectFont:pressed
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_font_selected.png);
+}
+
+QToolButton#btn_chat_input_icon
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_face.png);
+}
+QToolButton#btn_chat_input_icon:hover
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_face_hover.png);
+}
+
+QToolButton#btn_chat_input_icon:pressed
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_face_selected.png);
+}
+
+QToolButton#btn_chat_input_screenshot
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_cut.png);
+}
+QToolButton#btn_chat_input_screenshot:hover
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_cut_hover.png);
+}
+
+QToolButton#btn_chat_input_screenshot:pressed
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_cut_selected.png);
+}
+
+
+QToolButton#btn_chat_input_image
+{
+
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_sendpic.png);
+
+}
+QToolButton#btn_chat_input_image:hover
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_sendpic_hover.png);
+
+}
+
+QToolButton#btn_chat_input_image:pressed
+{
+    border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_sendpic_selected.png);
+}
+
+
