@@ -18,6 +18,7 @@ class ChatInput : public QWidget
 public:
     explicit ChatInput(QWidget *parent = 0);
 
+
     QStringList getFontInfo();
 
 
@@ -46,6 +47,7 @@ private:
     void init();
     void setDefault();
 
+
     QToolButton *btn_chat_input_selectFont;
     QToolButton *btn_chat_input_icon;
     QToolButton *btn_chat_input_shake;
@@ -56,6 +58,11 @@ private:
     QToolButton *btn_chat_input_messagemanage;
 
 
+    QTextEdit *te_message;
+
+    QToolButton *btn_chat_input_send;
+    QToolButton *btn_chat_input_close;
+
     QLabel *label_font;
     QLabel *label_color;
     QLabel *label_size;
@@ -63,12 +70,9 @@ private:
     ColorComboBox *cb_color;
     QComboBox *cb_size;
 
-    QTextEdit *te_message;
-
-    QToolButton *btn_chat_input_send;
-    QToolButton *btn_chat_input_close;
 
     QString message_content;
+
 };
 
 #endif // CHATINPUT_H

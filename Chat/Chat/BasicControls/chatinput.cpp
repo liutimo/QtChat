@@ -19,6 +19,9 @@ ChatInput::ChatInput(QWidget *parent) : QWidget(parent)
     setMouseTracking(true);
     setDefault();
 }
+
+
+
 void ChatInput::init()
 {
     btn_chat_input_selectFont = new QToolButton(this);
@@ -48,8 +51,6 @@ void ChatInput::init()
     btn_chat_input_messagemanage->setText("message record");
     btn_chat_input_messagemanage->setObjectName("btn_chat_input_messagemanage");
 
-
-
     label_font = new QLabel("字体:", this);
     label_color = new QLabel("颜色:", this);
     label_size = new QLabel("大小:", this);
@@ -66,7 +67,6 @@ void ChatInput::init()
 
     te_message = new QTextEdit(this);
     connect(te_message, &QTextEdit::textChanged, this, &ChatInput::test);
-
 
     btn_chat_input_send = new QToolButton(this);
     btn_chat_input_send->setText("Send");
@@ -104,6 +104,7 @@ void ChatInput::init()
     h_layout_top_hide->addStretch();
     h_layout_top_hide->setSpacing(5);
 
+
     QHBoxLayout *h_layout_middle = new QHBoxLayout;
     h_layout_middle->addWidget(te_message);
 
@@ -111,6 +112,7 @@ void ChatInput::init()
     h_layout_bottom->addStretch();
     h_layout_bottom->addWidget(btn_chat_input_send);
     h_layout_bottom->addWidget(btn_chat_input_close);
+
 
     v_layout->addLayout(h_layout_top_hide);
     v_layout->addLayout(h_layout_top);
@@ -154,7 +156,6 @@ void ChatInput::addIcon(QString path)
     this->activateWindow();
     te_message->setFocus();
 }
-
 
 void ChatInput::setDefault()
 {
@@ -264,4 +265,3 @@ void ChatInput::keyPressEvent(QKeyEvent *event)
 {
 
 }
-

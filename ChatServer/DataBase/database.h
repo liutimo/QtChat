@@ -1,7 +1,7 @@
 /****************************************
-*   数据库相关操作						* 
-*	单例模式，全局只拥有实例。			*
-*	因此得保证是线程安全的。			*
+*   ???????						*
+*	?????????????			*
+*	????????????			*
 *	created by lz 2017/5/25  12:32	    *
 *****************************************/
 
@@ -11,32 +11,32 @@
 #include <mysql/mysql.h>
 #include <pthread.h>
 
-//mysql 连接实例
+//mysql ????
 MYSQL *mysql;
 
-//mysql 结果集
+//mysql ???
 MYSQL_RES *mysql_res;
 
-//mysql 结果集中的一行
+//mysql ???????
 MYSQL_ROW *mysql_row;
 
 
-//初始化数据库连接
+//????????
 int init_mysql();
 
-//执行SQL
+//??SQL
 int execute_mysql(const char *sql);
 
-//关闭连接
+//????
 void close_mysql();
 
-//错误处理
+//????
 void print_error_mysql(const char *msg);
 
-/*********************我是分界线************************/
-/******************应用对数据库的操作*******************/
+/*********************?????************************/
+/******************?????????*******************/
 
-//判断用户id和密码是否匹配
+//????id???????
 int login_check_mysql(const char *userid, const char *password);
 
 //get friendlist with json

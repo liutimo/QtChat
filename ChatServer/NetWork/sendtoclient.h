@@ -12,6 +12,7 @@ void sendMsg(int fd, MsgType msgtype, char *data, ssize_t size);
 void sendResponseHeartBeatMsg(int fd);
 
 //正常的通讯
+
 void sendResponseLoginMsg(int fd, ResponseLoginMsg *msg);
 
 //send friendlist
@@ -22,6 +23,8 @@ void sendMessage(int fd, ReceivedMessageMsg *msg);
 
 
 //发生异常时需要发送的消息
+
+
 
 
 

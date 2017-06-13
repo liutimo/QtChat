@@ -18,7 +18,7 @@ extern int epoll_fd ;
 
 void recvMsg(int fd)
 {
-    //获取后面一个包的长度
+    //??????????
     char *buf = (char *)malloc(sizeof(Request));
     readn(fd, buf, sizeof(Request));
 
@@ -29,7 +29,7 @@ void recvMsg(int fd)
     buf = NULL;
 
     if (length < 0){
-        //客户端异常处理
+        //???????
         ev.data.fd = fd;
         ev.events = EPOLLIN|EPOLLET;
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
@@ -94,9 +94,9 @@ void handleLoginMsg(int fd, Msg *msg)
     case DATABASE_USER_CORRECT:
         loginSuccess = true;
         r_msg.ls = LOGINSUCCESS;
-        //维持在线状态需要做的事
+        //???????????
 
-        //加入在线队列
+        //??????
         OnlineUser user;
         user.fd = fd;
         strcpy(user.userid, lmsg.userid);
@@ -139,7 +139,6 @@ void handleForwordMessageMsg(int fd, Msg *msg)
     int friend_fd = findOnlineUserWithUid(fmsg->friendid);
 
 //    write(STDOUT_FILENO, fmsg->message, fmsg->length);
-
     if(friend_fd == -1)
     {
         //store message to database;
@@ -149,8 +148,5 @@ void handleForwordMessageMsg(int fd, Msg *msg)
         //forward
         forwardmessage(fd, friend_fd, fmsg);
     }
-
-
-
     free(fmsg);
 }

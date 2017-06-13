@@ -1,30 +1,32 @@
 #ifndef MARCO_H
 #define MARCO_H
 
-//端口
+//莽芦炉氓聫拢
 #define PORT 55555
 
-//用户名长度限制
+//莽聰篓忙聢路氓聬聧茅聲驴氓潞娄茅聶聬氓聢露
 #define USERIDMAXLEN 20
 
-//加密后密码长度
+//氓聤 氓炉聠氓聬聨氓炉聠莽 聛茅聲驴氓潞娄
 #define PASSWORDMAXLEN 128
 
-//服务器监听的最大值限定
+//忙聹聧氓聤隆氓聶篓莽聸聭氓聬卢莽職聞忙聹聙氓陇搂氓聙录茅聶聬氓庐職
 #define LISTENMAXNUM 128
 
 
-/*********数据库相关配置************/
+
 #define DATABASE_HOST "localhost"
 #define DATABASE_USER "root"
 #define DATABASE_PASSWORD "123456"
 #define DATABASE_DBNAME "chat"
 #define DATABASE_PORT 3306
-#define DATABASE_SQLMAXLENGTH 2048  //sql语句最长限定
 
-//查询返回类型 从 129开始
+#define DATABASE_SQLMAXLENGTH 2048  //sql猫炉颅氓聫楼忙聹聙茅聲驴茅聶聬氓庐職
 
-//登陆相关
+//忙聼楼猫炉垄猫驴聰氓聸聻莽卤禄氓聻聥 盲禄聨 129氓录聙氓搂聥
+
+//莽聶禄茅聶聠莽聸赂氓聟鲁
+
 #define DATABASE_USER_NOTEXIST 129
 #define DATABASE_USER_PASSWORDERROR 130
 #define DATABASE_USER_CORRECT 131

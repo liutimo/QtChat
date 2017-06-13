@@ -7,12 +7,12 @@ void init_onlineuser()
 
 	if (head == NULL)
 	{
-		printf("In onlinehashtable.c:ÄÚ´æ¿Õ¼ä²»¹»£¬ ³õÊ¼»¯ÔÚÏßÓÃ»§ÁÐ±íÊ§°Ü\n");
+		printf("In onlinehashtable.c:å†…å­˜ç©ºé—´ä¸å¤Ÿï¼Œ åˆå§‹åŒ–åœ¨çº¿ç”¨æˆ·åˆ—è¡¨å¤±è´¥\n");
 		exit(-1);
 	}
 }
 
-//Ìí¼ÓÒ»¸öÔÚÏßÓÃ»§
+//æ·»åŠ ä¸€ä¸ªåœ¨çº¿ç”¨æˆ·
 void addOnlineUser(OnlineUser *user)
 {
 	OnlineUserLinklist* node = (OnlineUserLinklist*)malloc(sizeof(OnlineUserLinklist));
@@ -24,7 +24,7 @@ void addOnlineUser(OnlineUser *user)
 	head->next = node;
 }
 
-//É¾³ýÒ»¸öÔÚÏßÓÃ»§
+//åˆ é™¤ä¸€ä¸ªåœ¨çº¿ç”¨æˆ·
 void delOnlineUser(const int fd)
 {
 	OnlineUserLinklist* before = head;
@@ -58,7 +58,7 @@ char* findOnlineUserWithFd(const int fd)
         return NULL;
 }
 
-//¸ù¾ÝÓÃ»§id ²éÕÒÔÚÏßÓÃ»§ÁÐ±í¡£Èç¹ûÔÚÏß·µ»Øfd¡£
+//æ ¹æ®ç”¨æˆ·id æŸ¥æ‰¾åœ¨çº¿ç”¨æˆ·åˆ—è¡¨ã€‚å¦‚æžœåœ¨çº¿è¿”å›žfdã€‚
 int findOnlineUserWithUid(const char *userid)
 {
 	OnlineUserLinklist* current = head->next;

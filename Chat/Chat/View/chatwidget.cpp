@@ -12,7 +12,6 @@
 #include <QDebug>
 #include <QTextObject>
 #include <QDateTime>
-
 ChatWidget::ChatWidget(QWidget *parent) : BasicWidget(parent)
 {
     widgetIcon->hide();
@@ -56,8 +55,8 @@ void ChatWidget::init()
     chatinput = new ChatInput(this);
     chatinput->setObjectName("chatinput");
     connect(chatinput, &ChatInput::sendMsg, this, &ChatWidget::setMessage);
-
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedMessage, this, &ChatWidget::showMessage);
+
 }
 
 void ChatWidget::resizeEvent(QResizeEvent *event)

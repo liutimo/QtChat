@@ -1,7 +1,7 @@
 /****************************************
-*   ¹şÏ£±í								*
-*	Î¬»¤ÔÚÏßÓÃ»§						*
-*	ĞèÒª±£Ö¤ÊÇÏß³Ì°²È«µÄ				*
+*   å“ˆå¸Œè¡¨								*
+*	ç»´æŠ¤åœ¨çº¿ç”¨æˆ·						*
+*	éœ€è¦ä¿è¯æ˜¯çº¿ç¨‹å®‰å…¨çš„				*
 *	created by lz 2017/5/26  13:44	    *
 *****************************************/
 
@@ -17,11 +17,11 @@
 
 
 typedef struct _OnlineUser {
-	int fd;								//ÔÚÏßÓÃ»§ËùÓµÓĞµÄsocketÃèÊö·û
-	char userid[USERIDMAXLEN];			//ÔÚÏßÓÃ»§µÄID¡£ ¸ù¾İ´ËIDÀ´²éÑ¯»¹ÓĞÊÇ·ñÔÚÏß
+	int fd;								//åœ¨çº¿ç”¨æˆ·æ‰€æ‹¥æœ‰çš„socketæè¿°ç¬¦
+	char userid[USERIDMAXLEN];			//åœ¨çº¿ç”¨æˆ·çš„IDã€‚ æ ¹æ®æ­¤IDæ¥æŸ¥è¯¢è¿˜æœ‰æ˜¯å¦åœ¨çº¿
 }OnlineUser;
 
-//½Úµã
+//èŠ‚ç‚¹
 typedef struct _OnlineUserLinklist {
 	OnlineUser user;
 	struct _OnlineUserLinklist* next;
@@ -32,13 +32,13 @@ OnlineUserLinklist *head;
 
 void init_onlineuser();
 
-//Ìí¼ÓÒ»¸öÔÚÏßÓÃ»§
+//æ·»åŠ ä¸€ä¸ªåœ¨çº¿ç”¨æˆ·
 void addOnlineUser(OnlineUser *user);
 
-//É¾³ıÒ»¸öÔÚÏßÓÃ»§
+//åˆ é™¤ä¸€ä¸ªåœ¨çº¿ç”¨æˆ·
 void delOnlineUser(const int fd);
 
-//¸ù¾İÓÃ»§id ²éÕÒÔÚÏßÓÃ»§ÁĞ±í¡£Èç¹ûÔÚÏß·µ»Øture¡£
+//æ ¹æ®ç”¨æˆ·id æŸ¥æ‰¾åœ¨çº¿ç”¨æˆ·åˆ—è¡¨ã€‚å¦‚æœåœ¨çº¿è¿”å›tureã€‚
 int findOnlineUserWithUid(const char *userid);
 char* findOnlineUserWithFd(const int fd);
 
