@@ -16,10 +16,7 @@ int main(int argc, char *argv[])
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
 
-//    ChatWidget w;
-
     LoginWidget w;
-//    ChatInput w;
 
     w.show();
     return a.exec();
