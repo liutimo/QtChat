@@ -3,6 +3,7 @@
 
 #include "msgstructure.h"
 #include <unistd.h>
+#include <pthread.h>
 
 
 //通用发送函数
@@ -14,6 +15,9 @@ void sendResponseHeartBeatMsg(int fd);
 //正常的通讯
 
 void sendResponseLoginMsg(int fd, ResponseLoginMsg *msg);
+
+
+void sendResponseUserInfo(int fd, const char *);
 
 //send friendlist
 void sendResponseFriendList(int fd, const char*);

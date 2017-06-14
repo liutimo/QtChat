@@ -13,8 +13,4 @@
 //加密后密码长度
 #define PASSWORDMAXLEN 128
 
-
-
-
-
 #endif // MARCO_H

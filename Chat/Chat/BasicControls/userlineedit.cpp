@@ -13,7 +13,7 @@ UserLineEdit::UserLineEdit(QWidget *parent ) : QLineEdit(parent)
 {
     init();
 
-    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 0);color:rgb(0,0, 0);text-align:center;font:15px}");
+    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 0);color:white;text-align:center;font:15px}");
 
 
 }
@@ -31,7 +31,7 @@ void UserLineEdit::resizeEvent(QResizeEvent *event)
 void UserLineEdit::focusOutEvent(QFocusEvent *e)
 {
     QLineEdit::focusOutEvent(e);
-    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 0);color:rgb(0,0,0);text-align:center;font:15px}");
+    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 0);color:white;text-align:center;font:15px}");
 }
 
 void UserLineEdit::focusInEvent(QFocusEvent *e)

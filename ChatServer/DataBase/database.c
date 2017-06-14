@@ -9,7 +9,7 @@ int init_mysql()
 {
     mysql = mysql_init(NULL);
 
-    //Á¬½ÓÊý¾Ý¿â¡£Èç¹ûÊ§°Ü£¬·µ»Ø-1.
+    //è¿žæŽ¥æ•°æ®åº“ã€‚å¦‚æžœå¤±è´¥ï¼Œè¿”å›ž-1.
     if (!mysql_real_connect(mysql, DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD,
         DATABASE_DBNAME, DATABASE_PORT, NULL, 0))
         return -1;
@@ -39,8 +39,8 @@ void print_error_mysql(const char *msg)
 }
 
 /*
-* ²éÑ¯ÅÐ¶ÏÓÃ»§ÊÇ·ñÄÜ¹»Æ¥Åä
-* ·µ»ØÖµ°üÀ¨   Æ¥Åä   ÃÜÂë´íÎó   ÒÔ¼° ÓÃ»§²»´æÔÚ
+* æŸ¥è¯¢åˆ¤æ–­ç”¨æˆ·æ˜¯å¦èƒ½å¤ŸåŒ¹é…
+* è¿”å›žå€¼åŒ…æ‹¬   åŒ¹é…   å¯†ç é”™è¯¯   ä»¥åŠ ç”¨æˆ·ä¸å­˜åœ¨
 */
 int login_check_mysql(const char *userid, const char *password)
 {
@@ -50,7 +50,7 @@ int login_check_mysql(const char *userid, const char *password)
     if (execute_mysql(sql) == -1)
         print_error_mysql(sql);
 
-    //»ñÈ¡²éÑ¯µÄ½á¹û¼¯
+    //èŽ·å–æŸ¥è¯¢çš„ç»“æžœé›†
     mysql_res = mysql_store_result(mysql);
 
     int r_count = mysql_num_rows(mysql_res);
@@ -59,7 +59,7 @@ int login_check_mysql(const char *userid, const char *password)
         return DATABASE_USER_NOTEXIST;
     }
 
-    //userid  ÊÇÎ¨Ò»µÄ£¬Òò´ËÈ·µ±½á¹û¼¯ºÏÖ»ÓÐÒ»ÐÐ
+    //userid  æ˜¯å”¯ä¸€çš„ï¼Œå› æ­¤ç¡®å½“ç»“æžœé›†åˆåªæœ‰ä¸€è¡Œ
     mysql_row = mysql_fetch_row(mysql_res);
 
 
@@ -96,7 +96,6 @@ char *get_friendlist_json(const char *userid)
     sprintf(sql_getfriends, "select friendid, username, remark, grouptype, personalizedsignature from friendlist, userinfo "
                           "where friendlist.userid='%s' and friendid = userinfo.userid;", userid);
 
-    printf("%s\n", sql_getfriends);
     //get group
     if (execute_mysql(sql_getgroup) == -1)
         print_error_mysql(sql_getgroup);
@@ -113,8 +112,6 @@ char *get_friendlist_json(const char *userid)
         print_error_mysql(sql_getfriends);
 
     mysql_res = mysql_store_result(mysql);
-
-    printf("query count %d", mysql_affected_rows(mysql));
 
     //mysql_row[3] == frouptype
     while((mysql_row = mysql_fetch_row(mysql_res)) != NULL) {
@@ -137,6 +134,34 @@ char *get_friendlist_json(const char *userid)
             }
             node = node->next;
         }
+    }
+
+    return cJSON_PrintUnformatted(root);
+}
+
+char *get_userinfo_json(const char *userid)
+{
+    cJSON *root = NULL;
+
+    root = cJSON_CreateObject();
+
+    char sql_getuserinfo[DATABASE_SQLMAXLENGTH];
+    memset(sql_getuserinfo, 0, DATABASE_SQLMAXLENGTH);
+
+    sprintf(sql_getuserinfo, "select username, personalizedsignature, imagepath from userinfo where userid='%s';", userid);
+
+
+    printf("%s\n", sql_getuserinfo);
+    //get group
+    if (execute_mysql(sql_getuserinfo) == -1)
+        print_error_mysql(sql_getuserinfo);
+
+    mysql_res = mysql_store_result(mysql);
+
+    if((mysql_row = mysql_fetch_row(mysql_res)) != NULL) {
+        cJSON_AddStringToObject(root, "username", mysql_row[0]);
+        cJSON_AddStringToObject(root, "ps", mysql_row[1]);
+        cJSON_AddStringToObject(root, "imagepath", mysql_row[2]);
     }
 
     return cJSON_PrintUnformatted(root);

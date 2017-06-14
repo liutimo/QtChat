@@ -83,6 +83,7 @@ QLabel#ImageSkinLabel:hover
     border-image:url(:/Resource/skinmanage/grou_main_search_frame.png);
 }
 
+
 /*搜索框*/
 QPushButton#main_search_btn_clear
 {
@@ -123,7 +124,6 @@ QToolButton#tb_contact[selected="true"]
     background-color: rgba(255, 255, 255, 200);
     image:url(:/Resource/mainwidget/icon_contacts_selected.png);
 }
-
 
 
 QToolButton#tb_group

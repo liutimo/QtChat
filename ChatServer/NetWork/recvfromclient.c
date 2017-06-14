@@ -48,9 +48,7 @@ void recvMsg(int fd)
         return;
     }
 
-
     Msg *msg = (Msg*)buf;
-    printf("Request len = %d, read len = %d from client, msg.len=%d\n", length, len, msg->len);
     switch (msg->type)
     {
     case REQUESTLOGIN:
@@ -62,6 +60,12 @@ void recvMsg(int fd)
     case REQUESTFORWORDMESSAGE:
         handleForwordMessageMsg(fd, msg);
         break;
+    case REQUESTUSERINFO: {
+        init_mysql();
+        sendResponseUserInfo(fd, get_userinfo_json(findOnlineUserWithFd(fd)));
+        close_mysql();
+        break;
+    }
     default:
         break;
     }
@@ -79,8 +83,6 @@ void handleLoginMsg(int fd, Msg *msg)
     init_mysql();
 
     ResponseLoginMsg r_msg;
-
-    printf("user %s logining...\n", lmsg.userid);
 
     switch (login_check_mysql(lmsg.userid, lmsg.password))
     {
@@ -107,8 +109,6 @@ void handleLoginMsg(int fd, Msg *msg)
         sendResponseFriendList(fd, get_friendlist_json(lmsg.userid));
     }
 
-    printf("%s\n", get_friendlist_json(lmsg.userid));
-
     close_mysql();
 }
 
@@ -130,13 +130,9 @@ void handleForwordMessageMsg(int fd, Msg *msg)
     RequestForwordMessageMsg *fmsg = (RequestForwordMessageMsg*)malloc(msg->len * sizeof(char));
     memcpy(fmsg, msg->data, msg->len);
 
-
-//    char *message = (char*)malloc(fmsg->length * sizeof(char) + 1);
-//    strcpy(message, fmsg->message);
-//    message[fmsg->length * sizeof(char)] = '\0';
     int friend_fd = findOnlineUserWithUid(fmsg->friendid);
 
-//    write(STDOUT_FILENO, fmsg->message, fmsg->length);
+
     if(friend_fd == -1)
     {
         //store message to database;

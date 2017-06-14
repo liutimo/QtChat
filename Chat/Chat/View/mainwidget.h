@@ -7,12 +7,15 @@
 
 #include "basicwidget.h"
 
+QT_BEGIN_NAMESPACE
 class QPushButton;
 class HeadIcon;
 class LineEdit;
 class QToolButton;
 class QStackedWidget;
 class UserLineEdit;
+class QMenu;
+QT_END_NAMESPACE
 
 class MainWidget : public BasicWidget
 {
@@ -37,6 +40,9 @@ private slots:
     void changSelectedButton();
 
     void receiveFriendList(QByteArray);
+    void receiveUserInfo(QByteArray);
+
+    void changeStatus();
 private:
     typedef enum _SkinType{
         PURECOLOR = 0,          //纯色
@@ -46,7 +52,9 @@ private:
 
 
     void parseFriend(const QByteArray&);
+    void parseUserInfo(const QByteArray&);
 
+    void init_menu();
 
     //标题栏按钮
     QPushButton *btn_mini;
@@ -64,6 +72,7 @@ private:
     //搜索
     LineEdit *le_serach;
 
+    QToolButton *tb_status;
     //三个导航按钮
     QToolButton *tb_contact;    //好友列表
     QToolButton *tb_group;      //群
@@ -71,6 +80,13 @@ private:
 
     QStackedWidget *stackwidget;
 
+    QMenu *menu;
+    QAction *state_online;
+    QAction *state_busy;
+    QAction *state_hide;
+    QAction *state_away;
+    QAction *state_Qme;
+    QAction *state_notdisturb;
 };
 
 #endif // MAINWIDGET_H

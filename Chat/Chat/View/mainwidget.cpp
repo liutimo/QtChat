@@ -7,7 +7,7 @@
 #include "BasicControls/userlineedit.h"
 #include "DataBase/database.h"
 #include "NetWork/connecttoserver.h"
-
+#include "NetWork/httpconnect.h"
 
 #include <QPushButton>
 #include <QResizeEvent>
@@ -22,6 +22,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QFontMetrics>
 
 MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     skinType(PURECOLOR),
@@ -36,8 +37,6 @@ MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     resize(300, 600);
 
     setWidgetTitle("这是一个主窗口");
-
-    qDebug() << "MainWidget init ok!";
 }
 
 void MainWidget::init()
@@ -60,13 +59,24 @@ void MainWidget::init()
     headIcon->setObjectName("mainwidget_headicon");
 
     username = new QLabel(this);
+    username->setAlignment(Qt::AlignVCenter);
     username->setText("username");
+    username->setStyleSheet("color: white;");
 
     personsignal = new UserLineEdit(this);
     personsignal->setText("wojuedewoyoubianyao");
 
     le_serach = new LineEdit(this);
     le_serach->move(0, 123);
+
+    tb_status = new QToolButton(this);
+    tb_status->setStyleSheet("QToolButton{border:0px;background-color: rgba(255, 255, 255, 0);}"
+                             "QToolButton:hover{border:0px;background-color: rgba(255, 255, 255, 255);}");
+    tb_status->setIcon(QIcon(":/Resource/state_online.png"));
+
+    menu = new QMenu;
+    init_menu();
+    connect(tb_status, &QToolButton::clicked, this, [this](){menu->exec(mapToGlobal(tb_status->geometry().bottomLeft()));});
 
     tb_contact = new QToolButton(this);
     tb_contact->setObjectName("tb_contact");
@@ -95,6 +105,10 @@ void MainWidget::init()
     connect(tb_group, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
     connect(tb_last, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
 
+    RequestUserInfoMsg r;
+    ConnectToServer::getInstance()->sendRequestUserInfoMsg(&r);
+
+    connect(ConnectToServer::getInstance(), &ConnectToServer::responseUserInfo, this, &MainWidget::receiveUserInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
 }
 
@@ -120,6 +134,7 @@ void MainWidget::resizeEvent(QResizeEvent *event)
     btn_mini->move(width() - btn_mini->width() - 28, 0);
     btn_skin->move(width() - btn_skin->width() - 56, 0);
 
+
     tb_contact->resize(width() / 3, 30);
     tb_contact->move(0, 153);
 
@@ -134,9 +149,9 @@ void MainWidget::resizeEvent(QResizeEvent *event)
 
     le_serach->resize(width(), 30);
 
-    username->move(85, 40);
+    username->move(88, 43);
 
-    personsignal->move(85, 75);
+    personsignal->move(88, 75);
 }
 
 void MainWidget::paintEvent(QPaintEvent*event)
@@ -226,6 +241,67 @@ void MainWidget::receiveFriendList(QByteArray bytearray)
     emit loadFinished();
 }
 
+
+void MainWidget::init_menu()
+{
+    state_online = new QAction(QIcon(":/Resource/state_online.png"), "在线");
+    state_busy = new QAction(QIcon(":/Resource/state_busy.png"), "忙碌");
+    state_hide = new QAction(QIcon(":/Resource/state_hide.png"), "隐身");
+    state_away = new QAction(QIcon(":/Resource/state_away.png"), "离开");
+    state_Qme = new QAction(QIcon(":/Resource/state_Qme.png"), "离线");
+    state_notdisturb = new QAction(QIcon(":/Resource/state_notdisturb.png"), "请勿打扰");
+
+    menu->addAction(state_online);
+    menu->addAction(state_busy);
+    menu->addAction(state_hide);
+    menu->addAction(state_away);
+    menu->addAction(state_Qme);
+    menu->addAction(state_notdisturb);
+
+    connect(state_online, &QAction::triggered, this, &MainWidget::changeStatus);
+    connect(state_busy, &QAction::triggered, this, &MainWidget::changeStatus);
+    connect(state_hide, &QAction::triggered, this, &MainWidget::changeStatus);
+    connect(state_away, &QAction::triggered, this, &MainWidget::changeStatus);
+    connect(state_Qme, &QAction::triggered, this, &MainWidget::changeStatus);
+    connect(state_notdisturb, &QAction::triggered, this, &MainWidget::changeStatus);
+
+}
+
+void MainWidget::changeStatus()
+{
+    QAction *action = static_cast<QAction*>(sender());
+
+    if (action == state_online)
+    {
+        tb_status->setIcon(QIcon(":/Resource/state_online.png"));
+    }
+    else if (action == state_busy)
+    {
+        tb_status->setIcon(QIcon(":/Resource/state_busy.png"));
+    }
+    else if (action == state_hide)
+    {
+        tb_status->setIcon(QIcon(":/Resource/state_hide.png"));
+    }
+    else if (action == state_away)
+    {
+        tb_status->setIcon(QIcon(":/Resource/state_away.png"));
+    }
+    else if (action == state_Qme)
+    {
+        tb_status->setIcon(QIcon(":/Resource/state_Qme.png"));
+    }
+    else if (action == state_notdisturb)
+    {
+        tb_status->setIcon(QIcon(":/Resource/state_notdisturb.png"));
+    }
+}
+
+void MainWidget::receiveUserInfo(QByteArray bytearry)
+{
+    parseUserInfo(bytearry);
+}
+
 void MainWidget::parseFriend(const QByteArray& bytearray)
 {
     QList<QVector<QString>> friends;
@@ -268,4 +344,37 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
         qDebug() << error.errorString();
 
     //    DataBase::getInstance()->setFriendList(friends);
+}
+
+
+void MainWidget::parseUserInfo(const QByteArray &bytearray)
+{
+    QJsonParseError error;
+    QJsonDocument document = QJsonDocument::fromJson(bytearray, &error);
+
+    if(!document.isNull())
+    {
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+            qDebug() << object.value("username").toString();
+            qDebug() << object.value("ps").toString();
+            qDebug() << object.value("imagepath").toString();
+
+            QFontMetrics fm(this->font());
+            qDebug() << fm.width(username->text());
+            username->setText(object.value("username").toString());
+            tb_status->move(88 + fm.boundingRect(username->text()).width(), 43);
+
+            personsignal->setText(object.value("ps").toString());
+
+            HttpConnect *http = new HttpConnect();
+            http->loadFileFormUrl(object.value("imagepath").toString());
+            connect(http, &HttpConnect::loadCompleted, this, [this, http](){
+                headIcon->setPixmap(QPixmap(http->getFilePath()));}
+            );
+        }
+    }
+    else
+        qDebug() << error.errorString();
 }

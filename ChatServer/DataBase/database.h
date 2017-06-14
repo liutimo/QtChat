@@ -42,5 +42,9 @@ int login_check_mysql(const char *userid, const char *password);
 //get friendlist with json
 char *get_friendlist_json(const char *userid);
 
+//get user info
+
+char *get_userinfo_json(const char *userid);
+
 
 #endif // !DATABASE_H

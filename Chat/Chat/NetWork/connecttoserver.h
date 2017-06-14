@@ -18,6 +18,7 @@ public:
     void sendLoginMsg(LoginMsg *loginmsg);
     void sendHeartBeatMsg(HeartBeatMsg *hearteabtmsg);
     void sendRequestForwordMessageMsg(RequestForwordMessageMsg *msg);
+    void sendRequestUserInfoMsg(RequestUserInfoMsg *msg);
 
 protected:
     void recv();
@@ -27,7 +28,7 @@ signals:
     void responseHeartBeat();
     void responseFriendList(QByteArray);
     void receivedMessage(const QString &msg, const QString &color, const QString &size,  const QString &family);
-
+    void responseUserInfo(QByteArray);
 
 private:
     ConnectToServer(QObject *parent = Q_NULLPTR);

@@ -5,22 +5,27 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <pthread.h>
+
+extern pthread_mutex_t mutex;
 
 void sendMsg(int fd, MsgType msgtype, char *data, ssize_t size)
 {
-    //Msg *msg = (Msg*)malloc(sizeof(Msg) + size);
-
+    pthread_mutex_lock(&mutex);
     char *buf = malloc(sizeof(char) * (sizeof(Msg) + size));
     Msg *msg = (Msg*)buf;
-
 	msg->type = msgtype;
 	msg->len = size;
-
 	memcpy(msg->data, data, msg->len);
 
-	writen(fd, (void*)msg, size + sizeof(Msg));
+    int n = writen(fd, (void*)msg, size + sizeof(Msg));
+
+    if(n==size + sizeof(Msg))
+        printf("send data len = %d\n",  size + sizeof(Msg));
+
 
 	free(msg);
+    pthread_mutex_unlock(&mutex);
 }
 
 void sendResponseHeartBeatMsg(int fd)
@@ -36,13 +41,20 @@ void sendResponseLoginMsg(int fd, ResponseLoginMsg *r_msg)
     sendMsg(fd,RESPONSELOGIN, r_msg, sizeof(ResponseLoginMsg));
 }
 
+void sendResponseUserInfo(int fd, const char *userinfo)
+{
+    ResponseUserinfo *f = (ResponseUserinfo*)malloc(sizeof(ResponseUserinfo) + strlen(userinfo) + 1);
+    f->length = strlen(userinfo) + 1;
+
+    memcpy(f->userinfo, userinfo, f->length);
+
+    sendMsg(fd, RESPONSEUSERINFO, f, sizeof(ResponseUserinfo) + f->length);
+}
+
 void sendResponseFriendList(int fd, const char *list)
 {
     ResponseFriendList *f = (ResponseFriendList*)malloc(sizeof(ResponseFriendList) + strlen(list) + 1);
-
     f->len = strlen(list) + 1;
-
-    printf("%d\n", f->len);
 
     memcpy(f->friendlist, list, f->len);
 

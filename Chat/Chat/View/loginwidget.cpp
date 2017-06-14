@@ -175,8 +175,7 @@ void LoginWidget::loginStatus(LoginStatus ls)
         mainwidget = new MainWidget();
         connect(mainwidget, &MainWidget::loadFinished, this, &LoginWidget::showMainWidget);
 
-        //startTimer(2000);
-        qDebug() << "MainWidget show ok!";
+        startTimer(2000);
         break;
     }
     case LOGINPWERROR:
@@ -226,7 +225,6 @@ void LoginWidget::socketError(QAbstractSocket::SocketError socketError)
 void LoginWidget::showMainWidget()
 {
     hide();
-    if(mainwidget != NULL)
-        mainwidget->show();
+    mainwidget->show();
     qDebug() << "mainwidget load success";
 }

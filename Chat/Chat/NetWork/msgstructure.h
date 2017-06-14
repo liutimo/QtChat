@@ -11,7 +11,9 @@ typedef enum _MsgType {
     RESPONSEFRIENDLIST,     //好友列表
     EXIT,
     REQUESTFORWORDMESSAGE,  //请求服务器转发消息
-    RECEIVEDMESSAGE
+    RECEIVEDMESSAGE,
+    RESPONSEUSERINFO,
+    REQUESTUSERINFO
 }MsgType;
 
 
@@ -85,5 +87,13 @@ typedef struct _ReceivedMessageMsg {
     long length;
     char message[0];
 }ReceivedMessageMsg;
+
+typedef struct _ResponseUserinfo {
+    int length;
+    char userinfo[0];
+}ResponseUserinfo;
+
+typedef struct _RequestUserInfoMsg {
+}RequestUserInfoMsg;
 
 #endif // MSGSTRUCTURE_H

@@ -20,6 +20,8 @@ int fd;
 struct pollfd pollfds[LISTENMAXNUM];
 nfds_t size = 0;
 
+
+
 void sig_handle(int signo)
 {
     if (signo == SIGINT)
@@ -51,7 +53,6 @@ int main()
     start(fd);
 
 //    pthread_join(pid, NULL);
-
 
 
     return 0;

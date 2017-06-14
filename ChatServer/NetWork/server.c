@@ -11,15 +11,18 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>    //sockaddr_in
 #include <errno.h>
+#include <pthread.h>
 
 struct epoll_event ev, events[1024];
 int epoll_fd ;
-
+pthread_mutex_t mutex;
 
 int init()
 {
     int server;
     struct sockaddr_in serv_sock;
+
+    pthread_mutex_init(&mutex, NULL);
 
     if ((server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         err_sys("create socket failed");

@@ -37,9 +37,6 @@ void ConnectToServer::closeServer()
 
 void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
 {
-
-
-
     mutex->lock();
     int memsize = (sizeof(Msg) + size) *sizeof(char);
     char *buf = new char[memsize];
@@ -85,6 +82,11 @@ void ConnectToServer::sendRequestForwordMessageMsg(RequestForwordMessageMsg *msg
     send(REQUESTFORWORDMESSAGE, (char *)msg, sizeof(RequestForwordMessageMsg) + msg->length);
 }
 
+void ConnectToServer::sendRequestUserInfoMsg(RequestUserInfoMsg *msg)
+{
+    send(REQUESTUSERINFO, (char *)msg, sizeof(RequestUserInfoMsg));
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
@@ -98,17 +100,26 @@ void ConnectToServer::recv()
         memcpy(rlm, msg->data, sizeof(ResponseLoginMsg));
         emit loginStatus(rlm->ls);
         delete rlm;
-    }
         break;
-    case HEARTBEAT:
+    }
+    case HEARTBEAT: {
         emit responseHeartBeat();
         break;
+    }
     case RESPONSEFRIENDLIST: {
         char *buf = new char[msg->len];
         ResponseFriendList *rf = (ResponseFriendList*)buf;
         memcpy(rf, msg->data, msg->len);
+        qDebug() << rf->friendlist;
         emit responseFriendList(QByteArray(rf->friendlist));
         delete []buf;
+        break;
+    }
+    case RESPONSEUSERINFO: {
+        ResponseUserinfo *rui = (ResponseUserinfo*)new char[msg->len];
+        memcpy(rui, msg->data, msg->len);
+        emit responseUserInfo(QByteArray(rui->userinfo));
+        delete rui;
         break;
     }
     case RECEIVEDMESSAGE: {
@@ -119,7 +130,8 @@ void ConnectToServer::recv()
         message[rmsg->length] = '\0';
         emit receivedMessage(message, rmsg->color, rmsg->size, rmsg->font);
         delete rmsg;
-        break;}
+        break;
+    }
     default:
         break;
     }
