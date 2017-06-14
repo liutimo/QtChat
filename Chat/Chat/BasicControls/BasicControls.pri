@@ -11,7 +11,8 @@ HEADERS += \
     $$PWD/facewidget.h \
     $$PWD/faceitemwidget.h \
     $$PWD/bubble.h \
-    $$PWD/colorcombobox.h
+    $$PWD/colorcombobox.h \
+    $$PWD/userlineedit.h
 
 SOURCES += \
     $$PWD/headicon.cpp \
@@ -26,4 +27,5 @@ SOURCES += \
     $$PWD/facewidget.cpp \
     $$PWD/faceitemwidget.cpp \
     $$PWD/bubble.cpp \
-    $$PWD/colorcombobox.cpp
+    $$PWD/colorcombobox.cpp \
+    $$PWD/userlineedit.cpp

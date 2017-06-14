@@ -12,6 +12,7 @@ class HeadIcon;
 class LineEdit;
 class QToolButton;
 class QStackedWidget;
+class UserLineEdit;
 
 class MainWidget : public BasicWidget
 {
@@ -57,6 +58,8 @@ private:
     QString skinPath;           //本地文件皮肤
 
     HeadIcon *headIcon;
+    QLabel *username;
+    UserLineEdit *personsignal;
 
     //搜索
     LineEdit *le_serach;

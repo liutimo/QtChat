@@ -4,6 +4,7 @@
 #include "BasicControls/headicon.h"
 #include "BasicControls/lineedit.h"
 #include "BasicControls/listwidget.h"
+#include "BasicControls/userlineedit.h"
 #include "DataBase/database.h"
 #include "NetWork/connecttoserver.h"
 
@@ -58,6 +59,11 @@ void MainWidget::init()
     headIcon->move(15, 40);
     headIcon->setObjectName("mainwidget_headicon");
 
+    username = new QLabel(this);
+    username->setText("username");
+
+    personsignal = new UserLineEdit(this);
+    personsignal->setText("wojuedewoyoubianyao");
 
     le_serach = new LineEdit(this);
     le_serach->move(0, 123);
@@ -127,6 +133,10 @@ void MainWidget::resizeEvent(QResizeEvent *event)
     stackwidget->move(0, 183);
 
     le_serach->resize(width(), 30);
+
+    username->move(85, 40);
+
+    personsignal->move(85, 75);
 }
 
 void MainWidget::paintEvent(QPaintEvent*event)

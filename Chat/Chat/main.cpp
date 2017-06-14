@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
 
-    LoginWidget w;
-
+    //    LoginWidget w;
+    MainWidget w;
     w.show();
     return a.exec();
 }

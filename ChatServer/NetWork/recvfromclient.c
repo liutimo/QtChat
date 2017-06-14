@@ -18,7 +18,6 @@ extern int epoll_fd ;
 
 void recvMsg(int fd)
 {
-    //??????????
     char *buf = (char *)malloc(sizeof(Request));
     readn(fd, buf, sizeof(Request));
 
@@ -94,9 +93,6 @@ void handleLoginMsg(int fd, Msg *msg)
     case DATABASE_USER_CORRECT:
         loginSuccess = true;
         r_msg.ls = LOGINSUCCESS;
-        //???????????
-
-        //??????
         OnlineUser user;
         user.fd = fd;
         strcpy(user.userid, lmsg.userid);
@@ -107,7 +103,9 @@ void handleLoginMsg(int fd, Msg *msg)
     sendResponseLoginMsg(fd, &r_msg);
 
     if (loginSuccess)
+    {
         sendResponseFriendList(fd, get_friendlist_json(lmsg.userid));
+    }
 
     printf("%s\n", get_friendlist_json(lmsg.userid));
 
