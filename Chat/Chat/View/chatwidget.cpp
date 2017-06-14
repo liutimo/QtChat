@@ -1,5 +1,5 @@
 #include "chatwidget.h"
-
+#include "../allvariable.h"
 #include "BasicControls/pushbutton.h"
 #include "BasicControls/headicon.h"
 
@@ -94,7 +94,7 @@ void ChatWidget::setMessage(const QString &msg)
 
     char *buf = new char[sizeof(RequestForwordMessageMsg) + msg.length()];
     RequestForwordMessageMsg *rmsg = (RequestForwordMessageMsg*)buf;
-    strcpy(rmsg->friendid, "123456");
+    strcpy(rmsg->friendid, userid.toUtf8().data());
     strcpy(rmsg->font, fontinfo.at(0).toUtf8().data());
     strcpy(rmsg->size, fontinfo.at(1).toUtf8().data());
     strcpy(rmsg->color, fontinfo.at(2).toUtf8().data());
@@ -107,7 +107,7 @@ void ChatWidget::setMessage(const QString &msg)
 
     QString html = QString("<html><b style=\"color:green; font-size:16px;\">%1</b> <em style=\"color:gray; font-size:12px;\">%2</em>"
                    "<br/>%3"
-                   "<br/></html>").arg("Test", QDateTime::currentDateTime().toString("h:m:s ap"), msg);
+                   "<br/></html>").arg(AllVariable::getLoginUserName(), QDateTime::currentDateTime().toString("h:m:s ap"), msg);
 
     textedit->append(html);
 }
@@ -115,9 +115,19 @@ void ChatWidget::setMessage(const QString &msg)
 void ChatWidget::showMessage(const QString &msg, const QString &color, const QString &size, const QString &family)
 {
     QString html = QString("<html><b style=\"color:green; font-size:16px;\">%1</b> <em style=\"color:gray; font-size:12px;\">%2</em>"
-                   "<br/><span style=\"color:%3; font-size:%4px;font-family:%5;\">%6<img src=\":/Resource/face/0.gif\"/></span>"
-                   "<br/></html>").arg("Test", QDateTime::currentDateTime().toString("h:m:s ap"), color, size, family, msg);
+                   "<br/><span style=\"color:%3; font-size:%4px;font-family:%5;\">%6</span>"
+                   "<br/></html>").arg(lb_username->text(), QDateTime::currentDateTime().toString("h:m:s ap"), color, size, family, msg);
 
     qDebug() << color << " " << size;
     textedit->append(html);
+}
+
+void ChatWidget::setUserName(const QString &username)
+{
+    lb_username->setText(username);
+}
+
+void ChatWidget::setUserid(const QString &userid)
+{
+    this->userid = userid;
 }

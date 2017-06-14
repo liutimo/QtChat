@@ -30,6 +30,7 @@ void recvMsg(int fd)
     if (length < 0){
         //???????
         ev.data.fd = fd;
+        delOnlineUser(fd);
         ev.events = EPOLLIN|EPOLLET;
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
         printf("client error occur \n");
@@ -41,6 +42,7 @@ void recvMsg(int fd)
     int len = readn(fd, buf, length);
     if (len != length){
         ev.data.fd = fd;
+        delOnlineUser(fd);
         ev.events = EPOLLIN|EPOLLET;
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
         printf("read data error\n");
@@ -80,9 +82,16 @@ void handleLoginMsg(int fd, Msg *msg)
     bool loginSuccess = false;
     memcpy(&lmsg, msg->data, msg->len);
 
-    init_mysql();
-
     ResponseLoginMsg r_msg;
+
+    if(findOnlineUserWithUid(lmsg.userid) != -1 )
+    {
+        r_msg.ls = LOGINREPEAT;
+        sendResponseLoginMsg(fd, &r_msg);
+        return;
+    }
+
+    init_mysql();
 
     switch (login_check_mysql(lmsg.userid, lmsg.password))
     {

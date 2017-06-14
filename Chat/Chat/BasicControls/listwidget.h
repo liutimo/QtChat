@@ -22,7 +22,6 @@ private:
 
     QMenu *blankMenu;//点击空白上的菜单
     QMenu *groupMenu;//点击组上的菜单
-    QMenu *personMenu;//点击人上的菜单
     QMenu *movetoMenu;
 
     QMap<QListWidgetItem*,QListWidgetItem*> groupMap;   // 组容器 - key:项 value:组
@@ -32,6 +31,8 @@ private:
 
     //保存每个分组的最后一个item的index
     QMap<QString, int> groupItemIndexMap;
+
+    QPoint item_point;  //menu show on this point
 signals:
 
 public slots:

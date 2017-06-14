@@ -19,29 +19,14 @@ void ListWidget::initMenu()
     //初始化：
     blankMenu = new QMenu();
     groupMenu = new QMenu();
-    personMenu = new QMenu();
-    movetoMenu = new QMenu("移动好友至", this);
-    movetoMenu->setIcon(QIcon(":/Resource/mainwidget/moveuser.png"));
+
+
     groupNameEdit=new QLineEdit();
 
     QAction *addGroup = new QAction("添加分组", this);
     QAction *delGroup = new QAction("删除该组", this);
     QAction *rename = new QAction("重命名", this);
 
-
-    QAction *sendMsg = new QAction(QIcon(":/Resource/mainwidget/sendmsg.png"), "发送即时消息", this);
-    connect(sendMsg, &QAction::triggered, this, &ListWidget::listWidgetMenuTriggered);
-
-    QAction *showinfo = new QAction(QIcon(":/Resource/mainwidget/msgmgr.png"), "查看资料",this);
-    QAction *updateremark = new QAction(QIcon(":/Resource/mainwidget/name.png"), "修改备注", this);
-   // QAction *moveto = new QAction();
-    QAction *del = new QAction(QIcon(":/Resource/mainwidget/deluser.png"), "删除好友", this);
-
-    for(QString group : DataBase::getInstance()->getGroup())
-    {
-        QAction *action = new QAction(group, this);
-        movetoMenu->addAction(action);
-    }
 
     //设置：
     groupNameEdit->setParent(this);  //设置父类
@@ -52,11 +37,7 @@ void ListWidget::initMenu()
     groupMenu->addAction(delGroup);
     groupMenu->addAction(rename);
 
-    personMenu->addAction(sendMsg);
-    personMenu->addAction(showinfo);
-    personMenu->addAction(updateremark);
-    personMenu->addMenu(movetoMenu);
-    personMenu->addAction(del);
+
 }
 //鼠标点击事件
 void ListWidget::mousePressEvent(QMouseEvent *event)
@@ -99,6 +80,7 @@ void ListWidget::mousePressEvent(QMouseEvent *event)
 void ListWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QListWidget::contextMenuEvent(event);           //调用基类事件
+
     if(currentItem==NULL)                           //如果点击到的是空白处
     {
         blankMenu->exec(QCursor::pos());
@@ -106,8 +88,7 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *event)
     }
     if(currentItem==groupMap.value(currentItem))    // 如果点击到的是组
         groupMenu->exec(QCursor::pos());
-    else                                            //否则点击到的是好友
-        personMenu->exec(QCursor::pos());
+
 }
 
 void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
@@ -130,7 +111,7 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
     for(QVector<QString> onefriend : friends)
     {
         ListViewItemWidget *frienditem=new ListViewItemWidget();
-        frienditem->setUserinfo(onefriend.at(0), onefriend.at(3));
+        frienditem->setUserinfo(onefriend.at(0), onefriend.at(1), onefriend.at(4));
 
         QListWidgetItem *newItem = new QListWidgetItem();
         this->insertItem(groupItemIndexMap.value(onefriend.at(2)) + 1,newItem);
@@ -149,6 +130,7 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
 
 void ListWidget::listWidgetMenuTriggered()
 {
-    ChatWidget *w = new ChatWidget();
-    w->show();
+//    ChatWidget *w = new ChatWidget();
+//    w->show();
+
 }

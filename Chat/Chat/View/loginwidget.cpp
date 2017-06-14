@@ -1,3 +1,4 @@
+#include "../allvariable.h"
 #include "loginwidget.h"
 #include "mainwidget.h"
 #include "chatwidget.h"
@@ -171,7 +172,6 @@ void LoginWidget::loginStatus(LoginStatus ls)
     case LOGINSUCCESS:
     {
         QThread::sleep(1);
-
         mainwidget = new MainWidget();
         connect(mainwidget, &MainWidget::loadFinished, this, &LoginWidget::showMainWidget);
 
@@ -187,7 +187,7 @@ void LoginWidget::loginStatus(LoginStatus ls)
     }
     case LOGINREPEAT:
     {
-        QString str = QString("%1已经登陆,请勿重复登陆!").arg(cb_username->currentText());
+        showStatusBar(QString("%1已经登陆,请勿重复登陆!").arg(cb_username->currentText()));
         break;
     }
     default:

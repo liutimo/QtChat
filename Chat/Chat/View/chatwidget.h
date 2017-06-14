@@ -12,7 +12,8 @@ class ChatWidget : public BasicWidget
     Q_OBJECT
 public:
     ChatWidget(QWidget *parent =Q_NULLPTR);
-
+    void setUserName(const QString &username);
+    void setUserid(const QString &userid);
 protected:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
@@ -35,6 +36,8 @@ private:
     QTextEdit *textedit;
 
     ChatInput *chatinput;
+
+    QString userid;
 
 };
 

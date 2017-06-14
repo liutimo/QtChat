@@ -1,3 +1,4 @@
+#include "../allvariable.h"
 #include "mainwidget.h"
 #include "skinmanagewidget.h"
 #include "Setting/rwsetting.h"
@@ -343,7 +344,7 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
     else
         qDebug() << error.errorString();
 
-    //    DataBase::getInstance()->setFriendList(friends);
+    DataBase::getInstance()->setFriendList(friends);
 }
 
 
@@ -359,20 +360,31 @@ void MainWidget::parseUserInfo(const QByteArray &bytearray)
             QJsonObject object = document.object();
             qDebug() << object.value("username").toString();
             qDebug() << object.value("ps").toString();
-            qDebug() << object.value("imagepath").toString();
+            QString url_str = object.value("imagepath").toString();
 
             QFontMetrics fm(this->font());
-            qDebug() << fm.width(username->text());
+
             username->setText(object.value("username").toString());
+            AllVariable::setLoginUserName(username->text());
+
             tb_status->move(88 + fm.boundingRect(username->text()).width(), 43);
 
             personsignal->setText(object.value("ps").toString());
 
-            HttpConnect *http = new HttpConnect();
-            http->loadFileFormUrl(object.value("imagepath").toString());
-            connect(http, &HttpConnect::loadCompleted, this, [this, http](){
-                headIcon->setPixmap(QPixmap(http->getFilePath()));}
-            );
+            QUrl url = QUrl::fromUserInput(url_str);
+            QFile f(url.fileName());
+
+            if(f.open(QIODevice::ReadOnly))
+                headIcon->setPixmap(QPixmap(url.fileName()));
+            else
+            {
+                qDebug() << "download image";
+                HttpConnect *http = new HttpConnect();
+                http->loadFileFormUrl(url_str);
+                connect(http, &HttpConnect::loadCompleted, this, [this, http](){
+                    headIcon->setPixmap(QPixmap(http->getFilePath()));}
+                );
+            }
         }
     }
     else
