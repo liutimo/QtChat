@@ -28,7 +28,7 @@
 
 #include <QWidget>
 
-class PushButton;
+class QPushButton;
 class QLabel;
 class BasicWidget : public QWidget
 {
@@ -51,7 +51,7 @@ protected:
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
 
-    PushButton* btn_close;
+    QPushButton* btn_close;
 
 signals:
 

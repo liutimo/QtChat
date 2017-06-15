@@ -1,25 +1,28 @@
-#include "../allvariable.h"
-#include "loginwidget.h"
 #include "mainwidget.h"
 #include "chatwidget.h"
-#include "BasicControls/headicon.h"
-#include "BasicControls/loginstatusbar.h"
+#include "loginwidget.h"
+#include "../allvariable.h"
 #include "Setting/rwsetting.h"
 #include "DataBase/database.h"
-#include "NetWork/connecttoserver.h"
-#include "Thread/heartbeatthread.h"
 #include "NetWork/msgstructure.h"
+#include "BasicControls/headicon.h"
+#include "Thread/heartbeatthread.h"
+#include "NetWork/connecttoserver.h"
+#include "BasicControls/loginstatusbar.h"
 
-#include <QCryptographicHash>
-#include <QEventLoop>
+#include <QMenu>
+#include <QDebug>
+#include <QTimer>
 #include <QSettings>
-#include <QPushButton>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QCheckBox>
-#include <QDebug>
+#include <QEventLoop>
+#include <QCloseEvent>
+#include <QPushButton>
 #include <QTimerEvent>
-
+#include <QSystemTrayIcon>
+#include <QCryptographicHash>
 
 LoginWidget::LoginWidget(QWidget *parent) : BasicWidget(parent),
     mainwidget(NULL)
@@ -29,8 +32,8 @@ LoginWidget::LoginWidget(QWidget *parent) : BasicWidget(parent),
 
     setFixedSize(320, 480);
     init();
+    init_traymenu();
     loadSetting();
-
     msg.status = 'a';
 }
 
@@ -92,6 +95,9 @@ void LoginWidget::init()
     connect(server, &ConnectToServer::connected, [](){qDebug() << "connected;";});
     connect(server, &ConnectToServer::loginStatus, this, &LoginWidget::loginStatus);
     connect(server, &ConnectToServer::responseHeartBeat, this, &LoginWidget::recvHeartBeat);
+
+    /*message hite*/
+    connect(server, &ConnectToServer::receivedMessage, this, &LoginWidget::handleMessage);
 }
 
 void LoginWidget::addSetting(int status)
@@ -226,5 +232,97 @@ void LoginWidget::showMainWidget()
 {
     hide();
     mainwidget->show();
-    qDebug() << "mainwidget load success";
+}
+void LoginWidget::init_traymenu()
+{
+    tray = new QSystemTrayIcon(this);
+    tray->setIcon(QIcon(":/timg (1).jpg"));
+
+    tray_menu = new QMenu();
+
+    timer = new QTimer(this);
+    timer->setInterval(500);
+    connect(timer, &QTimer::timeout, this, &LoginWidget::setTrayIcon);
+
+    QAction *state_online = new QAction(QIcon(":/Resource/state_online.png"), "在线");
+    QAction *state_busy = new QAction(QIcon(":/Resource/state_busy.png"), "忙碌");
+    QAction *state_hide = new QAction(QIcon(":/Resource/state_hide.png"), "隐身");
+    QAction *state_away = new QAction(QIcon(":/Resource/state_away.png"), "离开");
+    QAction *state_Qme = new QAction(QIcon(":/Resource/state_Qme.png"), "离线");
+    QAction *state_notdisturb = new QAction(QIcon(":/Resource/state_notdisturb.png"), "请勿打扰");
+    QAction *action_show = new QAction("打开主窗口");
+    QAction *action_exit = new QAction("退出");
+
+    connect(action_exit, &QAction::triggered, this, [this](){
+        this->close();
+    });
+
+    connect(action_show, &QAction::triggered, this, [this](){
+        if(mainwidget == NULL)
+        {
+            show();
+        }
+        else
+            mainwidget->show();
+    });
+
+    tray_menu->addAction(state_online);
+    tray_menu->addAction(state_busy);
+    tray_menu->addAction(state_hide);
+    tray_menu->addAction(state_away);
+    tray_menu->addAction(state_Qme);
+    tray_menu->addAction(state_notdisturb);
+    tray_menu->addSeparator();
+    tray_menu->addAction(action_show);
+    tray_menu->addSeparator();
+    tray_menu->addAction(action_exit);
+
+    tray->setContextMenu(tray_menu);
+    tray->show();
+    connect(tray, &QSystemTrayIcon::activated, this, &LoginWidget::iconIsActived);
+}
+
+void LoginWidget::handleMessage(ReceivedMessageMsg *msg)
+{
+    timer->start();
+    QStringList messageinfo;
+
+    char *m = new char[msg->length + 1];
+    strcpy(m, msg->message);
+    m[msg->length] = '\0';
+
+    QString friendid(msg->friendid);
+    QString fontfamily(msg->font);
+    QString fontsize(msg->size);
+    QString fontcolor(msg->color);
+    QString message(m);
+
+    messageinfo << fontfamily << fontsize << fontcolor << message;
+
+    QMap<QString, QVector<QStringList>*> messagemap = AllVariable::getMessageMap();
+
+    if(messagemap.value(friendid) == NULL)
+    {
+        QVector<QStringList> *messages = new QVector<QStringList>();
+        messages->append(messageinfo);
+        messagemap.insert(friendid, messages);
+    }
+    else
+    {
+        messagemap.value(friendid)->append(messageinfo);
+    }
+    delete msg;
+}
+
+void LoginWidget::setTrayIcon()
+{
+    if(flag % 2 == 0)
+        tray->setIcon(QIcon(":/timg (1).jpg"));
+    else
+        tray->setIcon(QIcon());
+    ++flag;
+}
+void LoginWidget::iconIsActived(QSystemTrayIcon::ActivationReason e)
+{
+    qDebug() << 11;
 }

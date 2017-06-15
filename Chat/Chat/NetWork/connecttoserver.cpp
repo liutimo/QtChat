@@ -125,11 +125,11 @@ void ConnectToServer::recv()
     case RECEIVEDMESSAGE: {
         ReceivedMessageMsg *rmsg = (ReceivedMessageMsg*)new char[msg->len];
         memcpy(rmsg, msg->data, msg->len);
-        char  *message = new char[rmsg->length + 1];
-        memcpy(message, rmsg->message, rmsg->length);
-        message[rmsg->length] = '\0';
-        emit receivedMessage(message, rmsg->color, rmsg->size, rmsg->font);
-        delete rmsg;
+//        char  *message = new char[rmsg->length + 1];
+//        memcpy(message, rmsg->message, rmsg->length);
+//        message[rmsg->length] = '\0';
+//        emit receivedMessage(message, rmsg->color, rmsg->size, rmsg->font);
+        emit receivedMessage(rmsg);
         break;
     }
     default:

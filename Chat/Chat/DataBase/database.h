@@ -21,8 +21,11 @@ public:
     void setFriendList(QList<QVector<QString>> friends);
     QList<QVector<QString>> getFriendList();
 
-
     QStringList getGroup();
+
+    void setChatLog(const QString &senderid, const QString &receiverid, const QString &content);
+
+
 
     static DataBase* getInstance();
 

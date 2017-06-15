@@ -1,8 +1,8 @@
 #include "chatwidget.h"
 #include "../allvariable.h"
+#include "DataBase/database.h"
 #include "BasicControls/pushbutton.h"
 #include "BasicControls/headicon.h"
-
 #include <NetWork/connecttoserver.h>
 
 #include <QPushButton>
@@ -55,7 +55,7 @@ void ChatWidget::init()
     chatinput = new ChatInput(this);
     chatinput->setObjectName("chatinput");
     connect(chatinput, &ChatInput::sendMsg, this, &ChatWidget::setMessage);
-    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedMessage, this, &ChatWidget::showMessage);
+//    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedMessage, this, &ChatWidget::showMessage);
 
 }
 
@@ -109,16 +109,17 @@ void ChatWidget::setMessage(const QString &msg)
                    "<br/>%3"
                    "<br/></html>").arg(AllVariable::getLoginUserName(), QDateTime::currentDateTime().toString("h:m:s ap"), msg);
 
+    DataBase::getInstance()->setChatLog(AllVariable::getLoginUserName(), lb_username->text(), html);
     textedit->append(html);
 }
 
 void ChatWidget::showMessage(const QString &msg, const QString &color, const QString &size, const QString &family)
 {
-    QString html = QString("<html><b style=\"color:green; font-size:16px;\">%1</b> <em style=\"color:gray; font-size:12px;\">%2</em>"
+    QString html = QString("<html><b style=\"color:red; font-size:16px;\">%1</b> <em style=\"color:gray; font-size:12px;\">%2</em>"
                    "<br/><span style=\"color:%3; font-size:%4px;font-family:%5;\">%6</span>"
                    "<br/></html>").arg(lb_username->text(), QDateTime::currentDateTime().toString("h:m:s ap"), color, size, family, msg);
 
-    qDebug() << color << " " << size;
+    DataBase::getInstance()->setChatLog(lb_username->text(), AllVariable::getLoginUserName(), html);
     textedit->append(html);
 }
 

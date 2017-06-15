@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QPixmap>
+#include <QPushButton>
 BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);
@@ -22,7 +23,7 @@ BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
     orientation = NONE;
     setMinimumSize(300,600);
 
-    btn_close = new PushButton(this);
+    btn_close = new QPushButton(this);
     btn_close->setToolTip("关闭");
     btn_close->setObjectName("btn_close");
     btn_close->setFixedSize(28, 28);
@@ -35,7 +36,7 @@ BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
     widgetTitle = new QLabel(this);
     widgetTitle->setFixedHeight(28);
     widgetTitle->setObjectName("widgetTitle");
-    connect(btn_close, &PushButton::clicked, this, &QWidget::close);
+    connect(btn_close, &PushButton::clicked, this, &QWidget::hide);
 }
 
 BasicWidget::~BasicWidget()
@@ -50,7 +51,6 @@ void BasicWidget::mouseMoveEvent(QMouseEvent *e)
     if (pressed) {
         QPoint p = e->globalPos();
         this->move(p.x() - point.x(), p.y() - point.y());
-
     }
     else if (pressed2 && orientation != NONE)
     {

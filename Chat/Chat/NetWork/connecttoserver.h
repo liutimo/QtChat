@@ -27,7 +27,8 @@ signals:
     void loginStatus(LoginStatus s);
     void responseHeartBeat();
     void responseFriendList(QByteArray);
-    void receivedMessage(const QString &msg, const QString &color, const QString &size,  const QString &family);
+//    void receivedMessage(const QString &msg, const QString &color, const QString &size,  const QString &family);
+    void receivedMessage(ReceivedMessageMsg *msg);
     void responseUserInfo(QByteArray);
 
 private:

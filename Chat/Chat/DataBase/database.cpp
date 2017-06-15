@@ -124,3 +124,13 @@ QStringList DataBase::getGroup()
 
     return groups;
 }
+
+void DataBase::setChatLog(const QString &senderid, const QString &receiverid, const QString &content)
+{
+    QString sql("insert into chatlog(senderid, receiverid, content) values('%1', '%2', '%3')");
+    sql = sql.arg(senderid, receiverid, content);
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+}

@@ -28,17 +28,22 @@
 #include "basicwidget.h"
 #include "NetWork/msgstructure.h"
 
+#include <QSystemTrayIcon>
 #include <QAbstractSocket>
 
-class QPushButton;
+QT_BEGIN_NAMESPACE
+class QMenu;
+class QTimer;
+class HeadIcon;
 class QLineEdit;
 class QCheckBox;
-class HeadIcon;
 class QComboBox;
-class ConnectToServer;
-class QTimer;
-class LoginStatusBar;
 class MainWidget;
+class QPushButton;
+class LoginStatusBar;
+class ConnectToServer;
+
+QT_END_NAMESPACE
 
 class LoginWidget : public BasicWidget
 {
@@ -49,7 +54,6 @@ public:
 
 protected:
     void timerEvent(QTimerEvent *event);
-
 
 private:
     void init();
@@ -65,6 +69,9 @@ private slots:
     void hide_status();
     void socketError(QAbstractSocket::SocketError socketError);
     void showMainWidget();
+    void handleMessage(ReceivedMessageMsg *msg);
+protected slots:
+    void iconIsActived(QSystemTrayIcon::ActivationReason);
 private:
     QPushButton *btn_login;
     QComboBox *cb_username;
@@ -75,13 +82,20 @@ private:
 
     ConnectToServer *server;
 
-    QTimer *timer;
     int  i = 0;
     HeartBeatMsg msg;
 
     LoginStatusBar *loginStatusBar;
 
     MainWidget *mainwidget;
+
+    void init_traymenu();
+    QMenu *tray_menu;
+    QSystemTrayIcon *tray;
+    QTimer *timer;
+    void setTrayIcon();
+    int flag = 0;
+
 };
 
 #endif // LOGINWIDGET_H
