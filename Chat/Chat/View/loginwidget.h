@@ -42,6 +42,7 @@ class MainWidget;
 class QPushButton;
 class LoginStatusBar;
 class ConnectToServer;
+class MessageListWidget;
 
 QT_END_NAMESPACE
 
@@ -72,6 +73,7 @@ private slots:
     void handleMessage(ReceivedMessageMsg *msg);
 protected slots:
     void iconIsActived(QSystemTrayIcon::ActivationReason);
+    void showMessageBox();
 private:
     QPushButton *btn_login;
     QComboBox *cb_username;
@@ -91,11 +93,12 @@ private:
 
     void init_traymenu();
     QMenu *tray_menu;
+    QAction *action_newmessage;
     QSystemTrayIcon *tray;
     QTimer *timer;
     void setTrayIcon();
     int flag = 0;
-
+    MessageListWidget *l;
 };
 
 #endif // LOGINWIDGET_H

@@ -43,8 +43,13 @@ int login_check_mysql(const char *userid, const char *password);
 char *get_friendlist_json(const char *userid);
 
 //get user info
-
 char *get_userinfo_json(const char *userid);
+
+//insert chat log
+void set_chatlog(const char *sender, const char *receiver, const char *content, const char *fontfamliy, const char *fontsize, const char *fontcolor);
+
+//store offline message;
+void set_offline_message(const char *sender, const char *receiver, const char *content, const char *fontfamliy, const char *fontsize, const char *fontcolor);
 
 
 #endif // !DATABASE_H

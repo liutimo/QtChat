@@ -9,6 +9,7 @@
 #include "Thread/heartbeatthread.h"
 #include "NetWork/connecttoserver.h"
 #include "BasicControls/loginstatusbar.h"
+#include "View/messagelistwidget.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -244,6 +245,9 @@ void LoginWidget::init_traymenu()
     timer->setInterval(500);
     connect(timer, &QTimer::timeout, this, &LoginWidget::setTrayIcon);
 
+    action_newmessage = new QAction("查看新消息");
+    connect(action_newmessage, &QAction::triggered, this, &LoginWidget::showMessageBox);
+
     QAction *state_online = new QAction(QIcon(":/Resource/state_online.png"), "在线");
     QAction *state_busy = new QAction(QIcon(":/Resource/state_busy.png"), "忙碌");
     QAction *state_hide = new QAction(QIcon(":/Resource/state_hide.png"), "隐身");
@@ -266,6 +270,9 @@ void LoginWidget::init_traymenu()
             mainwidget->show();
     });
 
+    action_newmessage->setEnabled(false);
+    tray_menu->addAction(action_newmessage);
+    tray_menu->addSeparator();
     tray_menu->addAction(state_online);
     tray_menu->addAction(state_busy);
     tray_menu->addAction(state_hide);
@@ -280,11 +287,15 @@ void LoginWidget::init_traymenu()
     tray->setContextMenu(tray_menu);
     tray->show();
     connect(tray, &QSystemTrayIcon::activated, this, &LoginWidget::iconIsActived);
+
+    l = new MessageListWidget();
+    l->hide();
 }
 
 void LoginWidget::handleMessage(ReceivedMessageMsg *msg)
 {
     timer->start();
+    action_newmessage->setEnabled(true);
     QStringList messageinfo;
 
     char *m = new char[msg->length + 1];
@@ -299,7 +310,7 @@ void LoginWidget::handleMessage(ReceivedMessageMsg *msg)
 
     messageinfo << fontfamily << fontsize << fontcolor << message;
 
-    QMap<QString, QVector<QStringList>*> messagemap = AllVariable::getMessageMap();
+    QMap<QString, QVector<QStringList>*> &messagemap = AllVariable::getMessageMap();
 
     if(messagemap.value(friendid) == NULL)
     {
@@ -312,6 +323,9 @@ void LoginWidget::handleMessage(ReceivedMessageMsg *msg)
         messagemap.value(friendid)->append(messageinfo);
     }
     delete msg;
+    l->updateMessage();
+    qDebug() << l->width() << "--" << l->getHeight();
+    l->setFixedSize(200, l->getHeight());
 }
 
 void LoginWidget::setTrayIcon()
@@ -320,9 +334,15 @@ void LoginWidget::setTrayIcon()
         tray->setIcon(QIcon(":/timg (1).jpg"));
     else
         tray->setIcon(QIcon());
-    ++flag;
+    ++flag; 
 }
 void LoginWidget::iconIsActived(QSystemTrayIcon::ActivationReason e)
 {
     qDebug() << 11;
+}
+
+void LoginWidget::showMessageBox()
+{
+    l->show();
+    l->move((QCursor::pos()));
 }

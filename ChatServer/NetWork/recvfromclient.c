@@ -142,14 +142,29 @@ void handleForwordMessageMsg(int fd, Msg *msg)
     int friend_fd = findOnlineUserWithUid(fmsg->friendid);
 
 
+    char *message = (char *)malloc(sizeof(char) *fmsg->length + 1);
+    strcpy(message, fmsg->message);
+    message[fmsg->length] = '\0';
+
+    printf("%d  |||  %s\n", fmsg->length, fmsg->message);
+
+    init_mysql();
+    set_chatlog(findOnlineUserWithFd(fd), fmsg->friendid, message, fmsg->font, fmsg->size, fmsg->color);
+    close_mysql();
+
+
+
     if(friend_fd == -1)
     {
-        //store message to database;
+        init_mysql();
+        set_offline_message(findOnlineUserWithFd(fd), fmsg->friendid, message, fmsg->font, fmsg->size, fmsg->color);
+        close_mysql();
     }
     else if(friend_fd > 0)
     {
         //forward
         forwardmessage(fd, friend_fd, fmsg);
     }
+    free(message);
     free(fmsg);
 }

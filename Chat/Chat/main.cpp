@@ -1,8 +1,10 @@
 #include "BasicControls/chatinput.h"
 #include "BasicControls/facewidget.h"
+#include "BasicControls/editinformation.h"
 #include "View/loginwidget.h"
 #include "View/chatwidget.h"
 #include "View/mainwidget.h"
+#include "View/messagelistwidget.h"
 #include <QApplication>
 #include <QFile>
 #include <QDebug>
@@ -18,7 +20,9 @@ int main(int argc, char *argv[])
     a.setStyleSheet(f.readAll());
 
         LoginWidget w;
-    //MainWidget w;
+    //    MainWidget w;
+    //    EditInformation w;
+    //MessageListWidget w;
     w.show();
     return a.exec();
 }

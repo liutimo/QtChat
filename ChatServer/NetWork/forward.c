@@ -2,6 +2,7 @@
 #include "sendtoclient.h"
 #include "msgstructure.h"
 #include "DataStructure/onlinehashtable.h"
+#include "DataBase/database.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -24,6 +25,8 @@ void forwardmessage(int fd, int friend_fd, RequestForwordMessageMsg *fmsg)
 
     printf("message from %s send to %s\n", userid, findOnlineUserWithFd(friend_fd));
     printf("font %s color  %s size %s\n", fmsg->font, fmsg->color, fmsg->size);
+
+
 
     strcpy(msg->friendid, userid);
 

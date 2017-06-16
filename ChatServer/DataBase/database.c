@@ -166,3 +166,32 @@ char *get_userinfo_json(const char *userid)
 
     return cJSON_PrintUnformatted(root);
 }
+
+
+//logid      | int(11)   | NO   | PRI | NULL              | auto_increment |
+//| senderid   | char(10)  | NO   | MUL | NULL              |                |
+//| content    | text      | YES  |     | NULL              |                |
+//| chattime   | timestamp | NO   |     | CURRENT_TIMESTAMP |                |
+//| receiverid
+
+void set_chatlog(const char *sender, const char *receiver, const char *content, const char *fontfamliy, const char *fontsize, const char *fontcolor)
+{
+    char sql_insert_chatlog[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql_insert_chatlog, "insert into chatlog(senderid, receiverid, content, fontfamliy, fontsize, fontcolor) "
+                                "values('%s', '%s', '%s', '%s', '%s', '%s')", sender, receiver, content, fontfamliy, fontsize, fontcolor);
+    printf("%s\n", sql_insert_chatlog);
+    if (execute_mysql(sql_insert_chatlog) == -1)
+        print_error_mysql(sql_insert_chatlog);
+}
+
+void set_offline_message(const char *sender, const char *receiver, const char *content, const char *fontfamliy, const char *fontsize, const char *fontcolor)
+{
+    char sql_insert_offlinemessage[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql_insert_offlinemessage, "insert into offlinemessage(senderid, receiverid, content, fontfamliy, fontsize, fontcolor) "
+                                "values('%s', '%s', '%s', '%s', '%s', '%s')", sender, receiver, content, fontfamliy, fontsize, fontcolor);
+    printf("%s\n", sql_insert_offlinemessage);
+    if (execute_mysql(sql_insert_offlinemessage) == -1)
+        print_error_mysql(sql_insert_offlinemessage);
+}

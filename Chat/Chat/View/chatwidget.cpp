@@ -92,15 +92,17 @@ void ChatWidget::setMessage(const QString &msg)
 
     QStringList fontinfo =  chatinput->getFontInfo();
 
-    char *buf = new char[sizeof(RequestForwordMessageMsg) + msg.length()];
+    char *buf = new char[sizeof(RequestForwordMessageMsg) + msg.toUtf8().size()];
+
     RequestForwordMessageMsg *rmsg = (RequestForwordMessageMsg*)buf;
     strcpy(rmsg->friendid, userid.toUtf8().data());
     strcpy(rmsg->font, fontinfo.at(0).toUtf8().data());
     strcpy(rmsg->size, fontinfo.at(1).toUtf8().data());
     strcpy(rmsg->color, fontinfo.at(2).toUtf8().data());
 
-    rmsg->length = msg.length();
-    memcpy(rmsg->message, msg.toUtf8().data(), msg.length());
+    rmsg->length = msg.toUtf8().size();
+    memcpy(rmsg->message, msg.toUtf8().data(), rmsg->length);
+
     ConnectToServer::getInstance()->sendRequestForwordMessageMsg(rmsg);
     delete []buf;
 

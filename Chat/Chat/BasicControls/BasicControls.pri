@@ -12,7 +12,10 @@ HEADERS += \
     $$PWD/faceitemwidget.h \
     $$PWD/bubble.h \
     $$PWD/colorcombobox.h \
-    $$PWD/userlineedit.h
+    $$PWD/userlineedit.h \
+    $$PWD/editinformation.h \
+    $$PWD/messageitemwidget.h \
+    $$PWD/numberwidget.h
 
 SOURCES += \
     $$PWD/headicon.cpp \
@@ -28,4 +31,10 @@ SOURCES += \
     $$PWD/faceitemwidget.cpp \
     $$PWD/bubble.cpp \
     $$PWD/colorcombobox.cpp \
-    $$PWD/userlineedit.cpp
+    $$PWD/userlineedit.cpp \
+    $$PWD/editinformation.cpp \
+    $$PWD/messageitemwidget.cpp \
+    $$PWD/numberwidget.cpp
+
+DISTFILES += \
+    $$PWD/BasicControls.pri
