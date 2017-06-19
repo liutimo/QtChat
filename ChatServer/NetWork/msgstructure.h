@@ -15,7 +15,8 @@ typedef enum _MsgType {
     RESPONSEUSERINFO,       //回应登录用户的信息
     REQUESTUSERINFO,        //请求登录用户的信息
     REQUESTOFFLINEMESSAGE,  //请求当前登录用户的离线消息
-    RESPONSEOFFLINEMESSAGE  //响应用户的请求离线消息的消息
+    RESPONSEOFFLINEMESSAGE, //响应用户的请求离线消息的消息
+    RESPONSACKOFFLINEMSG    //告知服务器， 离线消息已经收到
 }MsgType;
 
 
@@ -111,5 +112,8 @@ typedef struct _ResponseOfflineMessage {
     char json[0];
 }ResponseOfflineMessage;
 
+//空包
+typedef struct _ResponsAckOfflineMsg {
+}ResponseAckOfflineMsg;
 
 #endif // MSGSTRUCTURE_H

@@ -14,16 +14,32 @@ public:
     ChatWidget(QWidget *parent =Q_NULLPTR);
     void setUserName(const QString &username);
     void setUserid(const QString &userid);
+    void setIcon(const QString &path);
+
 protected:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
 
 private slots:
     void setMessage(const QString&);
+    void changePureColorSkin(QColor _color);
+    void changeImageSkin(const QString &path);
 public slots:
     void showMessage(const QString &msg, const QString &color, const QString &size, const QString &family);
 
 private:
+
+    typedef enum _SkinType{
+        PURECOLOR = 0,          //纯色
+        LOCALIMAGE,             //本地图片
+        NETWORKIMAGE            //网络图片
+    }SkinType;
+
+    //头像
+    SkinType skinType;
+    QColor color;               //纯色皮肤颜色
+    QString skinPath;           //本地文件皮肤
+
     void init();
 
     HeadIcon *headIcon;

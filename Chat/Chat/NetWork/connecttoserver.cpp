@@ -96,6 +96,15 @@ void ConnectToServer::sendRequestOfflineMessage()
     delete msg;
 }
 
+void ConnectToServer::sendRequestAckOfflineMsg()
+{
+    ResponseAckOfflineMsg *msg = new  ResponseAckOfflineMsg;
+
+    send(RESPONSACKOFFLINEMSG, (char*)msg, sizeof(ResponseAckOfflineMsg));
+
+    delete msg;
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
@@ -142,8 +151,9 @@ void ConnectToServer::recv()
         break;
     }
     case RESPONSEOFFLINEMESSAGE: {
-        ResponseOfflineMessage *rom = (ResponseOfflineMessage*)new char[msg->len];
+        ResponseOfflineMessage *rom = (ResponseOfflineMessage*)new char[msg->len + 1];
         memcpy(rom, msg->data, msg->len);
+        rom->json[rom->length] = '\0';
         emit receivedOfflineMessage(QByteArray(rom->json));
     }
     default:

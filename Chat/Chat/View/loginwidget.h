@@ -75,6 +75,8 @@ protected slots:
     void iconIsActived(QSystemTrayIcon::ActivationReason);
     void showMessageBox();
 private:
+
+
     QPushButton *btn_login;
     QComboBox *cb_username;
     QLineEdit *le_password;

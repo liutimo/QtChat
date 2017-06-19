@@ -1,5 +1,6 @@
 #include "listviewitemwidget.h"
 #include "DataBase/database.h"
+#include "NetWork/httpconnect.h"
 #include "View/chatwidget.h"
 #include "../allvariable.h"
 #include "headicon.h"
@@ -18,7 +19,6 @@ void ListViewItemWidget::init()
 {
     m_headicon = new HeadIcon(this);
     m_headicon->resize(30, 30);
-    m_headicon->setPixmap(QPixmap(":/timg (1).jpg"));
 
     m_nickname = new QLabel(this);
     m_nickname->setTextFormat(Qt::RichText);
@@ -88,9 +88,22 @@ void ListViewItemWidget::listWidgetMenuTriggered()
     {
         chat = new ChatWidget();
         chatwidgets.insert(userid, chat);
+        chat->setIcon(imagePath);
     }
 
     chat->setUserName(username);
     chat->setUserid(userid);
     chat->show();
+}
+
+void ListViewItemWidget::setImage(const QString& url)
+{
+    HttpConnect *http = new HttpConnect();
+    http->loadFileFormUrl(url);
+
+    connect(http, &HttpConnect::loadCompleted, this, [this, http](){
+        qDebug() << "设置头像";
+        imagePath = http->getFilePath();
+        m_headicon->setPixmap(QPixmap(imagePath));
+    });
 }

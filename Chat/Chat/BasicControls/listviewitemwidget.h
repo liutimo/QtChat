@@ -15,6 +15,7 @@ class ListViewItemWidget : public QWidget
 public:
     explicit ListViewItemWidget(QWidget *parent = 0);
     void setUserinfo(const QString &userid, const QString &username, const QString &signature);
+    void setImage(const QString& url);
     QString getUsername();
     QString getUserid();
 signals:
@@ -34,6 +35,7 @@ private:
 
     QString username;
     QString userid;
+    QString imagePath;
 
     QMenu *personMenu;//点击人上的菜单
     QMenu *movetoMenu;

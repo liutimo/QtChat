@@ -1,0 +1,24 @@
+QMAKE_CXX.INCDIRS = \
+    /home/liuzheng/Android/android-ndk-r15/sources/cxx-stl/gnu-libstdc++/4.9/include \
+    /home/liuzheng/Android/android-ndk-r15/sources/cxx-stl/gnu-libstdc++/4.9/libs/x86/include \
+    /home/liuzheng/Android/android-ndk-r15/platforms/android-16/arch-x86//usr/include \
+    /home/liuzheng/Android/android-ndk-r15/toolchains/x86-4.9/prebuilt/linux-x86_64/lib/gcc/i686-linux-android/4.9.x/include \
+    /home/liuzheng/Android/android-ndk-r15/toolchains/x86-4.9/prebuilt/linux-x86_64/lib/gcc/i686-linux-android/4.9.x/include-fixed \
+    /home/liuzheng/Android/android-ndk-r15/platforms/android-16/arch-x86/usr/include
+QMAKE_CXX.LIBDIRS = \
+    /home/liuzheng/Android/android-ndk-r15/sources/cxx-stl/gnu-libstdc++/4.9/libs/x86 \
+    /home/liuzheng/Android/android-ndk-r15/platforms/android-16/arch-x86//usr/lib \
+    /home/liuzheng/Android/android-ndk-r15/toolchains/x86-4.9/prebuilt/linux-x86_64/bin/../lib/gcc/i686-linux-android/4.9.x \
+    /home/liuzheng/Android/android-ndk-r15/toolchains/x86-4.9/prebuilt/linux-x86_64/lib/gcc/i686-linux-android/4.9.x \
+    /home/liuzheng/Android/android-ndk-r15/toolchains/x86-4.9/prebuilt/linux-x86_64/lib/gcc \
+    /home/liuzheng/Android/android-ndk-r15/toolchains/x86-4.9/prebuilt/linux-x86_64/i686-linux-android/lib \
+    /home/liuzheng/Android/android-ndk-r15/platforms/android-16/arch-x86/usr/lib
+QMAKE_CXX.QT_COMPILER_STDCXX = 199711L
+QMAKE_CXX.QT_GCC_MAJOR_VERSION = 4
+QMAKE_CXX.QT_GCC_MINOR_VERSION = 9
+QMAKE_CXX.QT_GCC_PATCH_VERSION = 0
+QMAKE_CXX.COMPILER_MACROS = \
+    QT_COMPILER_STDCXX \
+    QT_GCC_MAJOR_VERSION \
+    QT_GCC_MINOR_VERSION \
+    QT_GCC_PATCH_VERSION

@@ -78,6 +78,10 @@ void recvMsg(int fd)
         free(rom);
         close_mysql();
     }
+    case RESPONSACKOFFLINEMSG: {
+        handleOfflineAckMessage(fd);
+        break;
+    }
     default:
         break;
     }
@@ -177,4 +181,13 @@ void handleForwordMessageMsg(int fd, Msg *msg)
     }
     free(message);
     free(fmsg);
+}
+
+void handleOfflineAckMessage(int fd)
+{
+    init_mysql();
+
+    del_offline_message(findOnlineUserWithFd(fd));
+
+    close_mysql();
 }

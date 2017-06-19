@@ -53,4 +53,7 @@ void set_offline_message(const char *sender, const char *receiver, const char *c
 
 //查找离线消息
 char *get_offline_message(const char *userid);
+
+//删除离线消息
+void del_offline_message(const char *userid);
 #endif // !DATABASE_H

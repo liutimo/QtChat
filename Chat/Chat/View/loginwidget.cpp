@@ -186,11 +186,11 @@ void LoginWidget::loginStatus(LoginStatus ls)
         mainwidget = new MainWidget();
         connect(mainwidget, &MainWidget::loadFinished, this, &LoginWidget::showMainWidget);
         connect(mainwidget, &MainWidget::updateMessageBox, this, [this](){
-            qDebug() << "update mesage" << AllVariable::getMessageMap().value("123457")->size();
             timer->start();
             action_newmessage->setEnabled(true);
             l->updateMessage();
             l->setFixedSize(200, l->getHeight());
+            ConnectToServer::getInstance();
         });
         startTimer(2000);
         break;

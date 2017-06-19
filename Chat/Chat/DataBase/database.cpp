@@ -64,14 +64,13 @@ void DataBase::setLoaclUserInfo(const QString& userid, const QString &password)
 void DataBase::setFriendList(QList<QVector<QString>> friends)
 {
     QString sql = "insert into friendlist(friendid, username, remark, "
-                  "personalizedsignature, grouptype) values('%1', '%2', '%3', '%4', '%5')";
+                  "personalizedsignature, grouptype, imagepath) values('%1', '%2', '%3', '%4', '%5', '%6')";
 
     QSqlQuery sql_query;
 
     for (QVector<QString> onefriend : friends)
     {
-        QString s = sql.arg(onefriend[0], onefriend[1], onefriend[2], onefriend[3], onefriend[4]);
-        qDebug() << s;
+        QString s = sql.arg(onefriend[0], onefriend[1], onefriend[2], onefriend[3], onefriend[4], onefriend[5]);
         sql_query.prepare(s);
         sql_query.exec();
     }
@@ -81,7 +80,7 @@ QList<QVector<QString>> DataBase::getFriendList()
 {
     QList<QVector<QString>> friends;
 
-    QString sql = "select friendid, username, remark, grouptype, personalizedsignature from friendlist;";
+    QString sql = "select friendid, username, remark, grouptype, personalizedsignature, imagepath from friendlist;";
 
     QSqlQuery sql_query;
     sql_query.prepare(sql);
@@ -94,6 +93,7 @@ QList<QVector<QString>> DataBase::getFriendList()
         QString remarke = sql_query.value(2).toString();
         QString grouptype = sql_query.value(3).toString();
         QString personalizedsignature = sql_query.value(4).toString();
+        QString imagepath = sql_query.value(5).toString();
 
         QVector<QString> oneFriend;
         oneFriend.append(friendid);
@@ -101,7 +101,8 @@ QList<QVector<QString>> DataBase::getFriendList()
         oneFriend.append(remarke);
         oneFriend.append(grouptype);
         oneFriend.append(personalizedsignature);
-
+        oneFriend.append(imagepath);
+        qDebug() << imagepath;
         friends.append(oneFriend);
     }
 

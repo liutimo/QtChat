@@ -331,12 +331,14 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
                     QString remark = array.at(i).toObject().value("remark").toString();
                     QString grouptype = array.at(i).toObject().value("grouptype").toString();
                     QString personalizedsignature = array.at(i).toObject().value("personalizedsignature").toString();
+                    QString imagepath = array.at(i).toObject().value("imagepath").toString();
 
                     onefriend.append(friendid);
                     onefriend.append(username);
                     onefriend.append(remark);
                     onefriend.append(personalizedsignature);
                     onefriend.append(grouptype);
+                    onefriend.append(imagepath);
 
                     friends.append(onefriend);
                 }
@@ -397,6 +399,9 @@ void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
 {
     qDebug() << bytearray;
 
+    if(bytearray.size() < 3)
+        return ;
+
     QMap<QString, QVector<QStringList>*>& map = AllVariable::getMessageMap();
 
     QJsonParseError error;
@@ -436,6 +441,5 @@ void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
     else
         qDebug() << error.errorString();
 
-    qDebug() << AllVariable::getMessageMap().value("123457")->size();
     emit updateMessageBox();
 }

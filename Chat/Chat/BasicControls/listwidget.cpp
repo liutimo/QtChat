@@ -112,6 +112,7 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
     {
         ListViewItemWidget *frienditem=new ListViewItemWidget();
         frienditem->setUserinfo(onefriend.at(0), onefriend.at(1), onefriend.at(4));
+        frienditem->setImage(onefriend.at(5));
 
         QListWidgetItem *newItem = new QListWidgetItem();
         this->insertItem(groupItemIndexMap.value(onefriend.at(2)) + 1,newItem);

@@ -93,7 +93,7 @@ char *get_friendlist_json(const char *userid)
     memset(sql_getfriends, 0, DATABASE_SQLMAXLENGTH);
 
     sprintf(sql_getgroup, "select distinct grouptype from friendlist where userid='%s';", userid);
-    sprintf(sql_getfriends, "select friendid, username, remark, grouptype, personalizedsignature from friendlist, userinfo "
+    sprintf(sql_getfriends, "select friendid, username, remark, grouptype, personalizedsignature,imagepath from friendlist, userinfo "
                           "where friendlist.userid='%s' and friendid = userinfo.userid;", userid);
 
     //get group
@@ -130,6 +130,7 @@ char *get_friendlist_json(const char *userid)
                 cJSON_AddStringToObject(tmp, "remark", mysql_row[2]);
                 cJSON_AddStringToObject(tmp, "grouptype", mysql_row[3]);
                 cJSON_AddStringToObject(tmp, "personalizedsignature", mysql_row[4]);
+                cJSON_AddStringToObject(tmp, "imagepath", mysql_row[5]);
                 cJSON_AddItemToArray(node, tmp);
             }
             node = node->next;
@@ -257,4 +258,14 @@ char *get_offline_message(const char *userid)
     }
 
     return cJSON_PrintUnformatted(root);
+}
+
+void del_offline_message(const char *userid)
+{
+    char sql_del_offline[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql_del_offline, "delete from offlinemessage where receiverid='%s';", userid);
+
+    if(execute_mysql(sql_del_offline) == -1)
+        print_error_mysql(sql_del_offline);
 }

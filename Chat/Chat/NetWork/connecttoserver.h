@@ -20,6 +20,7 @@ public:
     void sendRequestForwordMessageMsg(RequestForwordMessageMsg *msg);
     void sendRequestUserInfoMsg(RequestUserInfoMsg *msg);
     void sendRequestOfflineMessage();
+    void sendRequestAckOfflineMsg();
 
 protected:
     void recv();
