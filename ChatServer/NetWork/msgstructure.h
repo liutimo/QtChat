@@ -9,11 +9,13 @@ typedef enum _MsgType {
     REQUESTLOGIN,			//请求登陆
     RESPONSELOGIN,			//告知客户端登录状态
     RESPONSEFRIENDLIST,     //好友列表
-    EXIT,
+    EXIT,                   //退出消息
     REQUESTFORWORDMESSAGE,  //请求服务器转发消息
-    RECEIVEDMESSAGE,
-    RESPONSEUSERINFO,
-    REQUESTUSERINFO
+    RECEIVEDMESSAGE,        //收到消息
+    RESPONSEUSERINFO,       //回应登录用户的信息
+    REQUESTUSERINFO,        //请求登录用户的信息
+    REQUESTOFFLINEMESSAGE,  //请求当前登录用户的离线消息
+    RESPONSEOFFLINEMESSAGE  //响应用户的请求离线消息的消息
 }MsgType;
 
 
@@ -93,7 +95,21 @@ typedef struct _ResponseUserinfo {
     char userinfo[0];
 }ResponseUserinfo;
 
+
+//请求用户的用户信息。是一个空包，因为并不需要用户任何的标志，仅仅凭借当前的fd就能获取用户的用户id
 typedef struct _RequestUserInfoMsg {
 }RequestUserInfoMsg;
+
+
+//请求登录用户的离线消息，发送一个空包
+typedef struct _RequestOfflineMessage {
+}RequestOfflineMessage;
+
+//请求当前用户的离线消息
+typedef struct _ResponseOfflineMessage {
+    int length;
+    char json[0];
+}ResponseOfflineMessage;
+
 
 #endif // MSGSTRUCTURE_H

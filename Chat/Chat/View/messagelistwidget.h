@@ -17,9 +17,10 @@ public:
     int getHeight();
 
 signals:
-
+    void nonewmessage();
 public slots:
     void updateMessage();
+    void showChatWidget(const QString);
 
 protected:
     void resizeEvent(QResizeEvent *event);

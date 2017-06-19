@@ -25,6 +25,8 @@ void sendResponseFriendList(int fd, const char*);
 //sendMessage
 void sendMessage(int fd, ReceivedMessageMsg *msg);
 
+//发送离线消息给用户
+void sendfflineMessage(int fd, ResponseOfflineMessage *msg);
 
 //发生异常时需要发送的消息
 

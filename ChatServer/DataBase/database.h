@@ -51,5 +51,6 @@ void set_chatlog(const char *sender, const char *receiver, const char *content, 
 //store offline message;
 void set_offline_message(const char *sender, const char *receiver, const char *content, const char *fontfamliy, const char *fontsize, const char *fontcolor);
 
-
+//查找离线消息
+char *get_offline_message(const char *userid);
 #endif // !DATABASE_H

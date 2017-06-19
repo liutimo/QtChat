@@ -20,6 +20,7 @@ protected:
 
 private slots:
     void setMessage(const QString&);
+public slots:
     void showMessage(const QString &msg, const QString &color, const QString &size, const QString &family);
 
 private:

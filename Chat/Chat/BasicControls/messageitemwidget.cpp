@@ -19,8 +19,8 @@ void MessageItemWidget::init()
 void MessageItemWidget::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton)
-        qDebug() << "s";
-        ;
+       emit itemclicked(friendname->text());
+
     QWidget::mousePressEvent(event);
 }
 

@@ -65,3 +65,9 @@ void sendMessage(int fd, ReceivedMessageMsg *msg)
 {
     sendMsg(fd, RECEIVEDMESSAGE, msg, sizeof(ReceivedMessageMsg) + msg->length);
 }
+
+//发送离线消息给用户
+void sendfflineMessage(int fd, ResponseOfflineMessage *msg)
+{
+    sendMsg(fd, RESPONSEOFFLINEMESSAGE, msg, msg->length + sizeof(ResponseOfflineMessage));
+}

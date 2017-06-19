@@ -195,3 +195,66 @@ void set_offline_message(const char *sender, const char *receiver, const char *c
     if (execute_mysql(sql_insert_offlinemessage) == -1)
         print_error_mysql(sql_insert_offlinemessage);
 }
+
+
+
+/*
+*   JSON 格式
+*   {
+*       'senderid' :
+*        {
+*           "content" : "";
+*           'font': '';
+*           'color' : '';
+*        }
+*   }
+*
+*/
+char *get_offline_message(const char *userid)
+{
+    cJSON *root = cJSON_CreateObject();
+
+    char sql_get_offlinemessage[DATABASE_SQLMAXLENGTH];
+    char sql_get_offlinesenderid[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql_get_offlinemessage, "select senderid, content, fontfamliy, fontsize, fontcolor from offlinemessage where receiverid='%s';", userid);
+    sprintf(sql_get_offlinesenderid, "select distinct senderid from offlinemessage where receiverid='%s';", userid);
+
+
+    if(execute_mysql(sql_get_offlinesenderid) == -1)
+        print_error_mysql(sql_get_offlinesenderid);
+
+    mysql_res = mysql_store_result(mysql);
+
+    while((mysql_row = mysql_fetch_row(mysql_res)) != NULL) {
+        cJSON_AddItemToObject(root, mysql_row[0], cJSON_CreateArray());
+    }
+
+    if(execute_mysql(sql_get_offlinemessage) == -1)
+        print_error_mysql(sql_get_offlinemessage);
+
+    mysql_res = mysql_store_result(mysql);
+
+    while((mysql_row = mysql_fetch_row(mysql_res)) != NULL) {
+        cJSON *node = root->child;
+        while(node)
+        {
+            if(strcmp(node->string, mysql_row[0]) == 0)
+            {
+                cJSON *current = node;
+                if(current == NULL)
+                    printf("null\n");
+
+                cJSON *tmp = cJSON_CreateObject();
+                cJSON_AddStringToObject(tmp, "content", mysql_row[1]);
+                cJSON_AddStringToObject(tmp, "fontfamliy", mysql_row[2]);
+                cJSON_AddStringToObject(tmp, "fontsize", mysql_row[3]);
+                cJSON_AddStringToObject(tmp, "fontcolor", mysql_row[4]);
+                cJSON_AddItemToArray(node, tmp);
+            }
+            node = node->next;
+        }
+    }
+
+    return cJSON_PrintUnformatted(root);
+}

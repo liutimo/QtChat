@@ -1,6 +1,7 @@
 #include "listviewitemwidget.h"
 #include "DataBase/database.h"
 #include "View/chatwidget.h"
+#include "../allvariable.h"
 #include "headicon.h"
 #include <QPixmap>
 #include <QLabel>
@@ -79,7 +80,16 @@ void ListViewItemWidget::contextMenuEvent(QContextMenuEvent *event)
 
 void ListViewItemWidget::listWidgetMenuTriggered()
 {
-    ChatWidget *chat = new ChatWidget();
+    QMap<QString, ChatWidget*>& chatwidgets = AllVariable::getChatWidgetMap();
+
+    ChatWidget *chat = chatwidgets.value(userid);
+
+    if (chat == NULL)
+    {
+        chat = new ChatWidget();
+        chatwidgets.insert(userid, chat);
+    }
+
     chat->setUserName(username);
     chat->setUserid(userid);
     chat->show();

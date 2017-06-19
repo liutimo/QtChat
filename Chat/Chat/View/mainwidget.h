@@ -33,14 +33,16 @@ private:
 signals:
     void changeBackGround(QColor color);
     void loadFinished();
+    void updateMessageBox();
 private slots:
     void changePureColorSkin(QColor );
     void changeImageSkin(const QString &);
     void showSkinManageWidget();
     void changSelectedButton();
 
-    void receiveFriendList(QByteArray);
-    void receiveUserInfo(QByteArray);
+    void receiveFriendList(const QByteArray&);
+    void receiveUserInfo(const QByteArray&);
+    void receiveOfflineMessage(const QByteArray&);
 
     void changeStatus();
 private:

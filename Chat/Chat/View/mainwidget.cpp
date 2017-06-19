@@ -108,9 +108,11 @@ void MainWidget::init()
 
     RequestUserInfoMsg r;
     ConnectToServer::getInstance()->sendRequestUserInfoMsg(&r);
+    ConnectToServer::getInstance()->sendRequestOfflineMessage();
 
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseUserInfo, this, &MainWidget::receiveUserInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
+    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedOfflineMessage, this, &MainWidget::receiveOfflineMessage);
 }
 
 void MainWidget::loadSetting()
@@ -228,7 +230,7 @@ void MainWidget::changSelectedButton()
         stackwidget->setCurrentIndex(2);
 }
 
-void MainWidget::receiveFriendList(QByteArray bytearray)
+void MainWidget::receiveFriendList(const QByteArray& bytearray)
 {
 
     parseFriend(bytearray);
@@ -298,7 +300,7 @@ void MainWidget::changeStatus()
     }
 }
 
-void MainWidget::receiveUserInfo(QByteArray bytearry)
+void MainWidget::receiveUserInfo(const QByteArray& bytearry)
 {
     parseUserInfo(bytearry);
 }
@@ -389,4 +391,51 @@ void MainWidget::parseUserInfo(const QByteArray &bytearray)
     }
     else
         qDebug() << error.errorString();
+}
+
+void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
+{
+    qDebug() << bytearray;
+
+    QMap<QString, QVector<QStringList>*>& map = AllVariable::getMessageMap();
+
+    QJsonParseError error;
+    QJsonDocument document = QJsonDocument::fromJson(bytearray, &error);
+
+    if(!document.isNull())
+    {
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+
+            //a is friends group by grouptype
+            for(auto name : object.keys())
+            {
+                QJsonArray array = object.value(name).toArray();
+                int size = array.size();
+                QVector<QStringList>* msgs = map.value(name);
+                if(msgs == NULL)
+                {
+                    msgs = new QVector<QStringList>();
+                    map.insert(name, msgs);
+                }
+                for(int i = 0; i < size; ++i)
+                {
+                    QStringList msg;
+                    QString content = array.at(i).toObject().value("content").toString();
+                    QString fontfamily = array.at(i).toObject().value("fontfamliy").toString();
+                    QString fontsize = array.at(i).toObject().value("fontsize").toString();
+                    QString fontcolor = array.at(i).toObject().value("fontcolor").toString();
+
+                    msg << fontfamily << fontsize << fontcolor << content;
+                    msgs->append(msg);
+                }
+            }
+        }
+    }
+    else
+        qDebug() << error.errorString();
+
+    qDebug() << AllVariable::getMessageMap().value("123457")->size();
+    emit updateMessageBox();
 }

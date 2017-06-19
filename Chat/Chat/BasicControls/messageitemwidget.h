@@ -22,6 +22,7 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 signals:
+    void itemclicked(const QString);
 
 public slots:
 

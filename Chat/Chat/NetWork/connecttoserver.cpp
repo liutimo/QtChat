@@ -87,6 +87,15 @@ void ConnectToServer::sendRequestUserInfoMsg(RequestUserInfoMsg *msg)
     send(REQUESTUSERINFO, (char *)msg, sizeof(RequestUserInfoMsg));
 }
 
+void ConnectToServer::sendRequestOfflineMessage()
+{
+    RequestOfflineMessage *msg = new  RequestOfflineMessage;
+
+    send(REQUESTOFFLINEMESSAGE, (char*)msg, sizeof(RequestOfflineMessage));
+
+    delete msg;
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
@@ -131,6 +140,11 @@ void ConnectToServer::recv()
 //        emit receivedMessage(message, rmsg->color, rmsg->size, rmsg->font);
         emit receivedMessage(rmsg);
         break;
+    }
+    case RESPONSEOFFLINEMESSAGE: {
+        ResponseOfflineMessage *rom = (ResponseOfflineMessage*)new char[msg->len];
+        memcpy(rom, msg->data, msg->len);
+        emit receivedOfflineMessage(QByteArray(rom->json));
     }
     default:
         break;

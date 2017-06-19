@@ -19,6 +19,7 @@ public:
     void sendHeartBeatMsg(HeartBeatMsg *hearteabtmsg);
     void sendRequestForwordMessageMsg(RequestForwordMessageMsg *msg);
     void sendRequestUserInfoMsg(RequestUserInfoMsg *msg);
+    void sendRequestOfflineMessage();
 
 protected:
     void recv();
@@ -30,6 +31,7 @@ signals:
 //    void receivedMessage(const QString &msg, const QString &color, const QString &size,  const QString &family);
     void receivedMessage(ReceivedMessageMsg *msg);
     void responseUserInfo(QByteArray);
+    void receivedOfflineMessage(QByteArray);
 
 private:
     ConnectToServer(QObject *parent = Q_NULLPTR);

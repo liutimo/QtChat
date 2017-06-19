@@ -22,6 +22,7 @@
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QTimerEvent>
+#include <QApplication>
 #include <QSystemTrayIcon>
 #include <QCryptographicHash>
 
@@ -178,10 +179,19 @@ void LoginWidget::loginStatus(LoginStatus ls)
     {
     case LOGINSUCCESS:
     {
+
+        AllVariable::setLoginUserId(cb_username->currentText());
+
         QThread::sleep(1);
         mainwidget = new MainWidget();
         connect(mainwidget, &MainWidget::loadFinished, this, &LoginWidget::showMainWidget);
-
+        connect(mainwidget, &MainWidget::updateMessageBox, this, [this](){
+            qDebug() << "update mesage" << AllVariable::getMessageMap().value("123457")->size();
+            timer->start();
+            action_newmessage->setEnabled(true);
+            l->updateMessage();
+            l->setFixedSize(200, l->getHeight());
+        });
         startTimer(2000);
         break;
     }
@@ -258,7 +268,7 @@ void LoginWidget::init_traymenu()
     QAction *action_exit = new QAction("退出");
 
     connect(action_exit, &QAction::triggered, this, [this](){
-        this->close();
+        QApplication::quit();
     });
 
     connect(action_show, &QAction::triggered, this, [this](){
@@ -289,14 +299,19 @@ void LoginWidget::init_traymenu()
     connect(tray, &QSystemTrayIcon::activated, this, &LoginWidget::iconIsActived);
 
     l = new MessageListWidget();
+
+    connect(l, &MessageListWidget::nonewmessage, this, [this](){
+        action_newmessage->setEnabled(false);
+        timer->stop();
+        tray->setIcon(QIcon(":/timg (1).jpg"));
+    });
+
     l->hide();
 }
 
 void LoginWidget::handleMessage(ReceivedMessageMsg *msg)
 {
-    timer->start();
-    action_newmessage->setEnabled(true);
-    QStringList messageinfo;
+
 
     char *m = new char[msg->length + 1];
     strcpy(m, msg->message);
@@ -308,24 +323,35 @@ void LoginWidget::handleMessage(ReceivedMessageMsg *msg)
     QString fontcolor(msg->color);
     QString message(m);
 
-    messageinfo << fontfamily << fontsize << fontcolor << message;
-
-    QMap<QString, QVector<QStringList>*> &messagemap = AllVariable::getMessageMap();
-
-    if(messagemap.value(friendid) == NULL)
+    ChatWidget *w = AllVariable::getChatWidgetMap().value(friendid);
+    if(w == NULL || w->isHidden())
     {
-        QVector<QStringList> *messages = new QVector<QStringList>();
-        messages->append(messageinfo);
-        messagemap.insert(friendid, messages);
+
+        timer->start();
+        action_newmessage->setEnabled(true);
+
+        QStringList messageinfo;
+        messageinfo << fontfamily << fontsize << fontcolor << message;
+
+        QMap<QString, QVector<QStringList>*> &messagemap = AllVariable::getMessageMap();
+
+        if(messagemap.value(friendid) == NULL)
+        {
+            QVector<QStringList> *messages = new QVector<QStringList>();
+            messages->append(messageinfo);
+            messagemap.insert(friendid, messages);
+        }
+        else
+        {
+            messagemap.value(friendid)->append(messageinfo);
+        }
+        delete msg;
+        l->updateMessage();
+        l->setFixedSize(200, l->getHeight());
     }
     else
-    {
-        messagemap.value(friendid)->append(messageinfo);
-    }
-    delete msg;
-    l->updateMessage();
-    qDebug() << l->width() << "--" << l->getHeight();
-    l->setFixedSize(200, l->getHeight());
+        w->showMessage(message, fontcolor, fontsize, fontfamily);
+
 }
 
 void LoginWidget::setTrayIcon()
@@ -334,7 +360,7 @@ void LoginWidget::setTrayIcon()
         tray->setIcon(QIcon(":/timg (1).jpg"));
     else
         tray->setIcon(QIcon());
-    ++flag; 
+    ++flag;
 }
 void LoginWidget::iconIsActived(QSystemTrayIcon::ActivationReason e)
 {

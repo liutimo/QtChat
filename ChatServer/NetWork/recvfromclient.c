@@ -68,6 +68,16 @@ void recvMsg(int fd)
         close_mysql();
         break;
     }
+    case REQUESTOFFLINEMESSAGE: {
+        init_mysql();
+        char *json = get_offline_message(findOnlineUserWithFd(fd));
+        ResponseOfflineMessage *rom = (ResponseOfflineMessage*)malloc(sizeof(ResponseOfflineMessage) + strlen(json));
+        rom->length = strlen(json);
+        memcpy(rom->json, json, rom->length);
+        sendfflineMessage(fd, rom);
+        free(rom);
+        close_mysql();
+    }
     default:
         break;
     }
