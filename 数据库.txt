@@ -67,6 +67,30 @@ create table friendlist(
 
 select distinct grouptype from friendlist where userid='123456';
 
+create table chatlog(
+	id bigint auto_increment, primary key,
+	senderid char(10) not null,
+	receiverid char(10) not null, 
+	content text, 
+	fontfamliy varchar(50), 
+	fontsize char(3), 
+	fontcolor char(20),
+	foreign key(senderid) references friendlist(friendid),
+	foreign key(receiverid) references friendlist(friendid)
+);
+
+create table offlinemessage(
+	id bigint auto_increment primary key,
+	senderid char(10) not null,
+	receiverid char(10) not null, 
+	content text, 
+	fontfamliy varchar(50), 
+	fontsize char(3), 
+	fontcolor char(20),
+	foreign key(senderid) references friendlist(friendid),
+	foreign key(receiverid) references friendlist(friendid)
+);
+
 
 
 
