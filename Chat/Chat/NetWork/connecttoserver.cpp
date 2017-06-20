@@ -8,8 +8,6 @@ ConnectToServer::ConnectToServer(QObject *parent) : QTcpSocket(parent)
     connectToHost(IP, PORT);
 
     connect(this, &ConnectToServer::readyRead, this, &ConnectToServer::recv);
-    //    connect(this, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
-    //          [=](QAbstractSocket::SocketError socketError){ qDebug() << socketError; });
 }
 
 ConnectToServer* ConnectToServer::server = NULL;
@@ -54,13 +52,13 @@ void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
 
 
     if( -1 == write((char *)&r, sizeof(r))) {
-        qDebug() << "??????????";
+        qDebug() << "发送 Request包失败";
         delete []buf;
         return;
     }
 
     if (-1 == write((char *)msg, r.len))
-        qDebug() << "??????????";
+        qDebug() << "发送 Msg包失败";
 
     delete []buf;
 
@@ -143,10 +141,6 @@ void ConnectToServer::recv()
     case RECEIVEDMESSAGE: {
         ReceivedMessageMsg *rmsg = (ReceivedMessageMsg*)new char[msg->len];
         memcpy(rmsg, msg->data, msg->len);
-//        char  *message = new char[rmsg->length + 1];
-//        memcpy(message, rmsg->message, rmsg->length);
-//        message[rmsg->length] = '\0';
-//        emit receivedMessage(message, rmsg->color, rmsg->size, rmsg->font);
         emit receivedMessage(rmsg);
         break;
     }

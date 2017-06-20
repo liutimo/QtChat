@@ -100,6 +100,8 @@ void LoginWidget::init()
 
     /*message hite*/
     connect(server, &ConnectToServer::receivedMessage, this, &LoginWidget::handleMessage);
+    connect(server, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
+          this, &LoginWidget::socketError);
 }
 
 void LoginWidget::addSetting(int status)
@@ -221,10 +223,11 @@ void LoginWidget::recvHeartBeat()
 void LoginWidget::timerEvent(QTimerEvent *event)
 {
     qDebug() << "发送心跳包";
-    if(i > 3)
+    if(i == 3)
     {
         qDebug() << "离线";
         i = 0;
+        mainwidget->setSatus(Offline);
         killTimer(event->timerId());
     }
     else
@@ -237,7 +240,13 @@ void LoginWidget::timerEvent(QTimerEvent *event)
 
 void LoginWidget::socketError(QAbstractSocket::SocketError socketError)
 {
-
+    switch (socketError) {
+    case QAbstractSocket::RemoteHostClosedError:
+        i = 3;
+        break;
+    default:
+        break;
+    }
 }
 void LoginWidget::showMainWidget()
 {
@@ -258,12 +267,12 @@ void LoginWidget::init_traymenu()
     action_newmessage = new QAction("查看新消息");
     connect(action_newmessage, &QAction::triggered, this, &LoginWidget::showMessageBox);
 
-    QAction *state_online = new QAction(QIcon(":/Resource/state_online.png"), "在线");
-    QAction *state_busy = new QAction(QIcon(":/Resource/state_busy.png"), "忙碌");
-    QAction *state_hide = new QAction(QIcon(":/Resource/state_hide.png"), "隐身");
-    QAction *state_away = new QAction(QIcon(":/Resource/state_away.png"), "离开");
-    QAction *state_Qme = new QAction(QIcon(":/Resource/state_Qme.png"), "离线");
-    QAction *state_notdisturb = new QAction(QIcon(":/Resource/state_notdisturb.png"), "请勿打扰");
+    QAction *state_online = new QAction(QIcon(":/Resource/status/imonline@2x.png"), "在线");
+    QAction *state_busy = new QAction(QIcon(":/Resource/status/away@2x.png"), "忙碌");
+    QAction *state_hide = new QAction(QIcon(":/Resource/status/invisible@2x.png"), "隐身");
+    QAction *state_away = new QAction(QIcon(":/Resource/status/away@2x.png"), "离开");
+    QAction *state_Qme = new QAction(QIcon(":/Resource/status/imoffline@2x.png"), "离线");
+    QAction *state_notdisturb = new QAction(QIcon(":/Resource/status/mute@2x.png"), "请勿打扰");
     QAction *action_show = new QAction("打开主窗口");
     QAction *action_exit = new QAction("退出");
 

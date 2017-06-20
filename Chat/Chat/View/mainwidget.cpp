@@ -73,7 +73,7 @@ void MainWidget::init()
     tb_status = new QToolButton(this);
     tb_status->setStyleSheet("QToolButton{border:0px;background-color: rgba(255, 255, 255, 0);}"
                              "QToolButton:hover{border:0px;background-color: rgba(255, 255, 255, 255);}");
-    tb_status->setIcon(QIcon(":/Resource/state_online.png"));
+    tb_status->setIcon(QIcon(":/Resource/status/imonline@2x.png"));
 
     menu = new QMenu;
     init_menu();
@@ -247,25 +247,25 @@ void MainWidget::receiveFriendList(const QByteArray& bytearray)
 
 void MainWidget::init_menu()
 {
-    state_online = new QAction(QIcon(":/Resource/state_online.png"), "在线");
-    state_busy = new QAction(QIcon(":/Resource/state_busy.png"), "忙碌");
-    state_hide = new QAction(QIcon(":/Resource/state_hide.png"), "隐身");
-    state_away = new QAction(QIcon(":/Resource/state_away.png"), "离开");
-    state_Qme = new QAction(QIcon(":/Resource/state_Qme.png"), "离线");
-    state_notdisturb = new QAction(QIcon(":/Resource/state_notdisturb.png"), "请勿打扰");
+    state_online = new QAction(QIcon(":/Resource/status/imonline@2x.png"), "在线");
+    state_busy = new QAction(QIcon(":/Resource/status/busy@2x.png"), "忙碌");
+    state_hide = new QAction(QIcon(":/Resource/status/invisible@2x.png"), "隐身");
+    state_away = new QAction(QIcon(":/Resource/status/away@2x.png"), "离开");
+    state_offline = new QAction(QIcon(":/Resource/status/imoffline@2x.png"), "离线");
+    state_notdisturb = new QAction(QIcon(":/Resource/status/mute@2x.png"), "请勿打扰");
 
     menu->addAction(state_online);
     menu->addAction(state_busy);
     menu->addAction(state_hide);
     menu->addAction(state_away);
-    menu->addAction(state_Qme);
+    menu->addAction(state_offline);
     menu->addAction(state_notdisturb);
 
     connect(state_online, &QAction::triggered, this, &MainWidget::changeStatus);
     connect(state_busy, &QAction::triggered, this, &MainWidget::changeStatus);
     connect(state_hide, &QAction::triggered, this, &MainWidget::changeStatus);
     connect(state_away, &QAction::triggered, this, &MainWidget::changeStatus);
-    connect(state_Qme, &QAction::triggered, this, &MainWidget::changeStatus);
+    connect(state_offline, &QAction::triggered, this, &MainWidget::changeStatus);
     connect(state_notdisturb, &QAction::triggered, this, &MainWidget::changeStatus);
 
 }
@@ -276,27 +276,27 @@ void MainWidget::changeStatus()
 
     if (action == state_online)
     {
-        tb_status->setIcon(QIcon(":/Resource/state_online.png"));
+        tb_status->setIcon(QIcon(":/Resource/status/imonline@2x.png"));
     }
     else if (action == state_busy)
     {
-        tb_status->setIcon(QIcon(":/Resource/state_busy.png"));
+        tb_status->setIcon(QIcon(":/Resource/status/busy@2x.png"));
     }
     else if (action == state_hide)
     {
-        tb_status->setIcon(QIcon(":/Resource/state_hide.png"));
+        tb_status->setIcon(QIcon(":/Resource/status/invisible@2x.png"));
     }
     else if (action == state_away)
     {
-        tb_status->setIcon(QIcon(":/Resource/state_away.png"));
+        tb_status->setIcon(QIcon(":/Resource/status/away@2x.png"));
     }
-    else if (action == state_Qme)
+    else if (action == state_offline)
     {
-        tb_status->setIcon(QIcon(":/Resource/state_Qme.png"));
+        tb_status->setIcon(QIcon(":/Resource/status/imoffline@2x.png"));
     }
     else if (action == state_notdisturb)
     {
-        tb_status->setIcon(QIcon(":/Resource/state_notdisturb.png"));
+        tb_status->setIcon(QIcon(":/Resource/status/mute@2x.png"));
     }
 }
 
@@ -442,4 +442,30 @@ void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
         qDebug() << error.errorString();
 
     emit updateMessageBox();
+}
+
+void MainWidget::setSatus(Status status)
+{
+    switch (status) {
+    case Online:
+        tb_status->setIcon(QIcon(":/Resource/status/imonline@2x.png"));
+        break;
+    case Offline:
+        tb_status->setIcon(QIcon(":/Resource/status/imoffline@2x.png"));
+        break;
+    case Hide:
+        tb_status->setIcon(QIcon(":/Resource/status/invisible@2x.png"));
+        break;
+    case Busy:
+        tb_status->setIcon(QIcon(":/Resource/status/busy@2x.png"));
+        break;
+    case NotDisturb:
+        tb_status->setIcon(QIcon(":/Resource/status/mute@2x.png"));
+        break;
+    case Away:
+        tb_status->setIcon(QIcon(":/Resource/status/away@2x.png"));
+        break;
+    default:
+        break;
+    }
 }

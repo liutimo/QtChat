@@ -17,11 +17,22 @@ class UserLineEdit;
 class QMenu;
 QT_END_NAMESPACE
 
+
+typedef enum _Status{
+    Online = 0,
+    Offline,
+    Hide,
+    Busy,
+    NotDisturb,
+    Away
+}Status;
+
 class MainWidget : public BasicWidget
 {
     Q_OBJECT
 public:
     MainWidget(QWidget *parent = Q_NULLPTR);
+    void setSatus(Status status);
 
 protected:
     void resizeEvent(QResizeEvent *);
@@ -87,7 +98,7 @@ private:
     QAction *state_busy;
     QAction *state_hide;
     QAction *state_away;
-    QAction *state_Qme;
+    QAction *state_offline;
     QAction *state_notdisturb;
 };
 
