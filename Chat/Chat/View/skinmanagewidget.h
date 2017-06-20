@@ -11,16 +11,30 @@ class SkinManageWidget : public BasicWidget
 public:
     static SkinManageWidget* getInstance();
 
+protected:
+    void paintEvent(QPaintEvent*);
+
 signals:
     void updatePureColorSkin(QColor);
     void updateImageSkin(const QString &);
 
 private slots:
-    void changPureColorSkin(QColor);
-    void changImageSkin(QString);
+    void changePureColorSkin(QColor );
+    void changeImageSkin(const QString &);
     void selectImageFromFileSystem();
 
 private:
+    typedef enum _SkinType{
+        PURECOLOR = 0,          //纯色
+        LOCALIMAGE,             //本地图片
+        NETWORKIMAGE            //网络图片
+    }SkinType;
+    //头像
+    SkinType skinType;
+    QColor color;               //纯色皮肤颜色
+    QString skinPath;           //本地文件皮肤
+
+
     SkinManageWidget(QWidget *parent = Q_NULLPTR);
     void init();
     QToolButton *tbtn_selectImage;

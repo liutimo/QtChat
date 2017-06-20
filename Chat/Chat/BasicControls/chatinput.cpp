@@ -119,6 +119,8 @@ void ChatInput::init()
     v_layout->addLayout(h_layout_middle);
     v_layout->addLayout(h_layout_bottom);
     setLayout(v_layout);
+
+    this->setStyleSheet("QToolButton{background-color: rgba(255, 255, 255, 0);}");
 }
 
 void ChatInput::test()

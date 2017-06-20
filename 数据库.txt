@@ -16,7 +16,8 @@ create table userinfo(
 	personalizedsignature varchar(200),
 	mobile char(11),
 	mail varchar(30),
-	registertime timestamp not null default current_timestamp,
+	registertime timestamp not null default current_timestamp,	
+	imagepath varchar(50) not null,
 	primary key(userid),
 	foreign key(userid) references user(userid)
 );

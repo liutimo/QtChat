@@ -52,27 +52,29 @@ void ListWidget::mousePressEvent(QMouseEvent *event)
         groupNameEdit->hide();
     }
     currentItem = this->itemAt(mapFromGlobal(QCursor::pos()));//鼠标位置的Item，不管右键左键都获取
-    if(event->button()==Qt::LeftButton && currentItem!=NULL && currentItem==groupMap.value(currentItem))//如果点击的左键并且是点击的是组
+    if(event->button()==Qt::LeftButton && currentItem!=NULL)
     {
-        if(isHideMap.value(currentItem))                                  //如果先前是隐藏，则显示
-        {
-            foreach(QListWidgetItem* subItem, groupMap.keys(currentItem))//遍历组的对应的项（包括自身和好友）
-                if(subItem!=currentItem)                                 //如果是组的话不进行处理
-                {
-                    subItem->setHidden(false);                            //好友全部显示
-                }
-            isHideMap.insert(currentItem,false);                          //设置该组为显示状态
+        QVector<QListWidgetItem*> *v = listmap.value(currentItem->text());
+
+        if(v==NULL)
+            return;
+
+        if(isHide.value(currentItem)) {
+            for(int i = 0; i < v->size(); ++i)
+            {
+                v->at(i)->setHidden(false);
+            }
+            isHide[currentItem] = false;
             currentItem->setIcon(QIcon(":/Resource/mainwidget/arrowdow.png"));
         }
-        else                                                             //否则，先前是显示，则隐藏
+        else
         {
-            foreach(QListWidgetItem* subItem, groupMap.keys(currentItem))//遍历组的对应的项（包括自身和好友）
-                if(subItem!=currentItem)                                 //如果是组的话不进行处理
-                {
-                    subItem->setHidden(true);                            //好友全部隐藏
-                }
-             isHideMap.insert(currentItem,true);                          //设置该组为隐藏状态
-             currentItem->setIcon(QIcon(":/Resource/mainwidget/arrowright"));
+            for(int i = 0; i < v->size(); ++i)
+            {
+                v->at(i)->setHidden(true);
+            }
+            isHide[currentItem] = true;
+            currentItem->setIcon(QIcon(":/Resource/mainwidget/arrowright.png"));
         }
     }
 }
@@ -81,13 +83,11 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QListWidget::contextMenuEvent(event);           //调用基类事件
 
-    if(currentItem==NULL)                           //如果点击到的是空白处
+    if(currentItem == NULL)                           //如果点击到的是空白处
     {
         blankMenu->exec(QCursor::pos());
         return;
     }
-    if(currentItem==groupMap.value(currentItem))    // 如果点击到的是组
-        groupMenu->exec(QCursor::pos());
 
 }
 
@@ -96,16 +96,15 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
     for(int i = 0; i < groups.size(); ++i)
     {
         QString group = groups.at(i);
-
         QListWidgetItem *newItem=new QListWidgetItem(group);
         newItem->setIcon(QIcon(":/Resource/mainwidget/arrowright.png"));
         newItem->setSizeHint(QSize(this->width(),25));
         this->addItem(newItem);
 
-        groupMap.insert(newItem,newItem);
-        isHideMap.insert(newItem,true);
+        isHide.insert(newItem, true);
 
-        groupItemIndexMap.insert(group, i);
+        groupItemIndex.append(new QPair<QString, int>(group, i));
+        listmap.insert(group, new QVector<QListWidgetItem*>());
     }
 
     for(QVector<QString> onefriend : friends)
@@ -114,24 +113,43 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         frienditem->setUserinfo(onefriend.at(0), onefriend.at(1), onefriend.at(4));
         frienditem->setImage(onefriend.at(5));
 
+
+        QString groupname = onefriend.at(3);
+
         QListWidgetItem *newItem = new QListWidgetItem();
-        this->insertItem(groupItemIndexMap.value(onefriend.at(2)) + 1,newItem);
-        this->setItemWidget(newItem, frienditem);
-        groupMap.insert(newItem,currentItem);   //加进容器，key为好友，value为组
+        int index = 0;
 
-
-        QMap<QString, int>::const_iterator iter = groupItemIndexMap.find(onefriend.at(2));
-        for(; iter != groupItemIndexMap.cend(); ++iter)
+        for(int i = 0; i < groupItemIndex.size(); ++i)
         {
-            groupItemIndexMap[iter.key()] = iter.value() + 1;
+            if(groupItemIndex.at(i)->first == groupname)
+            {
+                index = groupItemIndex.at(i)->second;
+                break;
+            }
         }
+
+        insertItem(index + 1,newItem);
+        setItemWidget(newItem, frienditem);
+        newItem->setHidden(true);
+        listmap.value(groupname)->append(newItem);
+
+
+        for(int i = index; i <groupItemIndex.size(); ++i)
+        {
+            groupItemIndex[i]->second++;
+        }
+
+    }
+    for(int i = 0; i <groupItemIndex.size(); ++i)
+    {
+        qDebug() <<groupItemIndex[i]->first << groupItemIndex[i]->second;
     }
 
 }
 
 void ListWidget::listWidgetMenuTriggered()
 {
-//    ChatWidget *w = new ChatWidget();
-//    w->show();
+    //    ChatWidget *w = new ChatWidget();
+    //    w->show();
 
 }

@@ -1,9 +1,11 @@
 #include "chatwidget.h"
 #include "../allvariable.h"
 #include "DataBase/database.h"
+#include "View/skinmanagewidget.h"
 #include "BasicControls/headicon.h"
 #include "NetWork/connecttoserver.h"
 #include "BasicControls/pushbutton.h"
+
 #include "Setting/rwsetting.h"
 
 #include <QLabel>
@@ -53,6 +55,13 @@ void ChatWidget::init()
 
     textedit = new QTextEdit(this);
     textedit->setReadOnly(true);
+    textedit->setStyleSheet("background-color: rgba(255, 255, 255, 200);");
+
+    chatinput = new ChatInput(this);
+    chatinput->setObjectName("chatinput");
+    chatinput->setStyleSheet("background-color: rgba(255, 255, 255, 200);");
+    connect(chatinput, &ChatInput::sendMsg, this, &ChatWidget::setMessage);
+
 
     QSettings *setting = RWSetting::getInstance()->getSetting();
     SkinType skintype = (SkinType)setting->value("SkinType").toInt();
@@ -66,11 +75,8 @@ void ChatWidget::init()
     default:
         break;
     }
-
-    chatinput = new ChatInput(this);
-    chatinput->setObjectName("chatinput");
-    connect(chatinput, &ChatInput::sendMsg, this, &ChatWidget::setMessage);
-    //    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedMessage, this, &ChatWidget::showMessage);
+    connect(SkinManageWidget::getInstance(), &SkinManageWidget::updatePureColorSkin, this, &ChatWidget::changePureColorSkin);
+    connect(SkinManageWidget::getInstance(), &SkinManageWidget::updateImageSkin, this, &ChatWidget::changeImageSkin);
 
 }
 
@@ -92,6 +98,7 @@ void ChatWidget::resizeEvent(QResizeEvent *event)
 
     chatinput->resize(width() , 200);
     chatinput->move(0, height() - 200);
+
 }
 
 void ChatWidget::paintEvent(QPaintEvent *event)
@@ -102,6 +109,7 @@ void ChatWidget::paintEvent(QPaintEvent *event)
     switch (skinType) {
     case PURECOLOR:
     {
+        color.setAlpha(200);
         p.setBrush(color);
         p.drawRect(0, 0, width(), height());
         //emit changeBackGround(color);

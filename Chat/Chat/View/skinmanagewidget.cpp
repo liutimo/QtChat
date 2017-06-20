@@ -1,9 +1,12 @@
 #include "skinmanagewidget.h"
-
+#include "Setting/rwsetting.h"
 #include "BasicControls/purecolorlabel.h"
 #include "BasicControls/imageskinlabel.h"
-#include <QToolButton>
+
 #include <QMutex>
+#include <QPainter>
+#include <QSettings>
+#include <QToolButton>
 #include <QFileDialog>
 #include <QDesktopServices>
 SkinManageWidget::SkinManageWidget(QWidget *parent) : BasicWidget(parent)
@@ -32,7 +35,7 @@ void SkinManageWidget::init()
                                                    QString::number(s++) + ".jpg", this);
             l->resize(100, 150);
             l->move(j * 101 + 4,  i * 151 + 29);
-            connect(l, &ImageSkinLabel::selecteImage, this, &SkinManageWidget::changImageSkin);
+            connect(l, &ImageSkinLabel::selecteImage, this, &SkinManageWidget::changeImageSkin);
         }
     }
 
@@ -43,7 +46,7 @@ void SkinManageWidget::init()
         l->setColor(QColor(qrand() % 256, qrand() % 256, qrand() % 256));
         l->resize(40, 40);
         l->move(i*41, 505);
-        connect(l, &PureColorLabel::selecteColor, this, &SkinManageWidget::changPureColorSkin);
+        connect(l, &PureColorLabel::selectedColor, this, &SkinManageWidget::changePureColorSkin);
     }
 
     tbtn_selectImage = new QToolButton(this);
@@ -51,19 +54,40 @@ void SkinManageWidget::init()
     tbtn_selectImage->setFixedSize(72, 24);
     tbtn_selectImage->move(5, 555);
 
+    QSettings *setting = RWSetting::getInstance()->getSetting();
+    SkinType skintype = (SkinType)setting->value("SkinType").toInt();
+
+    switch (skintype) {
+    case PURECOLOR:
+        changePureColorSkin((setting->value("SKINCOLOR")).value<QColor>());
+        break;
+    case LOCALIMAGE:
+        changeImageSkin(setting->value("SKINIMAGE").toString());
+    default:
+        break;
+    }
 
     connect(tbtn_selectImage, &QToolButton::clicked, this, &SkinManageWidget::selectImageFromFileSystem);
 }
 
-void SkinManageWidget::changPureColorSkin(QColor color)
+void SkinManageWidget::changePureColorSkin(QColor _color)
 {
-    setTitleBackgroundColor(color);
+    RWSetting::getInstance()->getSetting()->setValue("SkinType", PURECOLOR);
+    RWSetting::getInstance()->getSetting()->setValue("SKINCOLOR", _color);
+    skinType = PURECOLOR;
+    color = _color;
+    update();
+//    setTitleBackgroundColor(color);
     emit updatePureColorSkin(color);
 }
 
-void SkinManageWidget::changImageSkin(QString path)
+void SkinManageWidget::changeImageSkin(const QString& path)
 {
-    //setTitleBackgroundColor(color);
+    RWSetting::getInstance()->getSetting()->setValue("SkinType", LOCALIMAGE);
+    RWSetting::getInstance()->getSetting()->setValue("SKINIMAGE", path);
+    skinType = LOCALIMAGE;
+    skinPath = path;
+    update();
     emit updateImageSkin(path);
 }
 
@@ -91,3 +115,26 @@ SkinManageWidget* SkinManageWidget::getInstance()
     return instance;
 }
 
+void SkinManageWidget::paintEvent(QPaintEvent*event)
+{
+    QPainter p(this);
+    p.setPen(Qt::NoPen);
+
+    switch (skinType) {
+    case PURECOLOR:
+    {
+        p.setBrush(color);
+        p.drawRect(0, 0, width(), height());
+        //emit changeBackGround(color);
+        break;
+    }
+    case LOCALIMAGE:
+    {
+        p.drawPixmap(0, 0, width(), height(),
+                     QPixmap(skinPath).copy(0,0,width(), height()));
+        break;
+    }
+    default:
+        break;
+    }
+}

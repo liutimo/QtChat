@@ -24,13 +24,14 @@ private:
     QMenu *groupMenu;//点击组上的菜单
     QMenu *movetoMenu;
 
-    QMap<QListWidgetItem*,QListWidgetItem*> groupMap;   // 组容器 - key:项 value:组
-    QMap<QListWidgetItem*,bool> isHideMap;//用来判断该组是否隐藏了
+    QMap<QString, QVector<QListWidgetItem*>*> listmap;
+    QMap<QListWidgetItem*, bool> isHide;
     QLineEdit *groupNameEdit;//组的名字，重命名的时候需要用到
     QListWidgetItem *currentItem;//当前的项
 
     //保存每个分组的最后一个item的index
-    QMap<QString, int> groupItemIndexMap;
+    //QMap<QString, int> groupItemIndexMap;
+    QVector<QPair<QString, int>*> groupItemIndex;
 
     QPoint item_point;  //menu show on this point
 signals:

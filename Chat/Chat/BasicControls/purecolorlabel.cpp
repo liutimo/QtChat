@@ -22,7 +22,7 @@ void PureColorLabel::mouseReleaseEvent(QMouseEvent *ev)
 {
     if(ev->button() == Qt::LeftButton)
     {
-        emit selecteColor(color);
+        emit selectedColor(color);
     }
 }
 

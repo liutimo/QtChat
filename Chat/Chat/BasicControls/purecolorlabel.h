@@ -13,7 +13,7 @@ public:
     QColor getColor();
 
 signals:
-    void selecteColor(QColor);
+    void selectedColor(QColor);
 
 protected:
     void paintEvent(QPaintEvent *);
