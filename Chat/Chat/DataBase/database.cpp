@@ -64,13 +64,15 @@ void DataBase::setLoaclUserInfo(const QString& userid, const QString &password)
 void DataBase::setFriendList(QList<QVector<QString>> friends)
 {
     QString sql = "insert into friendlist(userid, friendid, username, remark, "
-                  "personalizedsignature, grouptype, imagepath) values('%1', '%2', '%3', '%4', '%5', '%6', '%7')";
+                  "personalizedsignature, grouptype, imagepath, birthofdate"
+                  ", sex, mobile, mail) values('%1', '%2', '%3', '%4', '%5', '%6', '%7', '%8', '%9', '%10', '%11')";
 
     QSqlQuery sql_query;
 
     for (QVector<QString> onefriend : friends)
     {
-        QString s = sql.arg(AllVariable::getLoginUserId(),onefriend[0], onefriend[1], onefriend[2], onefriend[3], onefriend[4], onefriend[5]);
+        QString s = sql.arg(AllVariable::getLoginUserId(),onefriend[0], onefriend[1], onefriend[2], onefriend[3],
+                onefriend[4], onefriend[5], onefriend[6], onefriend[7]).arg(onefriend[8], onefriend[9]);
         qDebug() << s;
         sql_query.prepare(s);
         sql_query.exec();
@@ -148,4 +150,30 @@ void DataBase::moveFriendToGroup(const QString &userid, const QString &group)
     QSqlQuery sql_query;
     sql_query.prepare(sql);
     sql_query.exec();
+}
+
+QVector<QString> DataBase::getFriendInfo(const QString &userid)
+{
+    QString sql("select username, sex, birthofdate, mail, mobile, personalizedsignature, imagepath "
+                "from friendlist where friendid='%1' limit 1;");
+    sql = sql.arg(userid);
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+
+    QVector<QString> info;
+    info.append(userid);
+    while(sql_query.next())
+    {
+        info.append(sql_query.value(0).toString());
+        info.append(sql_query.value(1).toString());
+        info.append(sql_query.value(2).toString());
+        info.append(sql_query.value(3).toString());
+        info.append(sql_query.value(4).toString());
+        info.append(sql_query.value(5).toString());
+        info.append(sql_query.value(6).toString());
+    }
+
+    return info;
 }

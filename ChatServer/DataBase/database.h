@@ -56,4 +56,7 @@ char *get_offline_message(const char *userid);
 
 //删除离线消息
 void del_offline_message(const char *userid);
+
+//移动好友
+void move_friend_to_group(char *userid, char *friendid, char *grouptype);
 #endif // !DATABASE_H

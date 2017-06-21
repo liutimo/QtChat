@@ -103,6 +103,17 @@ void ConnectToServer::sendRequestAckOfflineMsg()
     delete msg;
 }
 
+void ConnectToServer::sendRequestMoveFriendToGroup(const QString&userid,const QString &grouptype)
+{
+    RequestMoveFriendToGroup *msg = new RequestMoveFriendToGroup;
+    strcpy(msg->userid, userid.toUtf8().data());
+    strcpy(msg->grouptype, grouptype.toUtf8().data());
+
+    send(REQUESTMOVEFRIENDTOGROUP, (char*)msg, sizeof(RequestMoveFriendToGroup));
+    delete msg;
+}
+
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()

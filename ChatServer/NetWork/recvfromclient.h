@@ -13,5 +13,7 @@ void handleExitMsg(int fd);
 void handleForwordMessageMsg(int fd, Msg *msg);
 
 void handleOfflineAckMessage(int fd);
+
+void handleMoveFriendToGroup(int fd, RequestMoveFriendToGroup *msg);
 #endif // !RECVFROMCLIENT_H
 

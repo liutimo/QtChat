@@ -346,6 +346,10 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
                     QString grouptype = array.at(i).toObject().value("grouptype").toString();
                     QString personalizedsignature = array.at(i).toObject().value("personalizedsignature").toString();
                     QString imagepath = array.at(i).toObject().value("imagepath").toString();
+                    QString birthofdate = array.at(i).toObject().value("birthofdate").toString();
+                    QString sex = array.at(i).toObject().value("sex").toString();
+                    QString mobile = array.at(i).toObject().value("mobile").toString();
+                    QString mail = array.at(i).toObject().value("mail").toString();
 
                     onefriend.append(friendid);
                     onefriend.append(username);
@@ -353,6 +357,10 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
                     onefriend.append(personalizedsignature);
                     onefriend.append(grouptype);
                     onefriend.append(imagepath);
+                    onefriend.append(birthofdate);
+                    onefriend.append(sex);
+                    onefriend.append(mobile);
+                    onefriend.append(mail);
 
                     friends.append(onefriend);
                 }

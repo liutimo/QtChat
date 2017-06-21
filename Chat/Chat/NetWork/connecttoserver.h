@@ -21,7 +21,7 @@ public:
     void sendRequestUserInfoMsg(RequestUserInfoMsg *msg);
     void sendRequestOfflineMessage();
     void sendRequestAckOfflineMsg();
-
+    void sendRequestMoveFriendToGroup(const QString&userid,const QString &grouptype);
 protected:
     void recv();
 

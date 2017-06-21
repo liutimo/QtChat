@@ -15,7 +15,8 @@ HEADERS += \
     $$PWD/userlineedit.h \
     $$PWD/editinformation.h \
     $$PWD/messageitemwidget.h \
-    $$PWD/numberwidget.h
+    $$PWD/numberwidget.h \
+    $$PWD/showinfowidget.h
 
 SOURCES += \
     $$PWD/headicon.cpp \
@@ -34,7 +35,8 @@ SOURCES += \
     $$PWD/userlineedit.cpp \
     $$PWD/editinformation.cpp \
     $$PWD/messageitemwidget.cpp \
-    $$PWD/numberwidget.cpp
+    $$PWD/numberwidget.cpp \
+    $$PWD/showinfowidget.cpp
 
 DISTFILES += \
     $$PWD/BasicControls.pri

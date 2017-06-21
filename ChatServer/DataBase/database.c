@@ -93,8 +93,9 @@ char *get_friendlist_json(const char *userid)
     memset(sql_getfriends, 0, DATABASE_SQLMAXLENGTH);
 
     sprintf(sql_getgroup, "select distinct grouptype from friendlist where userid='%s';", userid);
-    sprintf(sql_getfriends, "select friendid, username, remark, grouptype, personalizedsignature,imagepath from friendlist, userinfo "
-                          "where friendlist.userid='%s' and friendid = userinfo.userid;", userid);
+    sprintf(sql_getfriends, "select friendid, username, remark, grouptype, personalizedsignature,imagepath,"
+                            "birthofdate, sex, mobile, mail from friendlist, userinfo "
+                            "where friendlist.userid='%s' and friendid = userinfo.userid;", userid);
 
     //get group
     if (execute_mysql(sql_getgroup) == -1)
@@ -131,6 +132,10 @@ char *get_friendlist_json(const char *userid)
                 cJSON_AddStringToObject(tmp, "grouptype", mysql_row[3]);
                 cJSON_AddStringToObject(tmp, "personalizedsignature", mysql_row[4]);
                 cJSON_AddStringToObject(tmp, "imagepath", mysql_row[5]);
+                cJSON_AddStringToObject(tmp, "birthofdate", mysql_row[6]);
+                cJSON_AddStringToObject(tmp, "sex", mysql_row[7]);
+                cJSON_AddStringToObject(tmp, "mobile", mysql_row[8]);
+                cJSON_AddStringToObject(tmp, "mail", mysql_row[9]);
                 cJSON_AddItemToArray(node, tmp);
             }
             node = node->next;
@@ -268,4 +273,17 @@ void del_offline_message(const char *userid)
 
     if(execute_mysql(sql_del_offline) == -1)
         print_error_mysql(sql_del_offline);
+}
+
+void move_friend_to_group(char *userid, char *friendid, char *grouptype)
+{
+    char sql_move_to_group[DATABASE_SQLMAXLENGTH];
+    sprintf(sql_move_to_group, "update friendlist set grouptype='%s' where userid='%s' and friendid='%s';"
+            , grouptype, userid, friendid);
+
+    printf("%s\n", sql_move_to_group);
+
+    if(execute_mysql(sql_move_to_group) == -1)
+        print_error_mysql(sql_move_to_group);
+
 }

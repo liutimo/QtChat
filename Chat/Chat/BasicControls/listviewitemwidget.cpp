@@ -1,6 +1,8 @@
 #include "listviewitemwidget.h"
 #include "DataBase/database.h"
 #include "NetWork/httpconnect.h"
+#include "NetWork/connecttoserver.h"
+#include "showinfowidget.h"
 #include "View/chatwidget.h"
 #include "../allvariable.h"
 #include "headicon.h"
@@ -39,6 +41,14 @@ void ListViewItemWidget::init()
     connect(sendMsg, &QAction::triggered, this, &ListViewItemWidget::listWidgetMenuTriggered);
 
     QAction *showinfo = new QAction(QIcon(":/Resource/mainwidget/msgmgr.png"), "查看资料",this);
+    connect(showinfo, &QAction::triggered, this, [this](){
+        ShowInfoWidget *w = new ShowInfoWidget;
+
+        w->setInfo(DataBase::getInstance()->getFriendInfo(userid));
+
+        w->show();
+    });
+
     QAction *updateremark = new QAction(QIcon(":/Resource/mainwidget/name.png"), "修改备注", this);
     QAction *del = new QAction(QIcon(":/Resource/mainwidget/deluser.png"), "删除好友", this);
 
@@ -113,6 +123,6 @@ void ListViewItemWidget::moveFriendTo()
 {
     QAction *s = static_cast<QAction*>(sender());
     DataBase::getInstance()->moveFriendToGroup(userid, s->text());
-
+    ConnectToServer::getInstance()->sendRequestMoveFriendToGroup(userid, s->text());
     emit updateListWidget();
 }

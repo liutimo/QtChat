@@ -82,6 +82,13 @@ void recvMsg(int fd)
         handleOfflineAckMessage(fd);
         break;
     }
+    case REQUESTMOVEFRIENDTOGROUP: {
+        RequestMoveFriendToGroup *rmsg = (RequestMoveFriendToGroup*)malloc(sizeof(RequestMoveFriendToGroup));
+        memset(rmsg, 0, sizeof(RequestMoveFriendToGroup));
+        memcpy(rmsg, msg->data, msg->len);
+        handleMoveFriendToGroup(fd, rmsg);
+        break;
+    }
     default:
         break;
     }
@@ -189,5 +196,14 @@ void handleOfflineAckMessage(int fd)
 
     del_offline_message(findOnlineUserWithFd(fd));
 
+    close_mysql();
+}
+
+void handleMoveFriendToGroup(int fd, RequestMoveFriendToGroup *rmsg)
+{
+    //rmsg->userid, rmsg->grouptype
+
+    init_mysql();
+    move_friend_to_group(findOnlineUserWithFd(fd), rmsg->userid, rmsg->grouptype);
     close_mysql();
 }

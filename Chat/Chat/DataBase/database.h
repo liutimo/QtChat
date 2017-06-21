@@ -27,6 +27,8 @@ public:
 
     void moveFriendToGroup(const QString &userid, const QString &group);
 
+    QVector<QString> getFriendInfo(const QString &userid);
+
     static DataBase* getInstance();
 
 signals:

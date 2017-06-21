@@ -5,18 +5,19 @@
 
 //消息类型
 typedef enum _MsgType {
-    HEARTBEAT = 0,			//心跳包
-    REQUESTLOGIN,			//请求登陆
-    RESPONSELOGIN,			//告知客户端登录状态
-    RESPONSEFRIENDLIST,     //好友列表
-    EXIT,                   //退出消息
-    REQUESTFORWORDMESSAGE,  //请求服务器转发消息
-    RECEIVEDMESSAGE,        //收到消息
-    RESPONSEUSERINFO,       //回应登录用户的信息
-    REQUESTUSERINFO,        //请求登录用户的信息
-    REQUESTOFFLINEMESSAGE,  //请求当前登录用户的离线消息
-    RESPONSEOFFLINEMESSAGE, //响应用户的请求离线消息的消息
-    RESPONSACKOFFLINEMSG    //告知服务器， 离线消息已经收到
+    HEARTBEAT = 0,              //心跳包
+    REQUESTLOGIN,               //请求登陆
+    RESPONSELOGIN,              //告知客户端登录状态
+    RESPONSEFRIENDLIST,         //好友列表
+    EXIT,                       //退出消息
+    REQUESTFORWORDMESSAGE,      //请求服务器转发消息
+    RECEIVEDMESSAGE,            //收到消息
+    RESPONSEUSERINFO,           //回应登录用户的信息
+    REQUESTUSERINFO,            //请求登录用户的信息
+    REQUESTOFFLINEMESSAGE,      //请求当前登录用户的离线消息
+    RESPONSEOFFLINEMESSAGE,     //响应用户的请求离线消息的消息
+    RESPONSACKOFFLINEMSG,       //告知服务器， 离线消息已经收到
+    REQUESTMOVEFRIENDTOGROUP   //移动好友到指定分组
 }MsgType;
 
 
@@ -115,5 +116,12 @@ typedef struct _ResponseOfflineMessage {
 //空包
 typedef struct _ResponsAckOfflineMsg {
 }ResponseAckOfflineMsg;
+
+//移动好友请求  移动目的userid到grouptype
+typedef struct _RequestMoveFriendToGroup {
+    char userid[USERIDMAXLEN];
+    char grouptype[20];
+
+}RequestMoveFriendToGroup;
 
 #endif // MSGSTRUCTURE_H

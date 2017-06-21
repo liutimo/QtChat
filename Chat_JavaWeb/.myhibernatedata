@@ -1,0 +1,20 @@
+#MyEclipse Hibernate Properties
+#Tue Jun 20 16:23:26 CST 2017
+genBasicCompId=false
+sessionFactoryName=com.lz.Hibernate.HibernateSessionFactory
+profile=
+daoSFId=
+jndiPath=
+detectM2M=false
+reStrategyClass=
+detectO2O=false
+springDaoFile=
+useJavaTypes=true
+keyGenerator=
+genVersionTag=false
+sessionFactoryId=
+basePersistenceClass=
+genAnnotations=false
+reSettingsFile=
+configFile=/Chat/src/hibernate.cfg.xml
+createConfigFile=true
