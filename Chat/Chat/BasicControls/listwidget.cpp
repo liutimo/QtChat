@@ -20,14 +20,11 @@ void ListWidget::initMenu()
     blankMenu = new QMenu();
     groupMenu = new QMenu();
 
-
     groupNameEdit=new QLineEdit();
 
     QAction *addGroup = new QAction("添加分组", this);
     QAction *delGroup = new QAction("删除该组", this);
     QAction *rename = new QAction("重命名", this);
-
-
     //设置：
     groupNameEdit->setParent(this);  //设置父类
     groupNameEdit->hide(); //设置初始时隐藏
@@ -36,14 +33,12 @@ void ListWidget::initMenu()
     blankMenu->addAction(addGroup);
     groupMenu->addAction(delGroup);
     groupMenu->addAction(rename);
-
-
 }
 //鼠标点击事件
 void ListWidget::mousePressEvent(QMouseEvent *event)
 {
-    QListWidget::mousePressEvent(event); // 如果不调用基类mousePressEvent，item被select会半天不响应,调用父类，让QSS起效，因为QSS基于父类QListWidget，子类就是子窗口，就是最上层窗口，是覆盖在父窗口上的，所以先于父窗口捕获消息
-    //防止一种特殊情况：给新item命名、点击其他item或空白处时，指向新item的currentItem被赋予其他item
+    QListWidget::mousePressEvent(event);
+
     if(groupNameEdit->isVisible() && !(groupNameEdit->rect().contains(event->pos())))
     {
         if(groupNameEdit->text()!=NULL)
@@ -78,21 +73,24 @@ void ListWidget::mousePressEvent(QMouseEvent *event)
         }
     }
 }
-//菜单事件，为了显示菜单，点击鼠标右键响应，鼠标点击事件mousePressEvent优先于contextMenuEvent
+
 void ListWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-    QListWidget::contextMenuEvent(event);           //调用基类事件
+    QListWidget::contextMenuEvent(event);
 
-    if(currentItem == NULL)                           //如果点击到的是空白处
+    if(currentItem == NULL)
     {
         blankMenu->exec(QCursor::pos());
         return;
     }
-
 }
 
 void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
 {
+    clear();
+    groupItemIndex.clear();
+    listmap.clear();
+
     for(int i = 0; i < groups.size(); ++i)
     {
         QString group = groups.at(i);
@@ -112,7 +110,11 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         ListViewItemWidget *frienditem=new ListViewItemWidget();
         frienditem->setUserinfo(onefriend.at(0), onefriend.at(1), onefriend.at(4));
         frienditem->setImage(onefriend.at(5));
-
+        connect(frienditem, &ListViewItemWidget::updateListWidget, this, [this](){
+            QStringList groups = DataBase::getInstance()->getGroup();
+            QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
+            setList(friends, groups);
+        });
 
         QString groupname = onefriend.at(3);
 
@@ -123,33 +125,23 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         {
             if(groupItemIndex.at(i)->first == groupname)
             {
-                index = groupItemIndex.at(i)->second;
+                index = i;
                 break;
             }
         }
 
-        insertItem(index + 1,newItem);
+        insertItem(groupItemIndex.at(index)->second + 1,newItem);
         setItemWidget(newItem, frienditem);
         newItem->setHidden(true);
         listmap.value(groupname)->append(newItem);
 
-
-        for(int i = index; i <groupItemIndex.size(); ++i)
+        for(int i = index; i < groupItemIndex.size(); ++i)
         {
             groupItemIndex[i]->second++;
         }
-
     }
-    for(int i = 0; i <groupItemIndex.size(); ++i)
-    {
-        qDebug() <<groupItemIndex[i]->first << groupItemIndex[i]->second;
-    }
-
 }
 
 void ListWidget::listWidgetMenuTriggered()
 {
-    //    ChatWidget *w = new ChatWidget();
-    //    w->show();
-
 }

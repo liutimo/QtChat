@@ -101,6 +101,14 @@ void MainWidget::init()
     stackwidget->addWidget(new QLabel("Test1"));
     stackwidget->addWidget(new QLabel("Test2"));
 
+
+    btn_add_friend = new QToolButton(this);
+    btn_add_friend->move(50, height() - 30);
+    btn_add_friend->resize(70, 28);
+    btn_add_friend->setStyleSheet("QToolButton{border:0px;border-image: url(:/Resource/mainwidget/main_search_bkg.png);}"
+                             "QToolButton:hover{border:0px;border-image: url(:/Resource/mainwidget/main_search_bkg_2"
+                                  ".png);}");
+
     connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
     connect(tb_contact, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
     connect(tb_group, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
@@ -153,7 +161,6 @@ void MainWidget::resizeEvent(QResizeEvent *event)
     le_serach->resize(width(), 30);
 
     username->move(88, 43);
-
     personsignal->move(88, 75);
 }
 
@@ -166,7 +173,11 @@ void MainWidget::paintEvent(QPaintEvent*event)
     case PURECOLOR:
     {
         p.setBrush(color);
-        p.drawRect(0, 0, width(), height());
+        p.drawRect(0, 0, width(), height() - 30);
+        QColor c(color);
+        c.setAlpha(100);
+        p.setBrush(c);
+        p.drawRect(0,  height() - 30, width(),30);
         //emit changeBackGround(color);
         break;
     }
@@ -174,6 +185,9 @@ void MainWidget::paintEvent(QPaintEvent*event)
     {
         p.drawPixmap(0, 0, width(), height(),
                      QPixmap(skinPath).copy(0,0,width(), height()));
+        QColor c(255, 255, 255, 100);
+        p.setBrush(c);
+        p.drawRect(0,  height() - 30, width(),30);
         break;
     }
     default:
@@ -235,10 +249,10 @@ void MainWidget::receiveFriendList(const QByteArray& bytearray)
 
     parseFriend(bytearray);
 
+    ListWidget* listwidget = dynamic_cast<ListWidget*>(stackwidget->widget(0));
+
     QStringList groups = DataBase::getInstance()->getGroup();
     QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
-
-    ListWidget* listwidget = dynamic_cast<ListWidget*>(stackwidget->widget(0));
 
     listwidget->setList(friends, groups);
     emit loadFinished();

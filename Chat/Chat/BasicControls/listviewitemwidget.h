@@ -19,8 +19,11 @@ public:
     QString getUsername();
     QString getUserid();
 signals:
-
+    void updateListWidget();
 public slots:
+
+private slots:
+    void moveFriendTo();
 
 protected:
     void resizeEvent(QResizeEvent *);

@@ -1,5 +1,5 @@
 #include "database.h"
-
+#include "../allvariable.h"
 #include <QDebug>
 
 DataBase::DataBase(QObject *parent) : QObject(parent)
@@ -63,14 +63,15 @@ void DataBase::setLoaclUserInfo(const QString& userid, const QString &password)
 
 void DataBase::setFriendList(QList<QVector<QString>> friends)
 {
-    QString sql = "insert into friendlist(friendid, username, remark, "
-                  "personalizedsignature, grouptype, imagepath) values('%1', '%2', '%3', '%4', '%5', '%6')";
+    QString sql = "insert into friendlist(userid, friendid, username, remark, "
+                  "personalizedsignature, grouptype, imagepath) values('%1', '%2', '%3', '%4', '%5', '%6', '%7')";
 
     QSqlQuery sql_query;
 
     for (QVector<QString> onefriend : friends)
     {
-        QString s = sql.arg(onefriend[0], onefriend[1], onefriend[2], onefriend[3], onefriend[4], onefriend[5]);
+        QString s = sql.arg(AllVariable::getLoginUserId(),onefriend[0], onefriend[1], onefriend[2], onefriend[3], onefriend[4], onefriend[5]);
+        qDebug() << s;
         sql_query.prepare(s);
         sql_query.exec();
     }
@@ -80,7 +81,10 @@ QList<QVector<QString>> DataBase::getFriendList()
 {
     QList<QVector<QString>> friends;
 
-    QString sql = "select friendid, username, remark, grouptype, personalizedsignature, imagepath from friendlist;";
+    QString sql = "select friendid, username, remark, grouptype, personalizedsignature, imagepath from friendlist where userid='%1';";
+
+    sql =sql.arg(AllVariable::getLoginUserId());
+
 
     QSqlQuery sql_query;
     sql_query.prepare(sql);
@@ -130,6 +134,16 @@ void DataBase::setChatLog(const QString &senderid, const QString &receiverid, co
 {
     QString sql("insert into chatlog(senderid, receiverid, content) values('%1', '%2', '%3')");
     sql = sql.arg(senderid, receiverid, content);
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+}
+
+void DataBase::moveFriendToGroup(const QString &userid, const QString &group)
+{
+    QString sql("update friendlist set grouptype='%1' where friendid='%2' and userid='%3';");
+    sql = sql.arg(group, userid, AllVariable::getLoginUserId());
 
     QSqlQuery sql_query;
     sql_query.prepare(sql);

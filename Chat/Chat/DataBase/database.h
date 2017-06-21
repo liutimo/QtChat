@@ -25,7 +25,7 @@ public:
 
     void setChatLog(const QString &senderid, const QString &receiverid, const QString &content);
 
-
+    void moveFriendToGroup(const QString &userid, const QString &group);
 
     static DataBase* getInstance();
 

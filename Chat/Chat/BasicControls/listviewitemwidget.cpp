@@ -32,6 +32,7 @@ void ListViewItemWidget::init()
     {
         QAction *action = new QAction(group, this);
         movetoMenu->addAction(action);
+        connect(action, &QAction::triggered, this, &ListViewItemWidget::moveFriendTo);
     }
 
     QAction *sendMsg = new QAction(QIcon(":/Resource/mainwidget/sendmsg.png"), "发送即时消息", this);
@@ -106,4 +107,12 @@ void ListViewItemWidget::setImage(const QString& url)
         imagePath = http->getFilePath();
         m_headicon->setPixmap(QPixmap(imagePath));
     });
+}
+
+void ListViewItemWidget::moveFriendTo()
+{
+    QAction *s = static_cast<QAction*>(sender());
+    DataBase::getInstance()->moveFriendToGroup(userid, s->text());
+
+    emit updateListWidget();
 }

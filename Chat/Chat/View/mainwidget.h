@@ -93,6 +93,9 @@ private:
 
     QStackedWidget *stackwidget;
 
+
+    QToolButton *btn_add_friend;
+
     QMenu *menu;
     QAction *state_online;
     QAction *state_busy;
