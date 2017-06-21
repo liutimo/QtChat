@@ -16,7 +16,8 @@ HEADERS += \
     $$PWD/editinformation.h \
     $$PWD/messageitemwidget.h \
     $$PWD/numberwidget.h \
-    $$PWD/showinfowidget.h
+    $$PWD/showinfowidget.h \
+    $$PWD/recentchatitemwidget.h
 
 SOURCES += \
     $$PWD/headicon.cpp \
@@ -36,7 +37,8 @@ SOURCES += \
     $$PWD/editinformation.cpp \
     $$PWD/messageitemwidget.cpp \
     $$PWD/numberwidget.cpp \
-    $$PWD/showinfowidget.cpp
+    $$PWD/showinfowidget.cpp \
+    $$PWD/recentchatitemwidget.cpp
 
 DISTFILES += \
     $$PWD/BasicControls.pri

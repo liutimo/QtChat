@@ -13,7 +13,7 @@ public:
     void mousePressEvent(QMouseEvent *event);//鼠标点击事件
     void contextMenuEvent(QContextMenuEvent*);//菜单事件，为了显示菜单
     void setList(QList<QVector<QString>>, QStringList);
-
+    void setList(QVector<QStringList> lists);
 
 private slots:
     void listWidgetMenuTriggered();

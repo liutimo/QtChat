@@ -1,5 +1,6 @@
 #include "listwidget.h"
 #include "listviewitemwidget.h"
+#include "recentchatitemwidget.h"
 #include "DataBase/database.h"
 #include <View/chatwidget.h>
 #include <QAction>
@@ -139,6 +140,22 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         {
             groupItemIndex[i]->second++;
         }
+    }
+}
+
+void ListWidget::setList(QVector<QStringList> lists)
+{
+    for(QStringList elem : lists)
+    {
+        if (elem.size() == 0)
+            continue;
+        RecentChatItemWidget *itemwidget = new RecentChatItemWidget;
+        itemwidget->setUserinfo(elem.at(0), elem.at(1), elem.at(2));
+        itemwidget->setImage(elem.at(3));
+        itemwidget->setMessage(elem.at(4));
+        QListWidgetItem *newItem = new QListWidgetItem();
+        insertItem(count(),newItem);
+        setItemWidget(newItem, itemwidget);
     }
 }
 

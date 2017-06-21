@@ -2,6 +2,8 @@
 #include "DataBase/database.h"
 #include "NetWork/httpconnect.h"
 #include "NetWork/connecttoserver.h"
+#include "Setting/rwsetting.h"
+#include <QSettings>
 #include "showinfowidget.h"
 #include "View/chatwidget.h"
 #include "../allvariable.h"
@@ -101,6 +103,21 @@ void ListViewItemWidget::listWidgetMenuTriggered()
         chatwidgets.insert(userid, chat);
         chat->setIcon(imagePath);
     }
+
+    QSettings *setting = RWSetting::getInstance()->getSetting();
+    QStringList us = setting->value("RecentlyChat").toStringList();
+
+    for (QStringList::iterator iter = us.begin(); iter != us.end();)
+    {
+        if (*iter == userid)
+            iter = us.erase(iter);
+        else
+            ++iter;
+    }
+
+    us << userid;
+
+    setting->setValue("RecentlyChat", us);
 
     chat->setUserName(username);
     chat->setUserid(userid);

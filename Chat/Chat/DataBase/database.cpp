@@ -177,3 +177,31 @@ QVector<QString> DataBase::getFriendInfo(const QString &userid)
 
     return info;
 }
+
+QVector<QStringList> DataBase::getRecentlyChatFriendInfo(const QStringList &list)
+{
+    QVector<QStringList> lists;
+
+    QString sql = "select username, personalizedsignature, imagepath, content  from chatlog, "
+                  "friendlist where receiverid='%1'"
+                  " and friendid=receiverid and userid='%2' order by  chattime desc limit 1;";
+    for(int i = list.size() - 1; i >=0; --i)
+    {
+        QSqlQuery sql_query;
+        sql_query.prepare(sql.arg(list.at(i), AllVariable::getLoginUserId()));
+        sql_query.exec();
+
+        QStringList l;
+        while(sql_query.next())
+        {
+            l.append(list.at(i));
+            l.append(sql_query.value(0).toString());
+            l.append(sql_query.value(1).toString());
+            l.append(sql_query.value(2).toString());
+            l.append(sql_query.value(3).toString());
+        }
+        lists.append(l);
+    }
+
+    return lists;
+}

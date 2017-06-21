@@ -94,12 +94,12 @@ void MainWidget::init()
 
 
     ListWidget *friendList = new ListWidget;
-    //ListWidget *groupList = new ListWidget;
-    //ListWidget *recentList = new ListWidget;
+    ListWidget *groupList = new ListWidget;
+    ListWidget *recentList = new ListWidget;
 
     stackwidget->addWidget(friendList);
-    stackwidget->addWidget(new QLabel("Test1"));
-    stackwidget->addWidget(new QLabel("Test2"));
+    stackwidget->addWidget(groupList);
+    stackwidget->addWidget(recentList);
 
 
     btn_add_friend = new QToolButton(this);
@@ -241,7 +241,17 @@ void MainWidget::changSelectedButton()
     else if(tb_sender == tb_group)
         stackwidget->setCurrentIndex(1);
     else
+    {
         stackwidget->setCurrentIndex(2);
+        QSettings *setting = RWSetting::getInstance()->getSetting();
+        QStringList us = setting->value("RecentlyChat").toStringList();
+
+        QVector<QStringList> lists = DataBase::getInstance()->getRecentlyChatFriendInfo(us);
+
+        ListWidget* listwidget = dynamic_cast<ListWidget*>(stackwidget->widget(2));
+        listwidget->setList(lists);
+
+    }
 }
 
 void MainWidget::receiveFriendList(const QByteArray& bytearray)

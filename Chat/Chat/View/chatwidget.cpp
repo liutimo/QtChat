@@ -153,7 +153,7 @@ void ChatWidget::setMessage(const QString &msg)
                            "<br/>%3"
                            "<br/></html>").arg(AllVariable::getLoginUserName(), QDateTime::currentDateTime().toString("h:m:s ap"), msg);
 
-    DataBase::getInstance()->setChatLog(AllVariable::getLoginUserName(), lb_username->text(), html);
+    DataBase::getInstance()->setChatLog(AllVariable::getLoginUserId(), userid, html);
     textedit->append(html);
 }
 
@@ -163,7 +163,7 @@ void ChatWidget::showMessage(const QString &msg, const QString &color, const QSt
                            "<br/><span style=\"color:%3; font-size:%4px;font-family:%5;\">%6</span>"
                            "<br/></html>").arg(lb_username->text(), QDateTime::currentDateTime().toString("h:m:s ap"), color, size, family, msg);
 
-    DataBase::getInstance()->setChatLog(lb_username->text(), AllVariable::getLoginUserName(), html);
+    DataBase::getInstance()->setChatLog(userid, AllVariable::getLoginUserId(), html);
     textedit->append(html);
 }
 
