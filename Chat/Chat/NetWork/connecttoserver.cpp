@@ -112,7 +112,15 @@ void ConnectToServer::sendRequestMoveFriendToGroup(const QString&userid,const QS
     send(REQUESTMOVEFRIENDTOGROUP, (char*)msg, sizeof(RequestMoveFriendToGroup));
     delete msg;
 }
-
+void ConnectToServer::sendRequestUpdateSignature(const QString &signature)
+{
+    RequestUpdateSignature *msg = (RequestUpdateSignature *)new char[signature.toUtf8().size()];
+    msg->length = signature.toUtf8().size();
+    strcpy(msg->sig, signature.toUtf8());
+    qDebug() << msg->sig;
+    send(REQUESTUPDATESIGNAURE, (char*)msg, sizeof(RequestUpdateSignature) + msg->length);
+    delete msg;
+}
 
 /*****************************???????????????**************************************/
 

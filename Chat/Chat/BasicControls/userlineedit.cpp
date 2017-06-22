@@ -1,5 +1,4 @@
 #include "userlineedit.h"
-
 #include "lineedit.h"
 #include <QPixmap>
 #include <QLabel>
@@ -9,6 +8,7 @@
 #include <QMouseEvent>
 #include <QPushButton>
 #include <QKeyEvent>
+#include "NetWork/connecttoserver.h"
 UserLineEdit::UserLineEdit(QWidget *parent ) : QLineEdit(parent)
 {
     init();
@@ -45,5 +45,9 @@ void UserLineEdit::keyPressEvent(QKeyEvent *e)
     if(e->key() == 16777220 || e->key() == 16777221) {
         setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 0);color:rgb(0,0,0);text-align:center;font:15px}");
         this->clearFocus();
+        qDebug() << "ssdasd" << text();
+        ConnectToServer::getInstance()->sendRequestUpdateSignature(text());
     }
+
+    QLineEdit::keyPressEvent(e);
 }

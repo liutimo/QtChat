@@ -89,6 +89,12 @@ void recvMsg(int fd)
         handleMoveFriendToGroup(fd, rmsg);
         break;
     }
+    case REQUESTUPDATESIGNAURE: {
+        RequestUpdateSignature *rmsg = (RequestUpdateSignature*)malloc(msg->len);
+        memcpy(rmsg, msg->data, msg->len);
+        handleUpdateSignature(fd, rmsg);
+        break;
+    }
     default:
         break;
     }
@@ -205,5 +211,16 @@ void handleMoveFriendToGroup(int fd, RequestMoveFriendToGroup *rmsg)
 
     init_mysql();
     move_friend_to_group(findOnlineUserWithFd(fd), rmsg->userid, rmsg->grouptype);
+    close_mysql();
+}
+
+void handleUpdateSignature(int fd, RequestUpdateSignature *msg)
+{
+    init_mysql();
+
+    char*message = malloc(msg->length);
+    strcpy(message, msg->sig);
+    update_user_signature(findOnlineUserWithFd(fd), message);
+    free(message);
     close_mysql();
 }

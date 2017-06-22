@@ -22,6 +22,7 @@ public:
     QString getUserid();
 signals:
     void updateListWidget();
+    void delOneItem();
 public slots:
 
 private slots:

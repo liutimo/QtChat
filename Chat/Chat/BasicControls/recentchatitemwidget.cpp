@@ -1,15 +1,18 @@
 #include "recentchatitemwidget.h"
 #include "DataBase/database.h"
 #include "NetWork/httpconnect.h"
+#include "Setting/rwsetting.h"
 #include "NetWork/connecttoserver.h"
 #include "showinfowidget.h"
 #include "View/chatwidget.h"
 #include "../allvariable.h"
 #include "headicon.h"
+
 #include <QPixmap>
 #include <QLabel>
 #include <QMenu>
 #include <QAction>
+#include <QSettings>
 
 RecentChatItemWidget::RecentChatItemWidget(QWidget *parent) : QWidget(parent)
 {
@@ -35,6 +38,20 @@ void RecentChatItemWidget::init()
     connect(sendMsg, &QAction::triggered, this, &RecentChatItemWidget::listWidgetMenuTriggered);
 
     QAction *del = new QAction(QIcon(":/Resource/mainwidget/deluser.png"), "删除会话", this);
+    connect(del, &QAction::triggered, this, [this](){
+        QSettings *setting = RWSetting::getInstance()->getSetting();
+        QStringList us = setting->value("RecentlyChat").toStringList();
+        for(QStringList::iterator iter = us.begin(); iter != us.end(); ++iter)
+        {
+            if(*iter == userid)
+            {
+                us.erase(iter);
+                break;
+            }
+        }
+        setting->setValue("RecentlyChat", us);
+        emit delOneItem();
+    });
 
     personMenu->addAction(sendMsg);
     personMenu->addAction(del);
@@ -121,5 +138,11 @@ void RecentChatItemWidget::moveFriendTo()
 
 void RecentChatItemWidget::setMessage(const QString &message)
 {
-    m_chatmessage->setText(message);
+    qDebug() << message;
+    QString p("</em><br/>(.*)</html>");
+    QRegExp rx(p);
+    rx.indexIn(message);
+    QString msg = rx.cap(1);
+    qDebug() << msg;
+    m_chatmessage->setText(msg);
 }

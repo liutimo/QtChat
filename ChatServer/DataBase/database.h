@@ -59,4 +59,7 @@ void del_offline_message(const char *userid);
 
 //移动好友
 void move_friend_to_group(char *userid, char *friendid, char *grouptype);
+
+//更新个性签名
+void update_user_signature(const char *userid, const char *sig);
 #endif // !DATABASE_H

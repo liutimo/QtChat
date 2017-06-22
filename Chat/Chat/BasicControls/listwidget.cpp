@@ -145,6 +145,7 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
 
 void ListWidget::setList(QVector<QStringList> lists)
 {
+    clear();
     for(QStringList elem : lists)
     {
         if (elem.size() == 0)
@@ -154,8 +155,15 @@ void ListWidget::setList(QVector<QStringList> lists)
         itemwidget->setImage(elem.at(3));
         itemwidget->setMessage(elem.at(4));
         QListWidgetItem *newItem = new QListWidgetItem();
+        newItem->setSizeHint(QSize(this->width(),50));
         insertItem(count(),newItem);
         setItemWidget(newItem, itemwidget);
+
+        connect(itemwidget, &RecentChatItemWidget::delOneItem, this, [this,newItem](){
+            qDebug() << "ssss";
+            removeItemWidget(newItem);
+            delete newItem;
+        });
     }
 }
 

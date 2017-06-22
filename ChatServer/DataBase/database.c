@@ -281,9 +281,18 @@ void move_friend_to_group(char *userid, char *friendid, char *grouptype)
     sprintf(sql_move_to_group, "update friendlist set grouptype='%s' where userid='%s' and friendid='%s';"
             , grouptype, userid, friendid);
 
-    printf("%s\n", sql_move_to_group);
-
     if(execute_mysql(sql_move_to_group) == -1)
         print_error_mysql(sql_move_to_group);
+}
 
+
+void update_user_signature(const char *userid, const char *sig)
+{
+    char sql_update_signature[DATABASE_SQLMAXLENGTH];
+    sprintf(sql_update_signature, "update userinfo set personalizedsignature='%s' where userid='%s';", sig, userid);
+
+    printf("%s\n", sql_update_signature);
+
+    if(execute_mysql(sql_update_signature) == -1)
+        print_error_mysql(sql_update_signature);
 }

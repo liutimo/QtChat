@@ -22,6 +22,7 @@ public:
     void sendRequestOfflineMessage();
     void sendRequestAckOfflineMsg();
     void sendRequestMoveFriendToGroup(const QString&userid,const QString &grouptype);
+    void sendRequestUpdateSignature(const QString &signature);
 protected:
     void recv();
 

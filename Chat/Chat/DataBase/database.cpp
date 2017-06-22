@@ -187,8 +187,10 @@ QVector<QStringList> DataBase::getRecentlyChatFriendInfo(const QStringList &list
                   " and friendid=receiverid and userid='%2' order by  chattime desc limit 1;";
     for(int i = list.size() - 1; i >=0; --i)
     {
+        QString sq = sql.arg(list.at(i), AllVariable::getLoginUserId());
+        qDebug() << sq;
         QSqlQuery sql_query;
-        sql_query.prepare(sql.arg(list.at(i), AllVariable::getLoginUserId()));
+        sql_query.prepare(sq);
         sql_query.exec();
 
         QStringList l;

@@ -1,6 +1,7 @@
 #include "BasicControls/chatinput.h"
 #include "BasicControls/facewidget.h"
 #include "BasicControls/editinformation.h"
+#include "BasicControls/showinfowidget.h"
 #include "View/loginwidget.h"
 #include "View/chatwidget.h"
 #include "View/mainwidget.h"
@@ -18,8 +19,8 @@ int main(int argc, char *argv[])
     QFile f(":/style.qss");
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
-
-        LoginWidget w;
+//    ShowInfoWidget w;
+      LoginWidget w;
     //    MainWidget w;
     //    EditInformation w;
     //MessageListWidget w;

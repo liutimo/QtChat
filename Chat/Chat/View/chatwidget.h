@@ -16,6 +16,9 @@ public:
     void setUserid(const QString &userid);
     void setIcon(const QString &path);
 
+signals:
+    void updateMessage();
+
 protected:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);

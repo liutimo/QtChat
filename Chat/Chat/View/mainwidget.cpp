@@ -65,7 +65,6 @@ void MainWidget::init()
     username->setStyleSheet("color: white;");
 
     personsignal = new UserLineEdit(this);
-    personsignal->setText("wojuedewoyoubianyao");
 
     le_serach = new LineEdit(this);
     le_serach->move(0, 123);
@@ -250,7 +249,6 @@ void MainWidget::changSelectedButton()
 
         ListWidget* listwidget = dynamic_cast<ListWidget*>(stackwidget->widget(2));
         listwidget->setList(lists);
-
     }
 }
 
@@ -501,3 +499,4 @@ void MainWidget::setSatus(Status status)
         break;
     }
 }
+
