@@ -15,6 +15,7 @@ class QToolButton;
 class QStackedWidget;
 class UserLineEdit;
 class QMenu;
+class ListWidget;
 QT_END_NAMESPACE
 
 
@@ -93,6 +94,7 @@ private:
 
     QStackedWidget *stackwidget;
 
+    ListWidget *searachwidget;
 
     QToolButton *btn_add_friend;
 

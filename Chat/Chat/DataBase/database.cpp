@@ -207,3 +207,32 @@ QVector<QStringList> DataBase::getRecentlyChatFriendInfo(const QStringList &list
 
     return lists;
 }
+
+QVector<QStringList> DataBase::searachFriend(const QString &key)
+{
+    QVector<QStringList> vec;
+
+    QString sql = "select friendid, username, personalizedsignature, imagepath from friendlist where remark "
+                  "like '%%1%' or  username like '%%1%' or friendid like'%%1%' and userid='%2';";
+    sql = sql.arg(key, AllVariable::getLoginUserId());
+
+    qDebug() << sql;
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+
+
+    while(sql_query.next())
+    {
+        QStringList l;
+        l.append(sql_query.value(0).toString());
+        l.append(sql_query.value(1).toString());
+        l.append(sql_query.value(2).toString());
+        l.append(sql_query.value(3).toString());
+        l.append(sql_query.value(4).toString());
+        vec.append(l);
+    }
+
+    return vec;
+}

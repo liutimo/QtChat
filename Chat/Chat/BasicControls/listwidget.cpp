@@ -167,6 +167,23 @@ void ListWidget::setList(QVector<QStringList> lists)
     }
 }
 
+void ListWidget::setList(QVector<QStringList> lists, int)
+{
+    clear();
+    for(QStringList elem : lists)
+    {
+        if (elem.size() == 0)
+            continue;
+        ListViewItemWidget *itemwidget = new ListViewItemWidget;
+        itemwidget->setUserinfo(elem.at(0), elem.at(1), elem.at(2));
+        itemwidget->setImage(elem.at(3));
+        QListWidgetItem *newItem = new QListWidgetItem();
+        newItem->setSizeHint(QSize(this->width(),40));
+        insertItem(count(),newItem);
+        setItemWidget(newItem, itemwidget);
+    }
+}
+
 void ListWidget::listWidgetMenuTriggered()
 {
 }

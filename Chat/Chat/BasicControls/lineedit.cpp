@@ -1,4 +1,6 @@
 #include "lineedit.h"
+#include "DataBase/database.h"
+
 #include <QPixmap>
 #include <QLabel>
 #include <QHBoxLayout>
@@ -13,7 +15,7 @@ LineEdit::LineEdit(QWidget *parent ) : QLineEdit(parent)
 
     setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 175);color:rgb(170,170,170);text-align:center;font:15px}");
 
-
+    connect(this, &LineEdit::textChanged, this, &LineEdit::textChange);
 }
 void LineEdit::init()
 {
@@ -52,6 +54,7 @@ void LineEdit::focusOutEvent(QFocusEvent *e)
     QLineEdit::focusOutEvent(e);
     //btn_clear->hide();
     setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 175);color:rgb(170,170,170);text-align:center;font:15px}");
+    emit LineEditFocusOut();
 }
 
 void LineEdit::focusInEvent(QFocusEvent *e)
@@ -59,4 +62,11 @@ void LineEdit::focusInEvent(QFocusEvent *e)
     QLineEdit::focusInEvent(e);
     btn_clear->show();
     setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 255);color:rgb(170,170,170);text-align:center;font:15px}");
+    emit LineEditFocusIn();
+}
+
+void LineEdit::textChange(const QString &text)
+{
+    if(!text.isEmpty())
+    emit searachResult(DataBase::getInstance()->searachFriend(text));
 }

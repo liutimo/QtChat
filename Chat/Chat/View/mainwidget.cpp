@@ -66,8 +66,31 @@ void MainWidget::init()
 
     personsignal = new UserLineEdit(this);
 
+    searachwidget = new ListWidget(this);
+    searachwidget->move(0, 153);
+    searachwidget->hide();
+
+
     le_serach = new LineEdit(this);
     le_serach->move(0, 123);
+    connect(le_serach, &LineEdit::LineEditFocusIn, this, [this](){
+        tb_contact->hide();
+        tb_group->hide();
+        tb_last->hide();
+        stackwidget->hide();
+        searachwidget->show();
+    });
+    connect(le_serach, &LineEdit::LineEditFocusOut, this, [this](){
+        tb_contact->show();
+        tb_group->show();
+        tb_last->show();
+        stackwidget->show();
+        searachwidget->hide();
+    });
+    connect(le_serach, &LineEdit::searachResult, this, [this](const QVector<QStringList> &s){
+        searachwidget->setList(s, 1);
+    });
+
 
     tb_status = new QToolButton(this);
     tb_status->setStyleSheet("QToolButton{border:0px;background-color: rgba(255, 255, 255, 0);}"
@@ -144,6 +167,7 @@ void MainWidget::resizeEvent(QResizeEvent *event)
     btn_mini->move(width() - btn_mini->width() - 28, 0);
     btn_skin->move(width() - btn_skin->width() - 56, 0);
 
+    searachwidget->resize(width(), height() - 183);
 
     tb_contact->resize(width() / 3, 30);
     tb_contact->move(0, 153);

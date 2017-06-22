@@ -29,8 +29,9 @@ public:
 
     QVector<QString> getFriendInfo(const QString &userid);
 
-
     QVector<QStringList>  getRecentlyChatFriendInfo(const QStringList &);
+
+    QVector<QStringList> searachFriend(const QString &key);
 
     static DataBase* getInstance();
 

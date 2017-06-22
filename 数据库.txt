@@ -69,7 +69,7 @@ create table friendlist(
 select distinct grouptype from friendlist where userid='123456';
 
 create table chatlog(
-	id bigint auto_increment, primary key,
+	id bigint auto_increment primary key,
 	senderid char(10) not null,
 	receiverid char(10) not null, 
 	content text, 
@@ -93,7 +93,20 @@ create table offlinemessage(
 );
 
 
+创建群
+create table chat_group(
+	groupid char(8) not null primary key unqiune,
+	groupname varchar(50) not null
+);
 
+创建用户和群的关联
+create table chat_groupmember(
+	id bigint auto_increment primary key,
+	groupid char(8) not null,
+	memberid char(10) not null,
+	foreign key(groupid) references chat_group(groupid),
+	foreign key(memberid) references user(userid)
+);
 
 
 
