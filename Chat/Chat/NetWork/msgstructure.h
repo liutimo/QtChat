@@ -18,7 +18,9 @@ typedef enum _MsgType {
     RESPONSEOFFLINEMESSAGE,     //响应用户的请求离线消息的消息
     RESPONSACKOFFLINEMSG,       //告知服务器， 离线消息已经收到
     REQUESTMOVEFRIENDTOGROUP,   //移动好友到指定分组
-    REQUESTUPDATESIGNAURE       //更新个性签名
+    REQUESTUPDATESIGNAURE,      //更新个性签名
+    REQUESTGROUPINFO,           //请求群组信息
+    RESPONSEGROUPINFO           //回应群组信息
 }MsgType;
 
 
@@ -130,5 +132,15 @@ typedef struct _RequestUpdateSignature {
     int length;
     char sig[0];
 }RequestUpdateSignature;
+
+//请求群组信息  空包
+typedef struct _RequestGroupInfo {
+
+}RequestGroupInfo;
+
+typedef struct _ResponseGroupInfo {
+    int length;
+    char json[0];
+}ResponseGroupInfo;
 
 #endif // MSGSTRUCTURE_H

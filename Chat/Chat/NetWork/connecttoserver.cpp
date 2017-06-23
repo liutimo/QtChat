@@ -114,11 +114,18 @@ void ConnectToServer::sendRequestMoveFriendToGroup(const QString&userid,const QS
 }
 void ConnectToServer::sendRequestUpdateSignature(const QString &signature)
 {
-    RequestUpdateSignature *msg = (RequestUpdateSignature *)new char[signature.toUtf8().size()];
+    RequestUpdateSignature *msg = (RequestUpdateSignature *)new char[sizeof(RequestUpdateSignature) + signature.toUtf8().size()];
     msg->length = signature.toUtf8().size();
     strcpy(msg->sig, signature.toUtf8());
     qDebug() << msg->sig;
     send(REQUESTUPDATESIGNAURE, (char*)msg, sizeof(RequestUpdateSignature) + msg->length);
+    delete msg;
+}
+
+void ConnectToServer::sendRequestGroupInfo()
+{
+    RequestGroupInfo *msg = (RequestGroupInfo*)new char[sizeof(RequestGroupInfo)];
+    send(REQUESTGROUPINFO, (char*)msg, sizeof(RequestGroupInfo));
     delete msg;
 }
 
@@ -168,6 +175,11 @@ void ConnectToServer::recv()
         memcpy(rom, msg->data, msg->len);
         rom->json[rom->length] = '\0';
         emit receivedOfflineMessage(QByteArray(rom->json));
+    }
+    case RESPONSEGROUPINFO: {
+        ResponseGroupInfo *rgi = (ResponseGroupInfo*)new char[msg->len];
+        memcpy(rgi, msg->data, msg->len);
+        emit receivedGroupInfo(QByteArray(rgi->json));
     }
     default:
         break;

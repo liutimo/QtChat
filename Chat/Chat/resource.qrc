@@ -323,5 +323,11 @@
         <file>Resource/status/imoffline@2x.png</file>
         <file>Resource/status/busy@2x.png</file>
         <file>Resource/status/away@2x.png</file>
+        <file>Resource/chatwidget/aio_splitbutton_right_normal.png</file>
+        <file>Resource/chatwidget/aio_splitbutton_right_hover.png</file>
+        <file>Resource/chatwidget/aio_splitbutton_right_down.png</file>
+        <file>Resource/chatwidget/aio_splitbutton_left_normal.png</file>
+        <file>Resource/chatwidget/aio_splitbutton_left_hover.png</file>
+        <file>Resource/chatwidget/aio_splitbutton_left_down.png</file>
     </qresource>
 </RCC>

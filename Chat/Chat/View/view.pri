@@ -4,7 +4,8 @@ HEADERS += \
     $$PWD/mainwidget.h \
     $$PWD/skinmanagewidget.h \
     $$PWD/chatwidget.h \
-    $$PWD/messagelistwidget.h
+    $$PWD/messagelistwidget.h \
+    $$PWD/groupchatwidget.h
 
 SOURCES += \
     $$PWD/basicwidget.cpp \
@@ -12,4 +13,5 @@ SOURCES += \
     $$PWD/mainwidget.cpp \
     $$PWD/skinmanagewidget.cpp \
     $$PWD/chatwidget.cpp \
-    $$PWD/messagelistwidget.cpp
+    $$PWD/messagelistwidget.cpp \
+    $$PWD/groupchatwidget.cpp

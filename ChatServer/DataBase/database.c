@@ -291,8 +291,34 @@ void update_user_signature(const char *userid, const char *sig)
     char sql_update_signature[DATABASE_SQLMAXLENGTH];
     sprintf(sql_update_signature, "update userinfo set personalizedsignature='%s' where userid='%s';", sig, userid);
 
-    printf("%s\n", sql_update_signature);
-
     if(execute_mysql(sql_update_signature) == -1)
         print_error_mysql(sql_update_signature);
+}
+
+char *get_group(const char*userid)
+{
+    char sql_get_group[DATABASE_SQLMAXLENGTH];
+    sprintf(sql_get_group, "select chat_group.groupid, groupname, groupimage from chat_group, chat_groupmember "
+                            "where chat_group.groupid=chat_groupmember.groupid and chat_groupmember.memberid='%s';", userid);
+
+    printf("%s\n", sql_get_group);
+
+    if(execute_mysql(sql_get_group) == -1)
+        print_error_mysql(sql_get_group);
+
+    mysql_res = mysql_store_result(mysql);
+
+    cJSON *root = cJSON_CreateArray();
+
+    while((mysql_row = mysql_fetch_row(mysql_res)) != NULL) {
+        cJSON *tmp = cJSON_CreateArray();
+        cJSON_AddStringToObject(tmp, "groupid", mysql_row[0]);
+        cJSON_AddStringToObject(tmp, "groupname", mysql_row[1]);
+        cJSON_AddStringToObject(tmp, "groupimage", mysql_row[2]);
+        cJSON_AddItemToArray(root, tmp);
+
+    }
+
+    return cJSON_PrintUnformatted(root);
+
 }

@@ -95,6 +95,10 @@ void recvMsg(int fd)
         handleUpdateSignature(fd, rmsg);
         break;
     }
+    case REQUESTGROUPINFO: {
+        handleRequestGroupMessage(fd);
+        break;
+    }
     default:
         break;
     }
@@ -223,4 +227,26 @@ void handleUpdateSignature(int fd, RequestUpdateSignature *msg)
     update_user_signature(findOnlineUserWithFd(fd), message);
     free(message);
     close_mysql();
+}
+
+void handleRequestGroupMessage(int fd)
+{
+    //根据fd找到对应的用户id
+    //然后查找数据库找到所有的群
+
+    init_mysql();
+    char *group = get_group(findOnlineUserWithFd(fd));
+    close_mysql();
+
+    if(group == NULL)
+        return;
+
+    ResponseGroupInfo *msg = (ResponseGroupInfo*)malloc(sizeof(ResponseGroupInfo) + strlen(group));
+    msg->length = strlen(group);
+    strcpy(msg->json, group);
+
+    sendGroupInfo(fd, msg);
+
+    free(msg);
+
 }

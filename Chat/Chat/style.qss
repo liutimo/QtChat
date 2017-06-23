@@ -126,6 +126,7 @@ QToolButton#tb_contact[selected="true"]
 }
 
 
+
 QToolButton#tb_group
 {
     border-bottom: 2px;
@@ -371,4 +372,35 @@ QToolButton#btn_chat_input_image:pressed
     border-image:url(:/Resource/chatwidget/midtoolbar/aio_quickbar_sendpic_selected.png);
 }
 
+QPushButton#btn_hide_list
+{
+    border-image:url(:/Resource/chatwidget/aio_splitbutton_right_hover.png);
+}
 
+QPushButton#btn_hide_list[selected="true"]
+{
+    border-image:url(:/Resource/chatwidget/aio_splitbutton_left_normal.png);
+}
+QPushButton#btn_hide_list[selected="true"]:hover
+{
+    border-image:url(:/Resource/chatwidget/aio_splitbutton_left_hover.png);
+}
+
+QPushButton#btn_hide_list[selected="true"]:pressed
+{
+    border-image:url(:/Resource/chatwidget/aio_splitbutton_left_down.png);
+}
+
+QPushButton#btn_hide_list[selected="false"]
+{
+    border-image:url(:/Resource/chatwidget/aio_splitbutton_right_normal.png);
+}
+QPushButton#btn_hide_list[selected="false"]:hover
+{
+    border-image:url(:/Resource/chatwidget/aio_splitbutton_right_hover.png);
+}
+
+QPushButton#btn_hide_list[selected="false"]:pressed
+{
+    border-image:url(:/Resource/chatwidget/aio_splitbutton_right_down.png);
+}

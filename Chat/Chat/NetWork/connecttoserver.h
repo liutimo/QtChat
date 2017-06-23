@@ -23,6 +23,8 @@ public:
     void sendRequestAckOfflineMsg();
     void sendRequestMoveFriendToGroup(const QString&userid,const QString &grouptype);
     void sendRequestUpdateSignature(const QString &signature);
+    void sendRequestGroupInfo();
+
 protected:
     void recv();
 
@@ -34,6 +36,7 @@ signals:
     void receivedMessage(ReceivedMessageMsg *msg);
     void responseUserInfo(QByteArray);
     void receivedOfflineMessage(QByteArray);
+    void receivedGroupInfo(const QByteArray&);
 
 private:
     ConnectToServer(QObject *parent = Q_NULLPTR);

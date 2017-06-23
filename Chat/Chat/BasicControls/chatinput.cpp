@@ -18,6 +18,7 @@ ChatInput::ChatInput(QWidget *parent) : QWidget(parent)
     init();
     setMouseTracking(true);
     setDefault();
+
 }
 
 
@@ -66,6 +67,7 @@ void ChatInput::init()
 
 
     te_message = new QTextEdit(this);
+    te_message->setStyleSheet("background-color:rgba(255,255,255,0)");
     connect(te_message, &QTextEdit::textChanged, this, &ChatInput::test);
 
     btn_chat_input_send = new QToolButton(this);

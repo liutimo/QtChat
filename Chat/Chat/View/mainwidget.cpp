@@ -139,10 +139,12 @@ void MainWidget::init()
     RequestUserInfoMsg r;
     ConnectToServer::getInstance()->sendRequestUserInfoMsg(&r);
     ConnectToServer::getInstance()->sendRequestOfflineMessage();
+    ConnectToServer::getInstance()->sendRequestGroupInfo();
 
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseUserInfo, this, &MainWidget::receiveUserInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedOfflineMessage, this, &MainWidget::receiveOfflineMessage);
+    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupInfo, this, &MainWidget::receiveGroupInfo);
 }
 
 void MainWidget::loadSetting()
@@ -496,6 +498,10 @@ void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
         qDebug() << error.errorString();
 
     emit updateMessageBox();
+}
+void MainWidget::receivedGroupInfo(const QByteArray&json)
+{
+    //shuju jiexi
 }
 
 void MainWidget::setSatus(Status status)

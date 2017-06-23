@@ -1,11 +1,11 @@
-#include "chatwidget.h"
+#include "groupchatwidget.h"
 #include "../allvariable.h"
 #include "DataBase/database.h"
 #include "View/skinmanagewidget.h"
 #include "BasicControls/headicon.h"
 #include "NetWork/connecttoserver.h"
 #include "BasicControls/pushbutton.h"
-
+#include "BasicControls/groupmemberlistwidget.h"
 #include "Setting/rwsetting.h"
 
 #include <QLabel>
@@ -16,8 +16,9 @@
 #include <QSettings>
 #include <QPushButton>
 #include <QTextObject>
+#include <QListWidget>
 
-ChatWidget::ChatWidget(QWidget *parent) : BasicWidget(parent)
+GroupChatWidget::GroupChatWidget(QWidget *parent) : BasicWidget(parent)
 {
     widgetIcon->hide();
     widgetTitle->hide();
@@ -26,19 +27,24 @@ ChatWidget::ChatWidget(QWidget *parent) : BasicWidget(parent)
     init();
 
     resize(650, 500);
+    setMouseTracking(true);
 }
 
-void ChatWidget::init()
+void GroupChatWidget::init()
 {
     headIcon = new HeadIcon(this);
     headIcon->setFixedSize(35, 35);
     headIcon->setPixmap(QPixmap(":/timg (1).jpg"));
+    headIcon->setStyleSheet("border:0px;background-color: transparent;");
 
     lb_username = new QLabel(tr("Username"), this);
+    lb_username->setStyleSheet("border:0px;background-color: transparent;");
 
     btn_chat_settings = new QPushButton(this);
     btn_chat_settings->setFixedSize(28, 28);
     btn_chat_settings->setObjectName("btn_chat_settings");
+
+
 
     btn_chat_close = new QPushButton(this);
     btn_chat_close->setFixedSize(28, 28);
@@ -54,34 +60,60 @@ void ChatWidget::init()
     btn_chat_max->setObjectName("btn_chat_max");
 
     textedit = new QTextEdit(this);
+//    textedit->setAttribute(Qt::WA_TransparentForMouseEvents);
     textedit->setReadOnly(true);
-    textedit->setStyleSheet("background-color: rgba(255, 255, 255, 200);");
+    textedit->setStyleSheet("border-top:1px solid #999;border-bottom:1px solid #999;background-color: transparent;");
+    textedit->installEventFilter(this);
 
     chatinput = new ChatInput(this);
     chatinput->setObjectName("chatinput");
-    chatinput->setStyleSheet("background-color: rgba(255, 255, 255, 200);");
-    connect(chatinput, &ChatInput::sendMsg, this, &ChatWidget::setMessage);
+    chatinput->setStyleSheet("background-color:transparent");
+    chatinput->installEventFilter(this);
+    connect(chatinput, &ChatInput::sendMsg, this, &GroupChatWidget::setMessage);
 
+    listwidget = new GroupMemberListWidget(this);
+    listwidget->setStyleSheet("background-color: transparent;");
 
-    QSettings *setting = RWSetting::getInstance()->getSetting();
-    SkinType skintype = (SkinType)setting->value("SkinType").toInt();
+    btn_hide_list = new QPushButton(this);
+    btn_hide_list->setObjectName("btn_hide_list");
+    btn_hide_list->setFixedSize(13, 90);
+    btn_hide_list->setProperty("selected", hide_list);
+    connect(btn_hide_list, &QPushButton::clicked, this, [this](){
+        hide_list = !hide_list;
+        btn_hide_list->setProperty("selected", hide_list);
+        btn_hide_list->style()->polish(btn_hide_list);
+        if(!hide_list) {
+            listwidget->show();
+            textedit->resize(width() - 200, height() - 240);
+            textedit->move(0, 45);
 
-    switch (skintype) {
-    case PURECOLOR:
-        changePureColorSkin((setting->value("SKINCOLOR")).value<QColor>());
-        break;
-    case LOCALIMAGE:
-        changeImageSkin(setting->value("SKINIMAGE").toString());
-    default:
-        break;
-    }
-    connect(SkinManageWidget::getInstance(), &SkinManageWidget::updatePureColorSkin, this, &ChatWidget::changePureColorSkin);
-    connect(SkinManageWidget::getInstance(), &SkinManageWidget::updateImageSkin, this, &ChatWidget::changeImageSkin);
+            listwidget->move(width() - 200,45);
+            listwidget->resize(150, height() - 45);
 
+            btn_hide_list->move(width() - 213, 45 + textedit->height() / 2);
+
+            chatinput->resize(width() - 200 , 200);
+            chatinput->move(0, height() - 200);
+        }
+        else
+        {
+            textedit->resize(width(), height() - 240);
+            textedit->move(0, 45);
+
+            listwidget->hide();;
+
+            btn_hide_list->move(width() - 13, 45 + textedit->height() / 2);
+
+            chatinput->resize(width(), 200);
+            chatinput->move(0, height() - 200);
+        }
+    });
 }
 
-void ChatWidget::resizeEvent(QResizeEvent *event)
+void GroupChatWidget::resizeEvent(QResizeEvent *event)
 {
+    BasicWidget::resizeEvent(event);
+
     headIcon->move(10, 10);
 
     lb_username->move(50, 12);
@@ -92,43 +124,45 @@ void ChatWidget::resizeEvent(QResizeEvent *event)
     btn_chat_min->move(width() - 84, 0);
     btn_chat_settings->move(width() - 112, 0);
 
-    textedit->resize(width(), height() - 240);
-    textedit->move(0, 45);
+    if(!hide_list) {
+        listwidget->show();
+        textedit->resize(width() - 200, height() - 240);
+        textedit->move(0, 45);
 
+        listwidget->move(width() - 200,45);
+        listwidget->resize(200, height() - 45);
 
-    chatinput->resize(width() , 200);
-    chatinput->move(0, height() - 200);
+        btn_hide_list->move(width() - 213, 45 + textedit->height() / 2);
+
+        chatinput->resize(width() - 200 , 200);
+        chatinput->move(0, height() - 200);
+    }
+    else
+    {
+        textedit->resize(width(), height() - 240);
+        textedit->move(0, 45);
+
+        listwidget->hide();;
+
+        btn_hide_list->move(width() - 13, 45 + textedit->height() / 2);
+
+        chatinput->resize(width(), 200);
+        chatinput->move(0, height() - 200);
+    }
 
 }
 
-void ChatWidget::paintEvent(QPaintEvent *event)
+void GroupChatWidget::paintEvent(QPaintEvent *event)
 {
+    BasicWidget::paintEvent(event);
     QPainter p(this);
     p.setPen(Qt::NoPen);
+    p.setBrush(QColor(234,233,248));
+    p.drawRect(0, 0, width(), height());
 
-    switch (skinType) {
-    case PURECOLOR:
-    {
-//        color.setAlpha(200);
-        p.setBrush(QColor(234,233,248));
-        p.drawRect(0, 0, width(), height());
-        //emit changeBackGround(color);
-        break;
-    }
-    case LOCALIMAGE:
-    {
-//        p.drawPixmap(0, 0, width(), height(),
-//                     QPixmap(skinPath).copy(0,0,width(), height()));
-        p.setBrush(QColor(234,233,248));
-        p.drawRect(0, 0, width(), height());
-        break;
-    }
-    default:
-        break;
-    }
 }
 
-void ChatWidget::setMessage(const QString &msg)
+void GroupChatWidget::setMessage(const QString &msg)
 {
 
     if(msg.isEmpty())
@@ -161,7 +195,7 @@ void ChatWidget::setMessage(const QString &msg)
     emit updateMessage();
 }
 
-void ChatWidget::showMessage(const QString &msg, const QString &color, const QString &size, const QString &family)
+void GroupChatWidget::showMessage(const QString &msg, const QString &color, const QString &size, const QString &family)
 {
     QString html = QString("<html><b style=\"color:red; font-size:16px;\">%1</b> <em style=\"color:gray; font-size:12px;\">%2</em>"
                            "<br/><span style=\"color:%3; font-size:%4px;font-family:%5;\">%6</span>"
@@ -171,36 +205,18 @@ void ChatWidget::showMessage(const QString &msg, const QString &color, const QSt
     textedit->append(html);
 }
 
-void ChatWidget::setUserName(const QString &username)
+void GroupChatWidget::setUserName(const QString &username)
 {
     lb_username->setText(username);
 }
 
-void ChatWidget::setUserid(const QString &userid)
+void GroupChatWidget::setUserid(const QString &userid)
 {
     this->userid = userid;
 }
 
-void ChatWidget::setIcon(const QString &path)
+void GroupChatWidget::setIcon(const QString &path)
 {
     headIcon->setPixmap(QPixmap(path));
 }
 
-
-
-void ChatWidget::changePureColorSkin(QColor _color)
-{
-    RWSetting::getInstance()->getSetting()->setValue("SkinType", PURECOLOR);
-    RWSetting::getInstance()->getSetting()->setValue("SKINCOLOR", _color);
-    skinType = PURECOLOR;
-    color = _color;
-    update();
-}
-void ChatWidget::changeImageSkin(const QString &path)
-{
-    RWSetting::getInstance()->getSetting()->setValue("SkinType", LOCALIMAGE);
-    RWSetting::getInstance()->getSetting()->setValue("SKINIMAGE", path);
-    skinType = LOCALIMAGE;
-    skinPath = path;
-    update();
-}

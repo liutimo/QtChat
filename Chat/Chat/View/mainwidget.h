@@ -55,6 +55,7 @@ private slots:
     void receiveFriendList(const QByteArray&);
     void receiveUserInfo(const QByteArray&);
     void receiveOfflineMessage(const QByteArray&);
+    void receivedGroupInfo(const QByteArray&);
 
     void changeStatus();
 private:

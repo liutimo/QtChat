@@ -2,6 +2,7 @@
 #include "BasicControls/facewidget.h"
 #include "BasicControls/editinformation.h"
 #include "BasicControls/showinfowidget.h"
+#include "View/groupchatwidget.h"
 #include "View/loginwidget.h"
 #include "View/chatwidget.h"
 #include "View/mainwidget.h"
@@ -21,6 +22,7 @@ int main(int argc, char *argv[])
     a.setStyleSheet(f.readAll());
 //    ShowInfoWidget w;
       LoginWidget w;
+//    GroupChatWidget w;
     //    MainWidget w;
     //    EditInformation w;
     //MessageListWidget w;
