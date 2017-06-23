@@ -236,3 +236,38 @@ QVector<QStringList> DataBase::searachFriend(const QString &key)
 
     return vec;
 }
+
+void DataBase::setGroupInfo(const QVector<QStringList> &lists)
+{
+    QString sql = "insert into chat_group(userid, groupid, groupname, groupimage)"
+                  "values('%1', '%2', '%3', '%4');";
+    for(auto elem : lists)
+    {
+        QString sql_ = sql.arg(AllVariable::getLoginUserId(), elem[0], elem[1], elem[2]);
+        QSqlQuery sql_query;
+        sql_query.prepare(sql_);
+        sql_query.exec();
+    }
+}
+
+QVector<QStringList> DataBase::getGroupInfo()
+{
+    QString sql = "select groupid, groupname, groupimage from chat_group where userid='%1';";
+    sql = sql.arg(AllVariable::getLoginUserId());
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+
+    QVector<QStringList> lists;
+    while(sql_query.next())
+    {
+        QStringList list;
+        list.append(sql_query.value(0).toString());
+        list.append(sql_query.value(1).toString());
+        list.append(sql_query.value(2).toString());
+        lists.append(list);
+    }
+
+    return lists;
+}

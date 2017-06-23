@@ -144,7 +144,7 @@ void MainWidget::init()
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseUserInfo, this, &MainWidget::receiveUserInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedOfflineMessage, this, &MainWidget::receiveOfflineMessage);
-    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupInfo, this, &MainWidget::receiveGroupInfo);
+    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupInfo, this, &MainWidget::receivedGroupInfo);
 }
 
 void MainWidget::loadSetting()
@@ -453,8 +453,6 @@ void MainWidget::parseUserInfo(const QByteArray &bytearray)
 
 void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
 {
-    qDebug() << bytearray;
-
     if(bytearray.size() < 3)
         return ;
 
@@ -499,9 +497,47 @@ void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
 
     emit updateMessageBox();
 }
+
+void MainWidget::parseGroup(const QByteArray&json)
+{
+    QVector<QStringList> lists;
+
+    qDebug() << json;
+    QJsonParseError error;
+    QJsonDocument document = QJsonDocument::fromJson(json, &error);
+
+    if(!document.isNull())
+    {
+        if(document.isArray())
+        {
+            QJsonArray array = document.array();
+
+            for(int i = 0; i < array.size(); ++i)
+            {
+                QStringList list;
+                QJsonValue value = array.at(i);
+                list << value.toArray().at(0).toString();
+                list << value.toArray().at(1).toString();
+                list << value.toArray().at(2).toString();
+                lists.append(list);
+            }
+        }
+
+    }
+    else
+        qDebug() << error.errorString();
+    DataBase::getInstance()->setGroupInfo(lists);
+}
+
 void MainWidget::receivedGroupInfo(const QByteArray&json)
 {
-    //shuju jiexi
+    parseGroup(json);
+
+    QVector<QStringList> lists = DataBase::getInstance()->getGroupInfo();
+
+    ListWidget* listwidget = dynamic_cast<ListWidget*>(stackwidget->widget(1));
+    listwidget->setGroupList(lists);
+
 }
 
 void MainWidget::setSatus(Status status)

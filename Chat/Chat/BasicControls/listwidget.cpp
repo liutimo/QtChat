@@ -1,6 +1,7 @@
 #include "listwidget.h"
 #include "listviewitemwidget.h"
 #include "recentchatitemwidget.h"
+#include "groupitemwidget.h"
 #include "DataBase/database.h"
 #include <View/chatwidget.h>
 #include <QAction>
@@ -164,6 +165,22 @@ void ListWidget::setList(QVector<QStringList> lists)
             removeItemWidget(newItem);
             delete newItem;
         });
+    }
+}
+
+void ListWidget::setGroupList(QVector<QStringList> lists)
+{
+    clear();
+    for(QStringList elem : lists)
+    {
+
+        GroupItemWidget *itemwidget = new GroupItemWidget;
+        itemwidget->setGroupInfo(elem.at(0), elem.at(1));
+        itemwidget->setImage(elem.at(2));
+        QListWidgetItem *newItem = new QListWidgetItem();
+        newItem->setSizeHint(QSize(this->width(),50));
+        insertItem(count(),newItem);
+        setItemWidget(newItem, itemwidget);
     }
 }
 

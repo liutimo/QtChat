@@ -33,6 +33,8 @@ public:
 
     QVector<QStringList> searachFriend(const QString &key);
 
+    void setGroupInfo(const QVector<QStringList> &lists);
+    QVector<QStringList> getGroupInfo();
     static DataBase* getInstance();
 
 signals:

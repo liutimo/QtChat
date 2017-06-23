@@ -19,7 +19,8 @@ HEADERS += \
     $$PWD/showinfowidget.h \
     $$PWD/recentchatitemwidget.h \
     $$PWD/groupmemberlistwidget.h \
-    $$PWD/groupmemberlineedit.h
+    $$PWD/groupmemberlineedit.h \
+    $$PWD/groupitemwidget.h
 
 SOURCES += \
     $$PWD/headicon.cpp \
@@ -42,7 +43,8 @@ SOURCES += \
     $$PWD/showinfowidget.cpp \
     $$PWD/recentchatitemwidget.cpp \
     $$PWD/groupmemberlistwidget.cpp \
-    $$PWD/groupmemberlineedit.cpp
+    $$PWD/groupmemberlineedit.cpp \
+    $$PWD/groupitemwidget.cpp
 
 DISTFILES += \
     $$PWD/BasicControls.pri

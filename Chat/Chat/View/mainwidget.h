@@ -68,7 +68,7 @@ private:
 
     void parseFriend(const QByteArray&);
     void parseUserInfo(const QByteArray&);
-
+    void parseGroup(const QByteArray&);
     void init_menu();
 
     //标题栏按钮

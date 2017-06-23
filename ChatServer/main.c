@@ -14,7 +14,6 @@
 #include "thread/threadhandle.h"
 #include "DataStructure/onlinehashtable.h"
 
-//闁稿繈鍔岄惇锟�
 int fd;
 
 struct pollfd pollfds[LISTENMAXNUM];
