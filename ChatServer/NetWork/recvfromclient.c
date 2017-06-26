@@ -30,24 +30,24 @@ void recvMsg(int fd)
 
     if (length < 0){
         //???????
-        ev.data.fd = fd;
-        delOnlineUser(fd);
-        ev.events = EPOLLIN|EPOLLET;
-        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
+//        e.data.fd = fd;
+//        delOvnlineUserWithFd(fd);
+//        ev.events = EPOLLIN|EPOLLET;
+//        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
         printf("client error occur \n");
-        close(fd);
+//        close(fd);
         return;
     }
 
     buf = (char *)malloc(sizeof(char) * length);
     int len = readn(fd, buf, length);
     if (len != length){
-        ev.data.fd = fd;
-        delOnlineUser(fd);
-        ev.events = EPOLLIN|EPOLLET;
-        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
+//        ev.data.fd = fd;
+//        delOnlineUserWithFd(fd);
+//        ev.events = EPOLLIN|EPOLLET;
+//        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
         printf("read data error\n");
-        close(fd);
+//        close(fd);
         return;
     }
 
@@ -77,6 +77,7 @@ void recvMsg(int fd)
         memcpy(rom->json, json, rom->length);
         sendfflineMessage(fd, rom);
         free(rom);
+        free(json);
         close_mysql();
     }
     case RESPONSACKOFFLINEMSG: {
@@ -88,12 +89,14 @@ void recvMsg(int fd)
         memset(rmsg, 0, sizeof(RequestMoveFriendToGroup));
         memcpy(rmsg, msg->data, msg->len);
         handleMoveFriendToGroup(fd, rmsg);
+        free(rmsg);
         break;
     }
     case REQUESTUPDATESIGNAURE: {
         RequestUpdateSignature *rmsg = (RequestUpdateSignature*)malloc(msg->len);
         memcpy(rmsg, msg->data, msg->len);
         handleUpdateSignature(fd, rmsg);
+        free(rmsg);
         break;
     }
     case REQUESTGROUPINFO: {
@@ -132,8 +135,10 @@ void handleLoginMsg(int fd, Msg *msg)
     }
 
     init_mysql();
+    int status = login_check_mysql(lmsg.userid, lmsg.password);
+    close_mysql();
 
-    switch (login_check_mysql(lmsg.userid, lmsg.password))
+    switch (status)
     {
     case DATABASE_USER_PASSWORDERROR:
         r_msg.ls = LOGINPWERROR;
@@ -155,10 +160,11 @@ void handleLoginMsg(int fd, Msg *msg)
 
     if (loginSuccess)
     {
+        init_mysql();
         sendResponseFriendList(fd, get_friendlist_json(lmsg.userid));
+        close_mysql();
     }
 
-    close_mysql();
 }
 
 void handleHeartBeatMsg(int fd)
@@ -186,7 +192,7 @@ void handleForwordMessageMsg(int fd, Msg *msg)
     strcpy(message, fmsg->message);
     message[fmsg->length] = '\0';
 
-    printf("%d  |||  %s\n", fmsg->length, fmsg->message);
+//    /("%d  |||  %s\n", fmsg->length, message);
 
     init_mysql();
     set_chatlog(findOnlineUserWithFd(fd), fmsg->friendid, message, fmsg->font, fmsg->size, fmsg->color);
@@ -259,6 +265,7 @@ void handleRequestGroupMessage(int fd)
     sendGroupInfo(fd, msg);
 
     free(msg);
+    free(group);
 }
 
 void handleRequestGroupMemberMessage(int fd)
@@ -270,33 +277,51 @@ void handleRequestGroupMemberMessage(int fd)
     if(memberinfo == NULL)
         return;
 
-    size_t size = sizeof(RequestGroupMemberInfo) + strlen(memberinfo) + 1;
+    size_t size = sizeof(ResponseGroupMemberInfo) + strlen(memberinfo) + 1;
     ResponseGroupMemberInfo *info = (ResponseGroupMemberInfo*)malloc(size);
 
     info->length = strlen(memberinfo) + 1;
     strcpy(info->json, memberinfo);
     info->json[info->length] = '\0';
     sendGroupMemberInfo(fd, info);
+
+    free(info);
+    free(memberinfo);
 }
 
 void handleRequestChangeStatus(int fd, Msg*msg)
 {
     RequestChangeStatus *rcs = (RequestChangeStatus*)malloc(msg->len);
+    memcpy(rcs, msg->data, msg->len);
 
+    init_mysql();
     char** friends = get_friends(findOnlineUserWithFd(fd));
+    close_mysql();
 
     ResponseFriendStatusChange *rfsc = (ResponseFriendStatusChange*)malloc(sizeof(ResponseFriendStatusChange));
     strcpy(rfsc->userid, findOnlineUserWithFd(fd));
 
+
+    OnlineUserNode *node = findWithFd(fd);
+
     switch (rcs->status) {
     case UserOffLine:                               //离线做离线处理
-        rfsc->status = UserOffLine;
+        node->user.status = UserOffLine;
+        ev.data.fd = fd;
+        ev.events = EPOLLIN|EPOLLET;
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
+        close(fd);
+
+        delOnlineUserWithUid(findOnlineUserWithFd(fd));
+        delOnlineUserWithFd(fd);
         break;
     case UserOnLine:                                //用户上线
         rfsc->status = UserOnLine;
+        node->user.status = UserOnLine;
         break;
     case UserHide:                                  //用户隐身
         rfsc->status = UserHide;
+        node->user.status = UserHide;
         break;
     default:
         break;
@@ -313,4 +338,5 @@ void handleRequestChangeStatus(int fd, Msg*msg)
     }
 
     free(rfsc);
+    free(friends);
 }

@@ -25,6 +25,7 @@ public:
     void sendRequestUpdateSignature(const QString &signature);
     void sendRequestGroupInfo();
     void sendRequestGroupMemberInfo();
+    void sendRequestChangeStatus(UserStatus status);
 
 protected:
     void recv();

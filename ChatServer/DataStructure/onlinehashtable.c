@@ -36,11 +36,7 @@ void addOnlineUserWithFd(OnlineUser *user)
     current1->next = node1;
 }
 
-void addOnlineUser(OnlineUser *user)
-{
-    addOnlineUserWithFd(user);
-    addOnlineUserWithUid(user);
-}
+
 
 void addOnlineUserWithUid(OnlineUser *user)
 {
@@ -62,8 +58,14 @@ void addOnlineUserWithUid(OnlineUser *user)
     current2->next = node2;
 }
 
+void addOnlineUser(OnlineUser *user)
+{
+    addOnlineUserWithFd(user);
+    addOnlineUserWithUid(user);
+}
+
 //删除一个在线用户
-void delOnlineUser(const int fd)
+void delOnlineUserWithFd(const int fd)
 {
     OnlineUserNode *current1= fd_head[fd - 3];
     OnlineUserNode *before1 = current1;
@@ -73,7 +75,7 @@ void delOnlineUser(const int fd)
 
     if(current1->user.fd == fd)
     {
-        fd_head[fd - 3] = current1->next;
+        fd_head[fd - 3] = NULL;
         free(current1);
         return;
     }
@@ -93,15 +95,15 @@ void delOnlineUser(const int fd)
 
 void delOnlineUserWithUid(const char *uid)
 {
-    OnlineUserNode *current1= fd_head[atoi(uid) %123456];
+    OnlineUserNode *current1= uid_head[atoi(uid) %123456];
     OnlineUserNode *before1 = current1;
 
     if(current1 == NULL)
         return;
 
-    if(strcpy(uid, current1->user.userid) == 0)
+    if(strcmp(uid, current1->user.userid) == 0)
     {
-        fd_head[atoi(uid) %123456] = current1->next;
+        uid_head[atoi(uid) %123456] = NULL;
         free(current1);
         return;
     }
@@ -110,7 +112,7 @@ void delOnlineUserWithUid(const char *uid)
 
     while(current1)
     {
-        if(strcpy(uid, current1->user.userid) == 0)
+        if(strcmp(uid, current1->user.userid) == 0)
         {
             before1->next = current1->next;
             free(current1);

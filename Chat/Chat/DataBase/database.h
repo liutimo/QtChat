@@ -40,6 +40,8 @@ public:
     void setGroupMemberInfo(const QMap<QString, QVector<QStringList>> &map);
     QVector<QStringList> getGroupMemberInfo(const QString &groupid);
 
+    QString getFriendName(const QString &friendid);
+    QString getFriendImage(const QString &friendid);
 signals:
     void setGroupMemberFinished();
 public slots:

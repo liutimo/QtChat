@@ -12,7 +12,7 @@ extern pthread_mutex_t mutex;
 void sendMsg(int fd, MsgType msgtype, char *data, ssize_t size)
 {
     pthread_mutex_lock(&mutex);
-    char *buf = malloc(sizeof(char) * (sizeof(Msg) + size));
+    char *buf = (char*)malloc((sizeof(Msg) + size));
     Msg *msg = (Msg*)buf;
 	msg->type = msgtype;
 	msg->len = size;
@@ -49,6 +49,8 @@ void sendResponseUserInfo(int fd, const char *userinfo)
     memcpy(f->userinfo, userinfo, f->length);
 
     sendMsg(fd, RESPONSEUSERINFO, f, sizeof(ResponseUserinfo) + f->length);
+
+    free(userinfo);
 }
 
 void sendResponseFriendList(int fd, const char *list)

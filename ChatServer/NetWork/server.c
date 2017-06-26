@@ -102,7 +102,5 @@ void start(int fd)
             }
 
         }
-
-
     }
 }

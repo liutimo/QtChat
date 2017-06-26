@@ -188,6 +188,30 @@ QVector<QString> DataBase::getFriendInfo(const QString &userid)
     return info;
 }
 
+QString DataBase::getFriendName(const QString &friendid)
+{
+    QString sql("select username from friendlist where friendid='%1' limit 1;");
+    sql = sql.arg(friendid);
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+
+    return sql_query.value(0).toString();
+}
+
+QString DataBase::getFriendImage(const QString &friendid)
+{
+    QString sql("select imagepath from friendlist where friendid='%1' limit 1;");
+    sql = sql.arg(friendid);
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+
+    return sql_query.value(0).toString();
+}
+
 //获取最近聊天的好友信息
 QVector<QStringList> DataBase::getRecentlyChatFriendInfo(const QStringList &list)
 {

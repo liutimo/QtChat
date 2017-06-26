@@ -297,25 +297,25 @@ void MainWidget::receiveFriendList(const QByteArray& bytearray)
 void MainWidget::init_menu()
 {
     state_online = new QAction(QIcon(":/Resource/status/imonline@2x.png"), "在线");
-    state_busy = new QAction(QIcon(":/Resource/status/busy@2x.png"), "忙碌");
+//    state_busy = new QAction(QIcon(":/Resource/status/busy@2x.png"), "忙碌");
     state_hide = new QAction(QIcon(":/Resource/status/invisible@2x.png"), "隐身");
-    state_away = new QAction(QIcon(":/Resource/status/away@2x.png"), "离开");
+//    state_away = new QAction(QIcon(":/Resource/status/away@2x.png"), "离开");
     state_offline = new QAction(QIcon(":/Resource/status/imoffline@2x.png"), "离线");
-    state_notdisturb = new QAction(QIcon(":/Resource/status/mute@2x.png"), "请勿打扰");
+//    state_notdisturb = new QAction(QIcon(":/Resource/status/mute@2x.png"), "请勿打扰");
 
     menu->addAction(state_online);
-    menu->addAction(state_busy);
+//    menu->addAction(state_busy);
     menu->addAction(state_hide);
-    menu->addAction(state_away);
+//    menu->addAction(state_away);
     menu->addAction(state_offline);
-    menu->addAction(state_notdisturb);
+//    menu->addAction(state_notdisturb);
 
     connect(state_online, &QAction::triggered, this, &MainWidget::changeStatus);
-    connect(state_busy, &QAction::triggered, this, &MainWidget::changeStatus);
+//    connect(state_busy, &QAction::triggered, this, &MainWidget::changeStatus);
     connect(state_hide, &QAction::triggered, this, &MainWidget::changeStatus);
-    connect(state_away, &QAction::triggered, this, &MainWidget::changeStatus);
+//    connect(state_away, &QAction::triggered, this, &MainWidget::changeStatus);
     connect(state_offline, &QAction::triggered, this, &MainWidget::changeStatus);
-    connect(state_notdisturb, &QAction::triggered, this, &MainWidget::changeStatus);
+//    connect(state_notdisturb, &QAction::triggered, this, &MainWidget::changeStatus);
 
 }
 
@@ -323,30 +323,37 @@ void MainWidget::changeStatus()
 {
     QAction *action = static_cast<QAction*>(sender());
 
+    UserStatus u;
+
     if (action == state_online)
     {
         tb_status->setIcon(QIcon(":/Resource/status/imonline@2x.png"));
+        u = UserOnLine;
     }
-    else if (action == state_busy)
-    {
-        tb_status->setIcon(QIcon(":/Resource/status/busy@2x.png"));
-    }
+//    else if (action == state_busy)
+//    {
+//        tb_status->setIcon(QIcon(":/Resource/status/busy@2x.png"));
+//    }
     else if (action == state_hide)
     {
+        u = UserHide;
         tb_status->setIcon(QIcon(":/Resource/status/invisible@2x.png"));
     }
-    else if (action == state_away)
-    {
-        tb_status->setIcon(QIcon(":/Resource/status/away@2x.png"));
-    }
+//    else if (action == state_away)
+//    {
+//        tb_status->setIcon(QIcon(":/Resource/status/away@2x.png"));
+//    }
     else if (action == state_offline)
     {
         tb_status->setIcon(QIcon(":/Resource/status/imoffline@2x.png"));
+        u = UserOffLine;
     }
-    else if (action == state_notdisturb)
-    {
-        tb_status->setIcon(QIcon(":/Resource/status/mute@2x.png"));
-    }
+//    else if (action == state_notdisturb)
+//    {
+//        tb_status->setIcon(QIcon(":/Resource/status/mute@2x.png"));
+//    }
+
+    ConnectToServer::getInstance()->sendRequestChangeStatus(u);
 }
 
 void MainWidget::receiveUserInfo(const QByteArray& bytearry)

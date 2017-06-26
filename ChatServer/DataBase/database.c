@@ -369,8 +369,8 @@ char **get_friends(const char *userid)
 {
     char sql_get_friendcount[DATABASE_SQLMAXLENGTH];
     char sql_get_friendsid[DATABASE_SQLMAXLENGTH];
-    sprintf(sql_get_friendcount, "SELECT count(friendid) FROM chat.friendlist where userid='%s';", userid);
-    sprintf(sql_get_friendsid, "SELECT friendid FROM chat.friendlist where userid='%s';", userid);
+    sprintf(sql_get_friendcount, "select count(friendid) from friendlist where userid='%s';", userid);
+    sprintf(sql_get_friendsid, "select friendid from friendlist where userid='%s';", userid);
 
     if(execute_mysql(sql_get_friendcount) == -1)
         print_error_mysql(sql_get_friendcount);

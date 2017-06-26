@@ -1,5 +1,6 @@
 #include "../allvariable.h"
 #include "messagelistwidget.h"
+#include "DataBase/database.h"
 #include <BasicControls/messageitemwidget.h>
 #include "View/chatwidget.h"
 #include <QListWidget>
@@ -31,7 +32,7 @@ void MessageListWidget::updateMessage()
     {
         QListWidgetItem *item = new QListWidgetItem();
         MessageItemWidget *w = new MessageItemWidget();
-        w->setFriendName(s.key(elem));
+        w->setFriendName(DataBase::getInstance()->getFriendName(s.key(elem)));
         w->setNumber(elem->size());
         connect(w, &MessageItemWidget::itemclicked, this, &MessageListWidget::showChatWidget);
         listwidget->insertItem(listwidget->count(), item);
@@ -53,6 +54,8 @@ void MessageListWidget::showChatWidget(const QString userid)
     if(w == NULL)
     {
         w = new ChatWidget();
+        w->setUserName(DataBase::getInstance()->getFriendName(userid));
+        w->setIcon(DataBase::getInstance()->getFriendImage(userid));
         w->setUserid(userid);
         wm.insert(userid, w);
     }

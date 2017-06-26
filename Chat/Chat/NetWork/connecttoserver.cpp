@@ -1,3 +1,4 @@
+
 #include "connecttoserver.h"
 #include "marco.h"
 
@@ -136,6 +137,16 @@ void ConnectToServer::sendRequestGroupMemberInfo()
     delete msg;
 }
 
+void ConnectToServer::sendRequestChangeStatus(UserStatus status)
+{
+    RequestChangeStatus *s = new RequestChangeStatus;
+    s->status = status;
+
+    send(REQUESTCHANGESTATUS, (char*)s, sizeof(RequestChangeStatus));
+
+    delete s;
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
@@ -194,6 +205,12 @@ void ConnectToServer::recv()
         ResponseGroupMemberInfo *info = (ResponseGroupMemberInfo*)new char[msg->len];
         memcpy(info,msg->data, msg->len);
         emit receivedGroupMemberInfo(info->json);
+        break;
+    }
+    case RESPONSEFRIENDSTATUSCHANGE: {
+        ResponseFriendStatusChange *rfsc = new ResponseFriendStatusChange;
+        memcmp(rfsc, msg->data, msg->len);
+        qDebug() << rfsc->userid << rfsc->status;
         break;
     }
     default:
