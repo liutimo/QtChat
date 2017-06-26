@@ -35,7 +35,7 @@ void ConnectToServer::closeServer()
 
 void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
 {
-    mutex->lock();
+//    mutex->lock();
     int memsize = (sizeof(Msg) + size) *sizeof(char);
     char *buf = new char[memsize];
     Msg *msg = (Msg*)buf;
@@ -62,7 +62,7 @@ void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
 
     delete []buf;
 
-    mutex->unlock();
+//    mutex->unlock();
 }
 
 void ConnectToServer::sendLoginMsg(LoginMsg *loginmsg)
@@ -117,7 +117,7 @@ void ConnectToServer::sendRequestUpdateSignature(const QString &signature)
     RequestUpdateSignature *msg = (RequestUpdateSignature *)new char[sizeof(RequestUpdateSignature) + signature.toUtf8().size()];
     msg->length = signature.toUtf8().size();
     strcpy(msg->sig, signature.toUtf8());
-    qDebug() << msg->sig;
+
     send(REQUESTUPDATESIGNAURE, (char*)msg, sizeof(RequestUpdateSignature) + msg->length);
     delete msg;
 }
@@ -126,6 +126,13 @@ void ConnectToServer::sendRequestGroupInfo()
 {
     RequestGroupInfo *msg = (RequestGroupInfo*)new char[sizeof(RequestGroupInfo)];
     send(REQUESTGROUPINFO, (char*)msg, sizeof(RequestGroupInfo));
+    delete msg;
+}
+
+void ConnectToServer::sendRequestGroupMemberInfo()
+{
+    RequestGroupMemberInfo *msg = new RequestGroupMemberInfo;
+    send(REQUESTGROUPMEMBERINFO, (char*)msg, sizeof(RequestGroupMemberInfo));
     delete msg;
 }
 
@@ -175,11 +182,19 @@ void ConnectToServer::recv()
         memcpy(rom, msg->data, msg->len);
         rom->json[rom->length] = '\0';
         emit receivedOfflineMessage(QByteArray(rom->json));
+        break;
     }
     case RESPONSEGROUPINFO: {
         ResponseGroupInfo *rgi = (ResponseGroupInfo*)new char[msg->len];
         memcpy(rgi, msg->data, msg->len);
         emit receivedGroupInfo(QByteArray(rgi->json));
+        break;
+    }
+    case RESPONSEGROUPMEMBERINFO: {
+        ResponseGroupMemberInfo *info = (ResponseGroupMemberInfo*)new char[msg->len];
+        memcpy(info,msg->data, msg->len);
+        emit receivedGroupMemberInfo(info->json);
+        break;
     }
     default:
         break;

@@ -99,6 +99,10 @@ void recvMsg(int fd)
         handleRequestGroupMessage(fd);
         break;
     }
+    case REQUESTGROUPMEMBERINFO: {
+        handleRequestGroupMemberMessage(fd);
+        break;
+    }
     default:
         break;
     }
@@ -222,8 +226,9 @@ void handleUpdateSignature(int fd, RequestUpdateSignature *msg)
 {
     init_mysql();
 
-    char*message = malloc(msg->length);
+    char*message = malloc(msg->length + 1);
     strcpy(message, msg->sig);
+    message[msg->length] = '\0';
     update_user_signature(findOnlineUserWithFd(fd), message);
     free(message);
     close_mysql();
@@ -242,11 +247,29 @@ void handleRequestGroupMessage(int fd)
         return;
 
     ResponseGroupInfo *msg = (ResponseGroupInfo*)malloc(sizeof(ResponseGroupInfo) + strlen(group));
+    printf("%s\n", group);
     msg->length = strlen(group);
     strcpy(msg->json, group);
 
     sendGroupInfo(fd, msg);
 
     free(msg);
+}
 
+void handleRequestGroupMemberMessage(int fd)
+{
+    init_mysql();
+    char *memberinfo = get_group_member(findOnlineUserWithFd(fd));
+    close_mysql();
+
+    if(memberinfo == NULL)
+        return;
+
+    size_t size = sizeof(RequestGroupMemberInfo) + strlen(memberinfo) + 1;
+    ResponseGroupMemberInfo *info = (ResponseGroupMemberInfo*)malloc(size);
+
+    info->length = strlen(memberinfo) + 1;
+    strcpy(info->json, memberinfo);
+    info->json[info->length] = '\0';
+    sendGroupMemberInfo(fd, info);
 }

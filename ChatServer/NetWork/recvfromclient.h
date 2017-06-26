@@ -19,5 +19,7 @@ void handleMoveFriendToGroup(int fd, RequestMoveFriendToGroup *msg);
 void handleUpdateSignature(int fd, RequestUpdateSignature *msg);
 
 void handleRequestGroupMessage(int fd);
+
+void handleRequestGroupMemberMessage(int fd);
 #endif // !RECVFROMCLIENT_H
 

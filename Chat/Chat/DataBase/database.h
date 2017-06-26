@@ -14,6 +14,7 @@ class DataBase : public QObject
 {
     Q_OBJECT
 public:
+    static DataBase* getInstance();
 
     QPair<QString, QString> getLocalUserInfo();
     void setLoaclUserInfo(const QString& userid, const QString &password);
@@ -35,10 +36,12 @@ public:
 
     void setGroupInfo(const QVector<QStringList> &lists);
     QVector<QStringList> getGroupInfo();
-    static DataBase* getInstance();
+
+    void setGroupMemberInfo(const QMap<QString, QVector<QStringList>> &map);
+    QVector<QStringList> getGroupMemberInfo(const QString &groupid);
 
 signals:
-
+    void setGroupMemberFinished();
 public slots:
 
 private:

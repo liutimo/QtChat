@@ -4,7 +4,9 @@
 #include "View/skinmanagewidget.h"
 #include "BasicControls/headicon.h"
 #include "NetWork/connecttoserver.h"
+#include "NetWork/httpconnect.h"
 #include "BasicControls/pushbutton.h"
+#include "BasicControls/groupitemwidget.h"
 #include "BasicControls/groupmemberlistwidget.h"
 #include "Setting/rwsetting.h"
 
@@ -28,6 +30,8 @@ GroupChatWidget::GroupChatWidget(QWidget *parent) : BasicWidget(parent)
 
     resize(650, 500);
     setMouseTracking(true);
+
+
 }
 
 void GroupChatWidget::init()
@@ -37,8 +41,8 @@ void GroupChatWidget::init()
     headIcon->setPixmap(QPixmap(":/timg (1).jpg"));
     headIcon->setStyleSheet("border:0px;background-color: transparent;");
 
-    lb_username = new QLabel(tr("Username"), this);
-    lb_username->setStyleSheet("border:0px;background-color: transparent;");
+    lb_groupname = new QLabel(tr("Username"), this);
+    lb_groupname->setStyleSheet("border:0px;background-color: transparent;");
 
     btn_chat_settings = new QPushButton(this);
     btn_chat_settings->setFixedSize(28, 28);
@@ -88,7 +92,7 @@ void GroupChatWidget::init()
             textedit->move(0, 45);
 
             listwidget->move(width() - 200,45);
-            listwidget->resize(150, height() - 45);
+            listwidget->resize(200, height() - 45);
 
             btn_hide_list->move(width() - 213, 45 + textedit->height() / 2);
 
@@ -116,8 +120,8 @@ void GroupChatWidget::resizeEvent(QResizeEvent *event)
 
     headIcon->move(10, 10);
 
-    lb_username->move(50, 12);
-    lb_username->resize(width() - 172, 30);
+    lb_groupname->move(50, 12);
+    lb_groupname->resize(width() - 172, 30);
 
     btn_chat_close->move(width() - 28, 0);
     btn_chat_max->move(width() - 56, 0);
@@ -173,7 +177,7 @@ void GroupChatWidget::setMessage(const QString &msg)
     char *buf = new char[sizeof(RequestForwordMessageMsg) + msg.toUtf8().size()];
 
     RequestForwordMessageMsg *rmsg = (RequestForwordMessageMsg*)buf;
-    strcpy(rmsg->friendid, userid.toUtf8().data());
+    strcpy(rmsg->friendid, groupid.toUtf8().data());
     strcpy(rmsg->font, fontinfo.at(0).toUtf8().data());
     strcpy(rmsg->size, fontinfo.at(1).toUtf8().data());
     strcpy(rmsg->color, fontinfo.at(2).toUtf8().data());
@@ -189,7 +193,7 @@ void GroupChatWidget::setMessage(const QString &msg)
                            "<br/>%3"
                            "<br/></html>").arg(AllVariable::getLoginUserName(), QDateTime::currentDateTime().toString("h:m:s ap"), msg);
 
-    DataBase::getInstance()->setChatLog(AllVariable::getLoginUserId(), userid, html);
+    DataBase::getInstance()->setChatLog(AllVariable::getLoginUserId(), groupid, html);
     textedit->append(html);
 
     emit updateMessage();
@@ -199,24 +203,41 @@ void GroupChatWidget::showMessage(const QString &msg, const QString &color, cons
 {
     QString html = QString("<html><b style=\"color:red; font-size:16px;\">%1</b> <em style=\"color:gray; font-size:12px;\">%2</em>"
                            "<br/><span style=\"color:%3; font-size:%4px;font-family:%5;\">%6</span>"
-                           "<br/></html>").arg(lb_username->text(), QDateTime::currentDateTime().toString("h:m:s ap"), color, size, family, msg);
+                           "<br/></html>").arg(lb_groupname->text(), QDateTime::currentDateTime().toString("h:m:s ap"), color, size, family, msg);
 
-    DataBase::getInstance()->setChatLog(userid, AllVariable::getLoginUserId(), html);
+    DataBase::getInstance()->setChatLog(groupid, AllVariable::getLoginUserId(), html);
     textedit->append(html);
 }
 
-void GroupChatWidget::setUserName(const QString &username)
+void GroupChatWidget::setGroupName(const QString &username)
 {
-    lb_username->setText(username);
+    lb_groupname->setText(username);
 }
 
-void GroupChatWidget::setUserid(const QString &userid)
+void GroupChatWidget::setGroupId(const QString &groupid)
 {
-    this->userid = userid;
+    this->groupid = groupid;
 }
 
 void GroupChatWidget::setIcon(const QString &path)
 {
-    headIcon->setPixmap(QPixmap(path));
+    if(QFile(QUrl(path).fileName()).exists())
+        headIcon->setPixmap(QPixmap(QUrl(path).fileName()));
+    else
+    {
+        HttpConnect *http = new HttpConnect();
+        http->loadFileFormUrl(path);
+
+        connect(http, &HttpConnect::loadCompleted, this, [this, http](){
+            qDebug() << "设置头像";
+            headIcon->setPixmap(QPixmap(http->getFilePath()));
+        });
+    }
 }
 
+void GroupChatWidget::initMemberList()
+{
+    QVector<QStringList> vec = DataBase::getInstance()->getGroupMemberInfo(groupid);
+
+    listwidget->setList(vec);
+}

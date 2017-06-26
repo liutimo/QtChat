@@ -145,6 +145,7 @@ void MainWidget::init()
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedOfflineMessage, this, &MainWidget::receiveOfflineMessage);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupInfo, this, &MainWidget::receivedGroupInfo);
+    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupMemberInfo, this, &MainWidget::receivedGroupMemberInfo);
 }
 
 void MainWidget::loadSetting()
@@ -538,6 +539,47 @@ void MainWidget::receivedGroupInfo(const QByteArray&json)
     ListWidget* listwidget = dynamic_cast<ListWidget*>(stackwidget->widget(1));
     listwidget->setGroupList(lists);
 
+    ConnectToServer::getInstance()->sendRequestGroupMemberInfo();
+}
+
+void MainWidget::receivedGroupMemberInfo(const QByteArray &json)
+{
+    QMap<QString, QVector<QStringList>> map;
+
+    QJsonParseError error;
+    QJsonDocument document = QJsonDocument::fromJson(json, &error);
+
+    if(!document.isNull())
+    {
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+
+            for(auto key : object.keys())
+            {
+                QVector<QStringList> vec;
+                QJsonArray array = object.value(key).toArray();
+
+                for(int i = 0; i < array.size(); ++i)
+                {
+                    QStringList list;
+                    QJsonValue tmp = array.at(i);
+                    list << tmp.toObject().value("memberid").toString();
+                    list << tmp.toObject().value("membername").toString();
+                    list << tmp.toObject().value("memberimage").toString();
+                    vec.append(list);
+                    qDebug() << list;
+                }
+
+                map.insert(key, vec);
+            }
+        }
+
+    }
+    else
+        qDebug() << error.errorString();
+
+    DataBase::getInstance()->setGroupMemberInfo(map);
 }
 
 void MainWidget::setSatus(Status status)

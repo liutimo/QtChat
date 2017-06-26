@@ -13,6 +13,7 @@ DataBase * DataBase::instance = NULL;
 QMutex * DataBase::mutex = new QMutex();
 
 
+//获取数据库链接实例
 DataBase* DataBase::getInstance()
 {
     mutex->lock();
@@ -27,6 +28,7 @@ DataBase* DataBase::getInstance()
     return instance;
 }
 
+//获取当前电脑的登陆过并且保存了的用户信息
 QPair<QString, QString> DataBase::getLocalUserInfo()
 {
     QSqlQuery sql_query;
@@ -42,6 +44,7 @@ QPair<QString, QString> DataBase::getLocalUserInfo()
     return QPair<QString, QString>("","");
 }
 
+//设置当前电脑登陆过并且保存的用户信息
 void DataBase::setLoaclUserInfo(const QString& userid, const QString &password)
 {
     QString sql = QString("update localuserinfo set userpw='%1' where userid='%2'").arg(password, userid);
@@ -61,6 +64,7 @@ void DataBase::setLoaclUserInfo(const QString& userid, const QString &password)
     }
 }
 
+//保存好友列表信息
 void DataBase::setFriendList(QList<QVector<QString>> friends)
 {
     QString sql = "insert into friendlist(userid, friendid, username, remark, "
@@ -79,6 +83,8 @@ void DataBase::setFriendList(QList<QVector<QString>> friends)
     }
 
 }
+
+//获取好友列表信息
 QList<QVector<QString>> DataBase::getFriendList()
 {
     QList<QVector<QString>> friends;
@@ -115,6 +121,7 @@ QList<QVector<QString>> DataBase::getFriendList()
     return friends;
 }
 
+//获取好友分组
 QStringList DataBase::getGroup()
 {
     QStringList groups;
@@ -132,6 +139,7 @@ QStringList DataBase::getGroup()
     return groups;
 }
 
+//保存好友聊天记录
 void DataBase::setChatLog(const QString &senderid, const QString &receiverid, const QString &content)
 {
     QString sql("insert into chatlog(senderid, receiverid, content) values('%1', '%2', '%3')");
@@ -142,6 +150,7 @@ void DataBase::setChatLog(const QString &senderid, const QString &receiverid, co
     sql_query.exec();
 }
 
+//好友分组移动 == 更新好友分组
 void DataBase::moveFriendToGroup(const QString &userid, const QString &group)
 {
     QString sql("update friendlist set grouptype='%1' where friendid='%2' and userid='%3';");
@@ -152,6 +161,7 @@ void DataBase::moveFriendToGroup(const QString &userid, const QString &group)
     sql_query.exec();
 }
 
+//获取指定好友信息
 QVector<QString> DataBase::getFriendInfo(const QString &userid)
 {
     QString sql("select username, sex, birthofdate, mail, mobile, personalizedsignature, imagepath "
@@ -178,6 +188,7 @@ QVector<QString> DataBase::getFriendInfo(const QString &userid)
     return info;
 }
 
+//获取最近聊天的好友信息
 QVector<QStringList> DataBase::getRecentlyChatFriendInfo(const QStringList &list)
 {
     QVector<QStringList> lists;
@@ -208,6 +219,7 @@ QVector<QStringList> DataBase::getRecentlyChatFriendInfo(const QStringList &list
     return lists;
 }
 
+//搜索
 QVector<QStringList> DataBase::searachFriend(const QString &key)
 {
     QVector<QStringList> vec;
@@ -237,19 +249,54 @@ QVector<QStringList> DataBase::searachFriend(const QString &key)
     return vec;
 }
 
+//保存群组信息
 void DataBase::setGroupInfo(const QVector<QStringList> &lists)
 {
-    QString sql = "insert into chat_group(userid, groupid, groupname, groupimage)"
-                  "values('%1', '%2', '%3', '%4');";
-    for(auto elem : lists)
+
+    QString sql1 = "select groupid from chat_group where userid='%1';";
+    sql1 = sql1.arg(AllVariable::getLoginUserId());
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql1);
+    sql_query.exec();
+
+
+    QVector<QString> vec;
+    while(sql_query.next())
     {
-        QString sql_ = sql.arg(AllVariable::getLoginUserId(), elem[0], elem[1], elem[2]);
-        QSqlQuery sql_query;
-        sql_query.prepare(sql_);
-        sql_query.exec();
+        vec.append(sql_query.value(0).toString());
     }
+
+    for (auto elem : lists)
+    {
+        bool exist = false;
+
+        for(auto id : vec)
+        {
+            //存在则跟更新记录
+            if(id == elem[0]){
+                QString sql2 = "update chat_group set groupname='%1', groupimage='%2' where userid='%3' and groupimage='%4';";
+                QSqlQuery sql_query2;
+                sql_query2.prepare(sql2.arg(elem[1], elem[2], AllVariable::getLoginUserId(), elem[0]));
+                sql_query2.exec();
+                exist = true;
+            }
+        }
+        //如果记录不存在， 则插入
+        if(!exist)
+        {
+            QString sql = "insert into chat_group(userid, groupid, groupname, groupimage)"
+                          "values('%1', '%2', '%3', '%4');";
+            QSqlQuery sql_query1;
+            sql_query1.prepare(sql.arg(AllVariable::getLoginUserId(), elem[0], elem[1], elem[2]));
+            sql_query1.exec();
+
+        }
+    }
+
 }
 
+//获取群组信息
 QVector<QStringList> DataBase::getGroupInfo()
 {
     QString sql = "select groupid, groupname, groupimage from chat_group where userid='%1';";
@@ -270,4 +317,42 @@ QVector<QStringList> DataBase::getGroupInfo()
     }
 
     return lists;
+}
+
+void DataBase::setGroupMemberInfo(const QMap<QString, QVector<QStringList>> &map)
+{
+    QString sql = "insert into chat_groupmember(groupid, memberid, membername, memberimage) values('%1', '%2', '%3', '%4');";
+
+    for(QString key : map.keys())
+    {
+        for(QStringList elem : map.value(key))
+        {
+            QSqlQuery sql_query;
+            sql_query.prepare(sql.arg(key, elem[0], elem[1], elem[2]));
+            sql_query.exec();
+        }
+    }
+    emit setGroupMemberFinished();
+}
+
+QVector<QStringList> DataBase::getGroupMemberInfo(const QString &groupid)
+{
+    QString sql = "select memberid, membername, memberimage from chat_groupmember where groupid='%1'";
+    sql = sql.arg(groupid);
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+
+    QVector<QStringList> vec;
+    while(sql_query.next())
+    {
+        QStringList list;
+        list << sql_query.value(0).toString()
+             << sql_query.value(1).toString()
+             << sql_query.value(2).toString();
+        vec.append(list);
+    }
+
+    return vec;
 }

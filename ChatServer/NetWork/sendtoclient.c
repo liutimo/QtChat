@@ -76,3 +76,7 @@ void sendGroupInfo(int fd, ResponseGroupInfo *msg)
 {
     sendMsg(fd, RESPONSEGROUPINFO, msg, msg->length + sizeof(ResponseGroupInfo));
 }
+void sendGroupMemberInfo(int fd, ResponseGroupMemberInfo *msg)
+{
+    sendMsg(fd, RESPONSEGROUPMEMBERINFO, msg, msg->length + sizeof(ResponseGroupMemberInfo));
+}

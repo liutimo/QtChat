@@ -24,6 +24,7 @@ public:
     void sendRequestMoveFriendToGroup(const QString&userid,const QString &grouptype);
     void sendRequestUpdateSignature(const QString &signature);
     void sendRequestGroupInfo();
+    void sendRequestGroupMemberInfo();
 
 protected:
     void recv();
@@ -37,7 +38,7 @@ signals:
     void responseUserInfo(QByteArray);
     void receivedOfflineMessage(QByteArray);
     void receivedGroupInfo(const QByteArray&);
-
+    void receivedGroupMemberInfo(const QByteArray&);
 private:
     ConnectToServer(QObject *parent = Q_NULLPTR);
 

@@ -56,7 +56,7 @@ private slots:
     void receiveUserInfo(const QByteArray&);
     void receiveOfflineMessage(const QByteArray&);
     void receivedGroupInfo(const QByteArray&);
-
+    void receivedGroupMemberInfo(const QByteArray&);
     void changeStatus();
 private:
     typedef enum _SkinType{

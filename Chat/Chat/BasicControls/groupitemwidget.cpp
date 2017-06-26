@@ -5,7 +5,7 @@
 #include "Setting/rwsetting.h"
 #include "NetWork/connecttoserver.h"
 #include "showinfowidget.h"
-#include "View/chatwidget.h"
+#include "View/groupchatwidget.h"
 #include "../allvariable.h"
 #include "headicon.h"
 
@@ -45,7 +45,7 @@ void GroupItemWidget::resizeEvent(QResizeEvent *event)
     m_headicon->move(5, (height() - 30) / 2);
 
     m_nickname->resize(width() - 80, 20);
-    m_nickname->move(40, 5);
+    m_nickname->move(40, (height() - 20) / 2);
 }
 void GroupItemWidget::setGroupInfo(const QString &groupid, const QString &groupname)
 {
@@ -72,14 +72,20 @@ void GroupItemWidget::contextMenuEvent(QContextMenuEvent *event)
 
 void GroupItemWidget::listWidgetMenuTriggered()
 {
-
+    GroupChatWidget *w = new GroupChatWidget;
+    w->setGroupId(groupid);
+    w->setGroupName(groupname);
+    w->setIcon(imagePath);
+    w->initMemberList();
+    w->show();
 }
 
 void GroupItemWidget::setImage(const QString& url)
 {
     HttpConnect *http = new HttpConnect();
 
-    if(QFile(QUrl(url).fileName()).exists())
+    imagePath = QUrl(url).fileName();
+    if(QFile(imagePath).exists())
     {
         m_headicon->setPixmap(QPixmap(QUrl(url).fileName()));
     }
@@ -87,7 +93,6 @@ void GroupItemWidget::setImage(const QString& url)
     {
         http->loadFileFormUrl(url);
         connect(http, &HttpConnect::loadCompleted, this, [this, http](){
-            imagePath = http->getFilePath();
             m_headicon->setPixmap(QPixmap(imagePath));
         });
     }

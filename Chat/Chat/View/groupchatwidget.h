@@ -14,10 +14,10 @@ class GroupChatWidget : public BasicWidget
     Q_OBJECT
 public:
     GroupChatWidget(QWidget *parent =Q_NULLPTR);
-    void setUserName(const QString &username);
-    void setUserid(const QString &userid);
+    void setGroupName(const QString &username);
+    void setGroupId(const QString &userid);
     void setIcon(const QString &path);
-
+    void initMemberList();
 signals:
     void updateMessage();
 
@@ -36,8 +36,9 @@ private:
 
     void init();
 
+
     HeadIcon *headIcon;
-    QLabel *lb_username;
+    QLabel *lb_groupname;
 
     QPushButton *btn_chat_settings;
     QPushButton *btn_chat_close;
@@ -48,7 +49,7 @@ private:
 
     ChatInput *chatinput;
 
-    QString userid;
+    QString groupid;
 
     GroupMemberListWidget *listwidget;
 

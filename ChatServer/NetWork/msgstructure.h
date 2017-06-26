@@ -5,36 +5,45 @@
 
 //消息类型
 typedef enum _MsgType {
-    HEARTBEAT = 0,              //心跳包
-    REQUESTLOGIN,               //请求登陆
-    RESPONSELOGIN,              //告知客户端登录状态
-    RESPONSEFRIENDLIST,         //好友列表
-    EXIT,                       //退出消息
-    REQUESTFORWORDMESSAGE,      //请求服务器转发消息
-    RECEIVEDMESSAGE,            //收到消息
-    RESPONSEUSERINFO,           //回应登录用户的信息
-    REQUESTUSERINFO,            //请求登录用户的信息
-    REQUESTOFFLINEMESSAGE,      //请求当前登录用户的离线消息
-    RESPONSEOFFLINEMESSAGE,     //响应用户的请求离线消息的消息
-    RESPONSACKOFFLINEMSG,       //告知服务器， 离线消息已经收到
-    REQUESTMOVEFRIENDTOGROUP,   //移动好友到指定分组
-    REQUESTUPDATESIGNAURE,      //更新个性签名
-    REQUESTGROUPINFO,           //请求群组信息
-    RESPONSEGROUPINFO           //回应群组信息
+    HEARTBEAT = 0,                  //心跳包
+    REQUESTLOGIN,                   //请求登陆
+    RESPONSELOGIN,                  //告知客户端登录状态
+    RESPONSEFRIENDLIST,             //好友列表
+    EXIT,                           //退出消息
+    REQUESTFORWORDMESSAGE,          //请求服务器转发消息
+    RECEIVEDMESSAGE,                //收到消息
+    RESPONSEUSERINFO,               //回应登录用户的信息
+    REQUESTUSERINFO,                //请求登录用户的信息
+    REQUESTOFFLINEMESSAGE,          //请求当前登录用户的离线消息
+    RESPONSEOFFLINEMESSAGE,         //响应用户的请求离线消息的消息
+    RESPONSACKOFFLINEMSG,           //告知服务器， 离线消息已经收到
+    REQUESTMOVEFRIENDTOGROUP,       //移动好友到指定分组
+    REQUESTUPDATESIGNAURE,          //更新个性签名
+    REQUESTGROUPINFO,               //请求群组信息
+    RESPONSEGROUPINFO,              //回应群组信息
+    REQUESTGROUPMEMBERINFO,         //请求群组成员信息
+    RESPONSEGROUPMEMBERINFO,        //回应群组成员信息
+    REQUESTCHANGESTATUS             //更改状态
+
 }MsgType;
 
+typedef enum _UserStauts {
+    UserOnLine = 0,                     //在线
+    UserOffLine,                        //离线
+    UserHide                            //隐身
+}UserStatus;
 
 //心跳包.  request和response都使用这个结构
 typedef struct _HeartBackMsg {
-    char status;				//确定为 'a';
+    char status;    				//确定为 'a';
 }HeartBeatMsg;
 
 //登录状态
 typedef enum _LoginStatus {
-    LOGINSUCCESS = 0,       //成功登录
-    LOGINPWERROR,			//密码错误
-    LOGINUNKNOW,		    //未知用户登录
-    LOGINREPEAT             //重复登陆
+    LOGINSUCCESS = 0,               //成功登录
+    LOGINPWERROR,                   //密码错误
+    LOGINUNKNOW,                    //未知用户登录
+    LOGINREPEAT                     //重复登陆
 }LoginStatus;
 
 //为了避免粘包，发送这个结构体来告知后面的数据的长度
@@ -142,5 +151,16 @@ typedef struct _ResponseGroupInfo {
     int length;
     char json[0];
 }ResponseGroupInfo;
+
+//请求群组成员信息  空包
+typedef struct _RequestGroupMemberInfo {
+
+}RequestGroupMemberInfo;
+
+//回应的群组成员信息
+typedef struct _ResponseGroupMemberInfo {
+    int length;
+    char json[0];
+}ResponseGroupMemberInfo;
 
 #endif // MSGSTRUCTURE_H

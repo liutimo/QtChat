@@ -64,4 +64,6 @@ void move_friend_to_group(char *userid, char *friendid, char *grouptype);
 void update_user_signature(const char *userid, const char *sig);
 
 char *get_group(const char*userid);
+
+char *get_group_member(const char *userid);
 #endif // !DATABASE_H

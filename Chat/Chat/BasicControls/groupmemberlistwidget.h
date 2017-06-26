@@ -13,7 +13,7 @@ class GroupMemberListWidget : public QWidget
     Q_OBJECT
 public:
     explicit GroupMemberListWidget(QWidget *parent = nullptr);
-
+    void setList(const QVector<QStringList> &vec);
 signals:
 
 protected:

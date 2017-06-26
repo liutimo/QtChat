@@ -31,6 +31,9 @@ void sendfflineMessage(int fd, ResponseOfflineMessage *msg);
 //发送群组信息
 void sendGroupInfo(int fd, ResponseGroupInfo *msg);
 
+//发送群组成员信息
+void sendGroupMemberInfo(int fd, ResponseGroupMemberInfo *msg);
+
 //发生异常时需要发送的消息
 
 

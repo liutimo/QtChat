@@ -320,5 +320,59 @@ char *get_group(const char*userid)
     }
 
     return cJSON_PrintUnformatted(root);
+}
 
+char *get_group_member(const char *userid)
+{
+    char sql_get_groupid[DATABASE_SQLMAXLENGTH];
+    char sql_get_groupmember[DATABASE_SQLMAXLENGTH];
+    sprintf(sql_get_groupid, "select distinct groupid from chat_groupmember where memberid='%s';", userid);
+    sprintf(sql_get_groupmember, "select groupid, memberid, userinfo.username, imagepath from chat_groupmember, userinfo "
+                                 "where userid=memberid and groupid in "
+                                  "(select groupid from chat_groupmember "
+                                  "where chat_groupmember.memberid='%s');", userid);
+
+    cJSON *root = cJSON_CreateObject();
+
+    printf("%s\n", sql_get_groupid);
+
+    if(execute_mysql(sql_get_groupid) == -1)
+        print_error_mysql(sql_get_groupid);
+
+    mysql_res = mysql_store_result(mysql);
+
+    while((mysql_row = mysql_fetch_row(mysql_res)) != NULL)
+    {
+        cJSON_AddItemToObject(root, mysql_row[0], cJSON_CreateArray());
+    }
+
+
+    if(execute_mysql(sql_get_groupmember) == -1)
+        print_error_mysql(sql_get_groupmember);
+
+    mysql_res = mysql_store_result(mysql);
+    printf("%s\n", sql_get_groupmember);
+
+    while((mysql_row = mysql_fetch_row(mysql_res)) != NULL)
+    {
+        cJSON *node = root->child;
+        while(node)
+        {
+            if(strcmp(node->string, mysql_row[0]) == 0)
+            {
+                cJSON *current = node;
+                if(current == NULL)
+                    printf("null\n");
+
+                cJSON *tmp = cJSON_CreateObject();
+                cJSON_AddStringToObject(tmp, "memberid", mysql_row[1]);
+                cJSON_AddStringToObject(tmp, "membername", mysql_row[2]);
+                cJSON_AddStringToObject(tmp, "memberimage", mysql_row[3]);
+                cJSON_AddItemToArray(node, tmp);
+            }
+            node = node->next;
+        }
+    }
+
+    return cJSON_PrintUnformatted(root);
 }
