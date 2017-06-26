@@ -2,6 +2,7 @@
 #include "groupitemwidget.h"
 #include "groupmemberlistwidget.h"
 #include "groupmemberlineedit.h"
+#include "listviewitemwidget.h"
 #include "listwidget.h"
 #include <QPushButton>
 #include <QPainter>
@@ -9,10 +10,10 @@
 GroupMemberListWidget::GroupMemberListWidget(QWidget *parent) : QWidget(parent)
 {
     lineedit = new GroupMemberLineEdit(this);
-    lineedit->setStyleSheet("background-color:rgba(255,255,255,0);");
+    lineedit->setStyleSheet("background-color:rgba(255,255,255,200);");
 
     listwidget = new ListWidget(this);
-    listwidget->setStyleSheet("background-color:rgba(255,255,255,0);");
+    listwidget->setStyleSheet("background-color:rgba(255,255,255,200);");
 
 
 
@@ -40,9 +41,10 @@ void GroupMemberListWidget::setList(const QVector<QStringList> &vec)
     for(int i = 0; i < vec.size(); ++i)
     {
         QStringList str = vec.at(i);
-        GroupItemWidget *item_widget = new GroupItemWidget;
+        ListViewItemWidget *item_widget = new ListViewItemWidget;
         item_widget->setImage(str.at(2));
-        item_widget->setGroupInfo(str.at(0), str.at(1));
+        item_widget->setUserinfo(str.at(0), str.at(1), "");
+        item_widget->setStyleSheet("background-color:rgba(255,255,255,0);");
 
         QListWidgetItem *item = new QListWidgetItem;
 

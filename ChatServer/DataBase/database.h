@@ -69,4 +69,11 @@ char *get_group_member(const char *userid);
 
 char **get_friends(const char *userid);
 
+//将群聊天消息放入聊天记录
+void set_group_chatlog(const char *senderid, const char *groupid, const char *content, const char *fontfamliy, const char *fontsize, const char *fontcolor);
+void set_group_offlinechatlog(const char *sender,const char *groupid ,const char *receiver, const char *content, const char *fontfamliy, const char *fontsize, const char *fontcolor);
+
+
+//通过群组id获取成员id
+char **get_memberid(const char *groupid);
 #endif // !DATABASE_H

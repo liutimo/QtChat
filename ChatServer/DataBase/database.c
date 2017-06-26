@@ -398,3 +398,59 @@ char **get_friends(const char *userid)
 
     return friends;
 }
+
+void set_group_chatlog(const char *senderid, const char *groupid, const char *content, const char *fontfamliy, const char *fontsize, const char *fontcolor)
+{
+    char sql_insert_groupchatlog[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql_insert_groupchatlog, "insert into chat_group_chatrecord(senderid, groupid, content, fontfamliy, fontsize, fontcolor) "
+                                "values('%s', '%s', '%s', '%s', '%s', '%s')", senderid, groupid, content, fontfamliy, fontsize, fontcolor);
+    printf("%s\n", sql_insert_groupchatlog);
+    if (execute_mysql(sql_insert_groupchatlog) == -1)
+        print_error_mysql(sql_insert_groupchatlog);
+}
+
+void set_group_offlinechatlog(const char *sender,const char *groupid ,const char *receiver, const char *content, const char *fontfamliy, const char *fontsize, const char *fontcolor)
+{
+    char sql_insert_offlinemessage[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql_insert_offlinemessage, "insert into chat_group_offlinemessage(senderid, groupid,receiverid, content, fontfamliy, fontsize, fontcolor) "
+                                "values('%s', '%s', '%s' ,'%s', '%s', '%s', '%s')", sender, groupid, receiver, content, fontfamliy, fontsize, fontcolor);
+    printf("%s\n", sql_insert_offlinemessage);
+    if (execute_mysql(sql_insert_offlinemessage) == -1)
+        print_error_mysql(sql_insert_offlinemessage);
+}
+
+char **get_memberid(const char *groupid)
+{
+    char sql_get_member_count[DATABASE_SQLMAXLENGTH];
+    char sql_get_membeid[DATABASE_SQLMAXLENGTH];
+    sprintf(sql_get_member_count, "select count(memberid) from chat_groupmember where groupid='%s';", groupid);
+    sprintf(sql_get_membeid, "select memberid from chat_groupmember where groupid='%s';", groupid);
+
+    if(execute_mysql(sql_get_member_count) == -1)
+        print_error_mysql(sql_get_member_count);
+
+    mysql_res = mysql_store_result(mysql);
+
+    mysql_row = mysql_fetch_row(mysql_res);
+    int count = atoi(mysql_row[0]);
+
+    char **members = (char**)malloc(sizeof(char*) * count + 1);
+    members[count] = NULL;
+
+    if(execute_mysql(sql_get_membeid) == -1)
+        print_error_mysql(sql_get_membeid);
+
+    mysql_res = mysql_store_result(mysql);
+
+    int i = 0;
+    while((mysql_row = mysql_fetch_row(mysql_res)) != NULL)
+    {
+        char *memberid = (char*)malloc(strlen(mysql_row[0]) + 1);
+        strcpy(memberid, mysql_row[0]);
+        members[i++] = memberid;
+    }
+
+    return members;
+}

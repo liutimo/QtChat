@@ -111,6 +111,9 @@ void recvMsg(int fd)
         handleRequestChangeStatus(fd, msg);
         break;
     }
+    case REQUESTFORWARDGROUPMESSAGE: {
+        handleFrowardGroupMsg(fd, msg);
+    }
     default:
         break;
     }
@@ -340,3 +343,41 @@ void handleRequestChangeStatus(int fd, Msg*msg)
     free(rfsc);
     free(friends);
 }
+
+void handleFrowardGroupMsg(int fd, Msg *msg)
+{
+    RequestForwordGroupMessage *rmsg = (RequestForwordGroupMessage*)malloc(msg->len);
+    memcpy(rmsg, msg->data, msg->len);
+
+    forwardgroupmessage(fd, rmsg);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

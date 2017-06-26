@@ -147,6 +147,11 @@ void ConnectToServer::sendRequestChangeStatus(UserStatus status)
     delete s;
 }
 
+void ConnectToServer::sendForwordGroupMessage(ForwordGroupMessage *msg)
+{
+    send(FORWARDGROUPMESSAGE, (char*)msg, msg->length + sizeof(ForwordGroupMessage));
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
@@ -193,24 +198,37 @@ void ConnectToServer::recv()
         memcpy(rom, msg->data, msg->len);
         rom->json[rom->length] = '\0';
         emit receivedOfflineMessage(QByteArray(rom->json));
+        delete rom;
         break;
     }
     case RESPONSEGROUPINFO: {
         ResponseGroupInfo *rgi = (ResponseGroupInfo*)new char[msg->len];
         memcpy(rgi, msg->data, msg->len);
         emit receivedGroupInfo(QByteArray(rgi->json));
+        delete rgi;
         break;
     }
     case RESPONSEGROUPMEMBERINFO: {
         ResponseGroupMemberInfo *info = (ResponseGroupMemberInfo*)new char[msg->len];
         memcpy(info,msg->data, msg->len);
         emit receivedGroupMemberInfo(info->json);
+        delete info;
         break;
     }
     case RESPONSEFRIENDSTATUSCHANGE: {
         ResponseFriendStatusChange *rfsc = new ResponseFriendStatusChange;
         memcmp(rfsc, msg->data, msg->len);
         qDebug() << rfsc->userid << rfsc->status;
+
+        delete rfsc;
+        break;
+    }
+    case FORWARDGROUPMESSAGE: {
+        ForwordGroupMessage *rmsg = (ForwordGroupMessage*)new char[msg->len];
+        memcpy(rmsg,msg->data, msg->len);
+        qDebug() << rmsg->groupid << rmsg->message;
+
+        delete rmsg;
         break;
     }
     default:

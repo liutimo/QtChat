@@ -36,8 +36,12 @@ void sendGroupMemberInfo(int fd, ResponseGroupMemberInfo *msg);
 
 //发送好友状态改变信息
 void sendFriendStatusChange(int fd, ResponseFriendStatusChange *msg);
-//发生异常时需要发送的消息
 
+
+//发送群组消息
+void sendGroupMessage(const int fd, RequestForwordGroupMessage* rmsg);
+
+//发生异常时需要发送的消息
 
 
 

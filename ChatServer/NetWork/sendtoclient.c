@@ -87,3 +87,9 @@ void sendFriendStatusChange(int fd, ResponseFriendStatusChange *msg)
 {
     sendMsg(fd, RESPONSEFRIENDSTATUSCHANGE, msg, sizeof(ResponseFriendStatusChange));
 }
+
+//发送群组消息
+void sendGroupMessage(const int fd, RequestForwordGroupMessage* rmsg)
+{
+    sendMsg(fd, REQUESTFORWARDGROUPMESSAGE, rmsg, rmsg->length + sizeof(RequestForwordGroupMessage));
+}

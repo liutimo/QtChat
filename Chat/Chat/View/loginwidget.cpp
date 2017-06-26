@@ -192,9 +192,9 @@ void LoginWidget::loginStatus(LoginStatus ls)
             action_newmessage->setEnabled(true);
             l->updateMessage();
             l->setFixedSize(200, l->getHeight());
-            ConnectToServer::getInstance();
+//            ConnectToServer::getInstance();
         });
-        startTimer(2000);
+        startTimer(20000);
         break;
     }
     case LOGINPWERROR:

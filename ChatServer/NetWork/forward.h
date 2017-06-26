@@ -11,5 +11,5 @@
 //void forwardmessage(int fd, int friend_fd, const char *message);
 void forwardmessage(int fd, int friend_fd, RequestForwordMessageMsg *fmsg);
 
-
+void forwardgroupmessage(int fd, RequestForwordGroupMessage *rfgm);
 #endif // FORWARD_H

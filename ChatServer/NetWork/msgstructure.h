@@ -24,7 +24,8 @@ typedef enum _MsgType {
     REQUESTGROUPMEMBERINFO,         //请求群组成员信息
     RESPONSEGROUPMEMBERINFO,        //回应群组成员信息
     REQUESTCHANGESTATUS,            //更改状态
-    RESPONSEFRIENDSTATUSCHANGE      //告知客户端好友状态改变
+    RESPONSEFRIENDSTATUSCHANGE,     //告知客户端好友状态改变
+    REQUESTFORWARDGROUPMESSAGE      //请求服务器转发群组消息
 }MsgType;
 
 typedef enum _UserStauts {
@@ -172,5 +173,16 @@ typedef struct _ResponseFriendStatusChange {
     char userid[USERIDMAXLEN];
     UserStatus status;
 }ResponseFriendStatusChange;
+
+
+typedef struct _RequestForwordGroupMessage {
+    char userid[USERIDMAXLEN];
+    char groupid[USERIDMAXLEN];
+    char font[30];
+    char size[3];
+    char color[8];
+    long length;
+    char message[0];
+}RequestForwordGroupMessage;
 
 #endif // MSGSTRUCTURE_H

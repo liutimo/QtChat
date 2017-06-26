@@ -133,7 +133,7 @@ void GroupChatWidget::resizeEvent(QResizeEvent *event)
         textedit->resize(width() - 200, height() - 240);
         textedit->move(0, 45);
 
-        listwidget->move(width() - 200,45);
+        listwidget->move(width() - 199,45);
         listwidget->resize(200, height() - 45);
 
         btn_hide_list->move(width() - 213, 45 + textedit->height() / 2);
@@ -174,10 +174,11 @@ void GroupChatWidget::setMessage(const QString &msg)
 
     QStringList fontinfo =  chatinput->getFontInfo();
 
-    char *buf = new char[sizeof(RequestForwordMessageMsg) + msg.toUtf8().size()];
+    char *buf = new char[sizeof(ForwordGroupMessage) + msg.toUtf8().size()];
 
-    RequestForwordMessageMsg *rmsg = (RequestForwordMessageMsg*)buf;
-    strcpy(rmsg->friendid, groupid.toUtf8().data());
+    ForwordGroupMessage *rmsg = (ForwordGroupMessage*)buf;
+    strcpy(rmsg->userid, AllVariable::getLoginUserId().toUtf8().data());
+    strcpy(rmsg->groupid, groupid.toUtf8().data());
     strcpy(rmsg->font, fontinfo.at(0).toUtf8().data());
     strcpy(rmsg->size, fontinfo.at(1).toUtf8().data());
     strcpy(rmsg->color, fontinfo.at(2).toUtf8().data());
@@ -185,15 +186,15 @@ void GroupChatWidget::setMessage(const QString &msg)
     rmsg->length = msg.toUtf8().size();
     memcpy(rmsg->message, msg.toUtf8().data(), rmsg->length);
 
-    ConnectToServer::getInstance()->sendRequestForwordMessageMsg(rmsg);
+    ConnectToServer::getInstance()->sendForwordGroupMessage(rmsg);
     delete []buf;
-
 
     QString html = QString("<html><b style=\"color:green; font-size:16px;\">%1</b> <em style=\"color:gray; font-size:12px;\">%2</em>"
                            "<br/>%3"
                            "<br/></html>").arg(AllVariable::getLoginUserName(), QDateTime::currentDateTime().toString("h:m:s ap"), msg);
 
-    DataBase::getInstance()->setChatLog(AllVariable::getLoginUserId(), groupid, html);
+    //存入本地数据库
+//    DataBase::getInstance()->setChatLog(AllVariable::getLoginUserId(), groupid, html);
     textedit->append(html);
 
     emit updateMessage();

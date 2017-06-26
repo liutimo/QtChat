@@ -26,7 +26,7 @@ public:
     void sendRequestGroupInfo();
     void sendRequestGroupMemberInfo();
     void sendRequestChangeStatus(UserStatus status);
-
+    void sendForwordGroupMessage(ForwordGroupMessage *msg);
 protected:
     void recv();
 
