@@ -42,6 +42,10 @@ public:
 
     QString getFriendName(const QString &friendid);
     QString getFriendImage(const QString &friendid);
+
+    QString getGroupName(const QString &groupid);
+
+    QString getGroupMemberName(const QString &groupid, const QString &memberid);
 signals:
     void setGroupMemberFinished();
 public slots:

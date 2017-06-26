@@ -2,6 +2,8 @@
 #include "chatwidget.h"
 #include "loginwidget.h"
 #include "../allvariable.h"
+#include "groupchatwidget.h"
+#include "messagelistwidget.h"
 #include "Setting/rwsetting.h"
 #include "DataBase/database.h"
 #include "NetWork/msgstructure.h"
@@ -9,7 +11,7 @@
 #include "Thread/heartbeatthread.h"
 #include "NetWork/connecttoserver.h"
 #include "BasicControls/loginstatusbar.h"
-#include "View/messagelistwidget.h"
+
 
 #include <QMenu>
 #include <QDebug>
@@ -100,6 +102,7 @@ void LoginWidget::init()
 
     /*message hite*/
     connect(server, &ConnectToServer::receivedMessage, this, &LoginWidget::handleMessage);
+    connect(server, &ConnectToServer::receivedGroupMessage, this, &LoginWidget::handleGroupMessage);
     connect(server, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
           this, &LoginWidget::socketError);
 }
@@ -194,7 +197,7 @@ void LoginWidget::loginStatus(LoginStatus ls)
             l->setFixedSize(200, l->getHeight());
 //            ConnectToServer::getInstance();
         });
-        startTimer(20000);
+        startTimer(1000);
         break;
     }
     case LOGINPWERROR:
@@ -217,12 +220,12 @@ void LoginWidget::loginStatus(LoginStatus ls)
 void LoginWidget::recvHeartBeat()
 {
     i = 0;
-    qDebug() << "收到心跳包回复";
+//    qDebug() << "收到心跳包回复";
 }
 
 void LoginWidget::timerEvent(QTimerEvent *event)
 {
-    qDebug() << "发送心跳包";
+//    qDebug() << "发送心跳包";
     if(i == 3)
     {
         qDebug() << "离线";
@@ -320,8 +323,6 @@ void LoginWidget::init_traymenu()
 
 void LoginWidget::handleMessage(ReceivedMessageMsg *msg)
 {
-
-
     char *m = new char[msg->length + 1];
     strcpy(m, msg->message);
     m[msg->length] = '\0';
@@ -361,6 +362,15 @@ void LoginWidget::handleMessage(ReceivedMessageMsg *msg)
     else
         w->showMessage(message, fontcolor, fontsize, fontfamily);
 
+}
+
+void LoginWidget::handleGroupMessage(ForwordGroupMessage *msg)
+{
+    GroupChatWidget *w  = new GroupChatWidget;
+    w->setGroupId(msg->groupid);
+    w->showMessage(msg->userid, msg->message, msg->color, msg->size, msg->font);
+    w->setGroupName(DataBase::getInstance()->getGroupName(msg->groupid));
+    w->show();
 }
 
 void LoginWidget::setTrayIcon()

@@ -200,11 +200,11 @@ void GroupChatWidget::setMessage(const QString &msg)
     emit updateMessage();
 }
 
-void GroupChatWidget::showMessage(const QString &msg, const QString &color, const QString &size, const QString &family)
+void GroupChatWidget::showMessage(const QString &senderid, const QString &msg, const QString &color, const QString &size, const QString &family)
 {
     QString html = QString("<html><b style=\"color:red; font-size:16px;\">%1</b> <em style=\"color:gray; font-size:12px;\">%2</em>"
                            "<br/><span style=\"color:%3; font-size:%4px;font-family:%5;\">%6</span>"
-                           "<br/></html>").arg(lb_groupname->text(), QDateTime::currentDateTime().toString("h:m:s ap"), color, size, family, msg);
+                           "<br/></html>").arg(DataBase::getInstance()->getGroupMemberName(groupid, senderid), QDateTime::currentDateTime().toString("h:m:s ap"), color, size, family, msg);
 
     DataBase::getInstance()->setChatLog(groupid, AllVariable::getLoginUserId(), html);
     textedit->append(html);

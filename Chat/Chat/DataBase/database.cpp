@@ -380,3 +380,27 @@ QVector<QStringList> DataBase::getGroupMemberInfo(const QString &groupid)
 
     return vec;
 }
+
+QString DataBase::getGroupName(const QString &groupid)
+{
+    QString sql = "select groupname from chat_group where groupid='%1'";
+    sql = sql.arg(groupid);
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+    sql_query.next();
+    return sql_query.value(0).toString();
+}
+
+QString DataBase::getGroupMemberName(const QString &groupid, const QString &memberid)
+{
+    QString sql = "select membername from chat_groupmember where groupid='%1' and memberid='%2'";
+    sql = sql.arg(groupid, memberid);
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.exec();
+    sql_query.next();
+    return sql_query.value(0).toString();
+}

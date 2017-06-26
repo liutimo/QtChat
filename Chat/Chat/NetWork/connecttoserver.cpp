@@ -227,8 +227,8 @@ void ConnectToServer::recv()
         ForwordGroupMessage *rmsg = (ForwordGroupMessage*)new char[msg->len];
         memcpy(rmsg,msg->data, msg->len);
         qDebug() << rmsg->groupid << rmsg->message;
-
-        delete rmsg;
+        emit receivedGroupMessage(rmsg);
+//        delete rmsg;
         break;
     }
     default:

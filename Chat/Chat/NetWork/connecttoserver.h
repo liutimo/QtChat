@@ -36,6 +36,7 @@ signals:
     void responseFriendList(QByteArray);
 //    void receivedMessage(const QString &msg, const QString &color, const QString &size,  const QString &family);
     void receivedMessage(ReceivedMessageMsg *msg);
+    void receivedGroupMessage(ForwordGroupMessage *msg);
     void responseUserInfo(QByteArray);
     void receivedOfflineMessage(QByteArray);
     void receivedGroupInfo(const QByteArray&);

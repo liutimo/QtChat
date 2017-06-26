@@ -71,6 +71,7 @@ private slots:
     void socketError(QAbstractSocket::SocketError socketError);
     void showMainWidget();
     void handleMessage(ReceivedMessageMsg *msg);
+    void handleGroupMessage(ForwordGroupMessage *msg);
 protected slots:
     void iconIsActived(QSystemTrayIcon::ActivationReason);
     void showMessageBox();
