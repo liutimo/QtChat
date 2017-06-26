@@ -69,18 +69,6 @@ int login_check_mysql(const char *userid, const char *password)
         return DATABASE_USER_PASSWORDERROR;
 }
 
-
-/*
-    before  this serach we hava to ensure the userid is online and legitimate
-    friendlist include:
-        friendid, friendname, group, personalizedsignature.
-        {
-            group :
-            [
-                'friendid' : '123457', 'friendname':'liutimo', 'group':'friend', 'personalizedsignature':'i like code'
-            ]
-        }
-*/
 char *get_friendlist_json(const char *userid)
 {
 
@@ -375,4 +363,38 @@ char *get_group_member(const char *userid)
     }
 
     return cJSON_PrintUnformatted(root);
+}
+
+char **get_friends(const char *userid)
+{
+    char sql_get_friendcount[DATABASE_SQLMAXLENGTH];
+    char sql_get_friendsid[DATABASE_SQLMAXLENGTH];
+    sprintf(sql_get_friendcount, "SELECT count(friendid) FROM chat.friendlist where userid='%s';", userid);
+    sprintf(sql_get_friendsid, "SELECT friendid FROM chat.friendlist where userid='%s';", userid);
+
+    if(execute_mysql(sql_get_friendcount) == -1)
+        print_error_mysql(sql_get_friendcount);
+
+    mysql_res = mysql_store_result(mysql);
+
+    mysql_row = mysql_fetch_row(mysql_res);
+    int count = atoi(mysql_row[0]);
+
+    char **friends = (char**)malloc(sizeof(char*) * count + 1);
+    friends[count] = NULL;
+
+    if(execute_mysql(sql_get_friendsid) == -1)
+        print_error_mysql(sql_get_friendsid);
+
+    mysql_res = mysql_store_result(mysql);
+
+    int i = 0;
+    while((mysql_row = mysql_fetch_row(mysql_res)) != NULL)
+    {
+        char *friendid = (char*)malloc(strlen(mysql_row[0]) + 1);
+        strcpy(friendid, mysql_row[0]);
+        friends[i++] = friendid;
+    }
+
+    return friends;
 }

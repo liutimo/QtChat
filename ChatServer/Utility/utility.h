@@ -1,5 +1,5 @@
 /*******************************************
-*		    ¶¨Òå¹«ÓÃµÄ°ü¹üº¯Êý             *
+*		    å®šä¹‰å…¬ç”¨çš„åŒ…è£¹å‡½æ•°             *
 *	      2017/5/24 10:35  by lz		   *
 *******************************************/
 #ifndef UTILITY_H
@@ -14,6 +14,7 @@ ssize_t writen(int filedes, const void *buff, size_t nbytes);
 
 
 ssize_t readline(int filedes, void *buff, size_t maxlen);
+
 
 
 #endif // !UTILITY_H

@@ -80,3 +80,8 @@ void sendGroupMemberInfo(int fd, ResponseGroupMemberInfo *msg)
 {
     sendMsg(fd, RESPONSEGROUPMEMBERINFO, msg, msg->length + sizeof(ResponseGroupMemberInfo));
 }
+
+void sendFriendStatusChange(int fd, ResponseFriendStatusChange *msg)
+{
+    sendMsg(fd, RESPONSEFRIENDSTATUSCHANGE, msg, sizeof(ResponseFriendStatusChange));
+}

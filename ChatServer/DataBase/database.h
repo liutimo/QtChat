@@ -66,4 +66,7 @@ void update_user_signature(const char *userid, const char *sig);
 char *get_group(const char*userid);
 
 char *get_group_member(const char *userid);
+
+char **get_friends(const char *userid);
+
 #endif // !DATABASE_H

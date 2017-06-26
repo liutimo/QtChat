@@ -283,24 +283,34 @@ void handleRequestChangeStatus(int fd, Msg*msg)
 {
     RequestChangeStatus *rcs = (RequestChangeStatus*)malloc(msg->len);
 
-//    OnlineUserNode *node = indWithFd(fd);
+    char** friends = get_friends(findOnlineUserWithFd(fd));
 
-//    if(rcs->status == node->user.status)
-//        return;
-
-//    node->user.status = rcs->status;
+    ResponseFriendStatusChange *rfsc = (ResponseFriendStatusChange*)malloc(sizeof(ResponseFriendStatusChange));
+    strcpy(rfsc->userid, findOnlineUserWithFd(fd));
 
     switch (rcs->status) {
     case UserOffLine:                               //离线做离线处理
-
+        rfsc->status = UserOffLine;
         break;
     case UserOnLine:                                //用户上线
-
+        rfsc->status = UserOnLine;
         break;
     case UserHide:                                  //用户隐身
-
+        rfsc->status = UserHide;
         break;
     default:
         break;
     }
+
+    int  i = 0;
+    while (friends[i] != NULL) {
+        int fd;
+        if((fd = findOnlineUserWithUid(friends[i])) != -1)
+        {
+            sendFriendStatusChange(fd, rfsc);
+        }
+        ++i;
+    }
+
+    free(rfsc);
 }

@@ -31,6 +31,13 @@ void sig_handle(int signo)
     }
 }
 
+int main1()
+{
+    init_mysql();
+    get_friends("123456");
+    close_mysql();
+}
+
 int main()
 {
 
@@ -57,3 +64,5 @@ int main()
 
     return 0;
 }
+
+
