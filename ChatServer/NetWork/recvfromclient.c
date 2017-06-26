@@ -1,11 +1,12 @@
+#include "error.h"
+#include "forward.h"
 #include "recvfromclient.h"
 #include "sendtoclient.h"
 #include "Utility/utility.h"
 #include "msgstructure.h"
 #include "DataBase/database.h"
-#include "error.h"
-#include "forward.h"
 #include "DataStructure/onlinehashtable.h"
+
 #include <sys/epoll.h>
 #include <stdio.h>
 #include <string.h>
@@ -101,6 +102,10 @@ void recvMsg(int fd)
     }
     case REQUESTGROUPMEMBERINFO: {
         handleRequestGroupMemberMessage(fd);
+        break;
+    }
+    case REQUESTCHANGESTATUS: {
+        handleRequestChangeStatus(fd, msg);
         break;
     }
     default:
@@ -272,4 +277,30 @@ void handleRequestGroupMemberMessage(int fd)
     strcpy(info->json, memberinfo);
     info->json[info->length] = '\0';
     sendGroupMemberInfo(fd, info);
+}
+
+void handleRequestChangeStatus(int fd, Msg*msg)
+{
+    RequestChangeStatus *rcs = (RequestChangeStatus*)malloc(msg->len);
+
+//    OnlineUserNode *node = indWithFd(fd);
+
+//    if(rcs->status == node->user.status)
+//        return;
+
+//    node->user.status = rcs->status;
+
+    switch (rcs->status) {
+    case UserOffLine:                               //离线做离线处理
+
+        break;
+    case UserOnLine:                                //用户上线
+
+        break;
+    case UserHide:                                  //用户隐身
+
+        break;
+    default:
+        break;
+    }
 }

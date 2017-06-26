@@ -21,5 +21,7 @@ void handleUpdateSignature(int fd, RequestUpdateSignature *msg);
 void handleRequestGroupMessage(int fd);
 
 void handleRequestGroupMemberMessage(int fd);
+
+void handleRequestChangeStatus(int fd, Msg*msg);
 #endif // !RECVFROMCLIENT_H
 

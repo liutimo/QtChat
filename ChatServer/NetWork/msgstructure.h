@@ -163,4 +163,9 @@ typedef struct _ResponseGroupMemberInfo {
     char json[0];
 }ResponseGroupMemberInfo;
 
+//请求更改状态
+typedef struct _RequestChangeStatus {
+    UserStatus status;
+}RequestChangeStatus;
+
 #endif // MSGSTRUCTURE_H
