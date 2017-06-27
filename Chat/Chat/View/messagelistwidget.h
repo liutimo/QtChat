@@ -20,7 +20,9 @@ signals:
     void nonewmessage();
 public slots:
     void updateMessage();
+    void updateGroupMessage();
     void showChatWidget(const QString);
+    void showGroupChatWidget(const QString);
 
 protected:
     void resizeEvent(QResizeEvent *event);

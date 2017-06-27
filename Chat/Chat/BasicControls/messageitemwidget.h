@@ -17,6 +17,7 @@ public:
     void setIcon(const QString &iconpath);
     void setFriendName(const QString &friendname);
     void setNumber(int number = 0);
+    void setId(const QString &i);
 protected:
     void mousePressEvent(QMouseEvent *event);
     void resizeEvent(QResizeEvent *event);
@@ -30,6 +31,7 @@ private:
 
     void init();
 
+    QString id;
     QLabel *friendname;
     QLabel *headicon;
     NumberWidget *numberWidget;

@@ -46,6 +46,13 @@ public:
     QString getGroupName(const QString &groupid);
 
     QString getGroupMemberName(const QString &groupid, const QString &memberid);
+
+
+    void setGroupOfflineMessage(const QString& groupid, const QString& senderid,
+                                const QString& content, const QString& fontfamliy,
+                                const QString& fontsize, const QString& fontcolor);
+    QVector<QStringList> getGroupOfflineMessage(const QString &groupid);
+
 signals:
     void setGroupMemberFinished();
 public slots:

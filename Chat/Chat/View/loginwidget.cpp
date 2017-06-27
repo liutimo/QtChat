@@ -366,11 +366,43 @@ void LoginWidget::handleMessage(ReceivedMessageMsg *msg)
 
 void LoginWidget::handleGroupMessage(ForwordGroupMessage *msg)
 {
-    GroupChatWidget *w  = new GroupChatWidget;
-    w->setGroupId(msg->groupid);
-    w->showMessage(msg->userid, msg->message, msg->color, msg->size, msg->font);
-    w->setGroupName(DataBase::getInstance()->getGroupName(msg->groupid));
-    w->show();
+    QMap<QString, GroupChatWidget*> &groupchatwidegt = AllVariable::getGroupChatWidget();
+
+    GroupChatWidget *w = groupchatwidegt.value(msg->groupid);
+
+
+    char *message = new char[msg->length + 1];
+    strcpy(message, msg->message);
+    message[msg->length] = '\0';
+
+    if ( w == NULL || w->isHidden() )
+    {
+        //开始闪烁
+        timer->start();
+
+        //激活菜单项
+        action_newmessage->setEnabled(true);
+
+        //消息存入未读消息数据库
+        DataBase::getInstance()->setGroupOfflineMessage(msg->groupid, msg->userid, message, msg->font, msg->size, msg->color);
+
+        QMap<QString, int>& groupmessagemap = AllVariable::getGroupOfflineMessage();
+
+        if(groupmessagemap.value(msg->groupid) == NULL)
+        {
+            groupmessagemap.insert(msg->groupid, 1);
+        }
+        else
+        {
+            groupmessagemap.insert(msg->groupid,groupmessagemap.value(msg->groupid)+1);
+        }
+        delete msg;
+        l->updateGroupMessage();
+        l->setFixedSize(200, l->getHeight());
+    }
+    else
+        w->showMessage(msg->userid, message, msg->color, msg->size, msg->font);
+
 }
 
 void LoginWidget::setTrayIcon()

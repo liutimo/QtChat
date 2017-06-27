@@ -404,3 +404,50 @@ QString DataBase::getGroupMemberName(const QString &groupid, const QString &memb
     sql_query.next();
     return sql_query.value(0).toString();
 }
+
+void DataBase::setGroupOfflineMessage(const QString& groupid, const QString& senderid,
+                                      const QString& content, const QString& fontfamliy,
+                                      const QString& fontsize, const QString& fontcolor)
+{
+    QString sql = "insert into chat_group_offline_message(groupid, senderid, content, fontfamliy,"
+                  "fontsize, fontcolor) values(?, ?, ?, ?, ?, ?);";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.addBindValue(groupid);
+    sql_query.addBindValue(senderid);
+    sql_query.addBindValue(content);
+    sql_query.addBindValue(fontfamliy);
+    sql_query.addBindValue(fontsize);
+    sql_query.addBindValue(fontcolor);
+
+    sql_query.exec();
+}
+
+
+QVector<QStringList> DataBase::getGroupOfflineMessage(const QString &groupid)
+{
+    QString sql = "select senderid, content, fontfamliy, fontsize, fontcolor from chat_group_offline_message where groupid = ?;";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.addBindValue(groupid);
+
+    sql_query.exec();
+
+    QVector<QStringList> vec;
+
+    while(sql_query.next())
+    {
+        QStringList list;
+        list << sql_query.value(0).toString();
+        list << sql_query.value(1).toString();
+        list << sql_query.value(2).toString();
+        list << sql_query.value(3).toString();
+        list << sql_query.value(4).toString();
+
+        vec.append(list);
+    }
+
+    return vec;
+}

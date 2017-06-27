@@ -21,24 +21,46 @@ void MessageListWidget::updateMessage()
     listwidget->clear();
 
     QMap<QString, QVector<QStringList>*> s = AllVariable::getMessageMap();
+    QMap<QString, int> &g  = AllVariable::getGroupOfflineMessage();
 
-    if(s.size() == 0)
+    if(s.size() == 0 && g.size() == 0)
     {
         emit nonewmessage();
         this->hide();
+        return;
     }
 
+    //好友消息
     for(auto elem : s)
     {
         QListWidgetItem *item = new QListWidgetItem();
         MessageItemWidget *w = new MessageItemWidget();
         w->setFriendName(DataBase::getInstance()->getFriendName(s.key(elem)));
         w->setNumber(elem->size());
+        w->setId(s.key(elem));
         connect(w, &MessageItemWidget::itemclicked, this, &MessageListWidget::showChatWidget);
         listwidget->insertItem(listwidget->count(), item);
         listwidget->setItemWidget(item, w);
     }
 
+    //群组消息
+    for(int elem : g)
+    {
+        QListWidgetItem *item = new QListWidgetItem();
+        MessageItemWidget *w = new MessageItemWidget();
+        w->setFriendName(DataBase::getInstance()->getGroupName(g.key(elem)));
+        w->setNumber(elem);
+        w->setId(g.key(elem));
+        connect(w, &MessageItemWidget::itemclicked, this, &MessageListWidget::showGroupChatWidget);
+        listwidget->insertItem(listwidget->count(), item);
+        listwidget->setItemWidget(item, w);
+    }
+
+}
+
+void MessageListWidget::updateGroupMessage()
+{
+    updateMessage();
 }
 
 int MessageListWidget::getHeight()
@@ -73,4 +95,32 @@ void MessageListWidget::showChatWidget(const QString userid)
     msgs.remove(userid);
     w->show();
     this->updateMessage();
+    hide();
+}
+
+void MessageListWidget::showGroupChatWidget(const QString groupid)
+{
+    QMap<QString, GroupChatWidget*> &map = AllVariable::getGroupChatWidget();
+
+    GroupChatWidget *w = map.value(groupid);
+
+    if (w == NULL)
+    {
+        w = new GroupChatWidget();
+        w->setGroupId(groupid);
+        w->setGroupName(DataBase::getInstance()->getGroupName(groupid));
+        map.insert(groupid, w);
+    }
+
+    QVector<QStringList> vec= DataBase::getInstance()->getGroupOfflineMessage(groupid);
+
+    for (QStringList elem : vec)
+    {
+        w->showMessage(elem[0], elem[1], elem[4], elem[2], elem[3]);
+    }
+
+    AllVariable::getGroupOfflineMessage().remove(groupid);
+    w->show();
+    updateMessage();
+    hide();
 }

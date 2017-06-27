@@ -19,7 +19,7 @@ void MessageItemWidget::init()
 void MessageItemWidget::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton)
-       emit itemclicked(friendname->text());
+       emit itemclicked(id);
 
     QWidget::mousePressEvent(event);
 }
@@ -33,6 +33,11 @@ void MessageItemWidget::resizeEvent(QResizeEvent *event)
 
     numberWidget->move(width() - 40, (height() - numberWidget->height()) / 2);
 
+}
+
+void MessageItemWidget::setId(const QString &i)
+{
+    id = i;
 }
 
 void MessageItemWidget::setIcon(const QString &iconpath)

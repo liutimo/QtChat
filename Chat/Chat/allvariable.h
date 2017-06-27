@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include "View/chatwidget.h"
-
+#include "View/groupchatwidget.h"
 class AllVariable : public QObject
 {
     Q_OBJECT
@@ -18,7 +18,13 @@ public:
     static void setLoginUserId(const QString &);
 
     static QMap<QString, QVector<QStringList>*>& getMessageMap();
+
+
+    //群组未读消息
+    static QMap<QString, int>& getGroupOfflineMessage();
+
     static QMap<QString, ChatWidget*>& getChatWidgetMap();
+    static QMap<QString, GroupChatWidget*>& getGroupChatWidget();
 signals:
 
 public slots:
@@ -28,6 +34,8 @@ private:
     static QString loginuserid;
     static QMap<QString, QVector<QStringList>*> messageMap;
     static QMap<QString, ChatWidget*> chatwidgetMap;
+    static QMap<QString, GroupChatWidget*> groupchawtidgetMap;
+    static QMap<QString, int> groupofflinemessageMap;
 };
 
 #endif // ALLVARIABLE_H
