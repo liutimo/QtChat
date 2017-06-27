@@ -1,4 +1,5 @@
 #include "messageitemwidget.h"
+#include "NetWork/httpconnect.h"
 #include "numberwidget.h"
 #include <QMouseEvent>
 #include <QLabel>
@@ -42,7 +43,20 @@ void MessageItemWidget::setId(const QString &i)
 
 void MessageItemWidget::setIcon(const QString &iconpath)
 {
-    headicon->setPixmap(QPixmap(iconpath).scaled(32, 32, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    QUrl u(iconpath);
+
+    if (QFile(u.fileName()).exists())
+        headicon->setPixmap(QPixmap(u.fileName()).scaled(32, 32, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    else
+    {
+        HttpConnect *http = new HttpConnect;
+        http->loadFileFormUrl(iconpath);
+        connect(http, &HttpConnect::loadCompleted, this, [this, http]()
+        {
+           headicon->setPixmap(QPixmap(http->getFilePath()).scaled(32, 32, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        });
+    }
+
 }
 
 void MessageItemWidget::setFriendName(const QString &_friendname)

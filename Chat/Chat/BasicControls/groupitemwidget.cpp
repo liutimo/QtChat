@@ -72,12 +72,37 @@ void GroupItemWidget::contextMenuEvent(QContextMenuEvent *event)
 
 void GroupItemWidget::listWidgetMenuTriggered()
 {
-    GroupChatWidget *w = new GroupChatWidget;
-    w->setGroupId(groupid);
-    w->setGroupName(groupname);
-    w->setIcon(imagePath);
-    w->initMemberList();
-    w->show();
+    QMap<QString, GroupChatWidget*>& groupchatwidgets = AllVariable::getGroupChatWidget();
+
+    GroupChatWidget *chat = groupchatwidgets.value(groupid);
+
+    if (chat == NULL)
+    {
+        chat = new GroupChatWidget();
+        groupchatwidgets.insert(groupid, chat);
+        chat->initMemberList();
+    }
+
+    QSettings *setting = RWSetting::getInstance()->getSetting();
+    QStringList us = setting->value("RecentlyGroupChat").toStringList();
+
+    for (QStringList::iterator iter = us.begin(); iter != us.end();)
+    {
+        if (*iter == groupid)
+            iter = us.erase(iter);
+        else
+            ++iter;
+    }
+
+    us << groupid;
+
+    setting->setValue("RecentlyGroupChat", us);
+
+    chat->setGroupId(groupid);
+    chat->setGroupName(groupname);
+    chat->setIcon(imagePath);
+    chat->initMemberList();
+    chat->show();
 }
 
 void GroupItemWidget::setImage(const QString& url)

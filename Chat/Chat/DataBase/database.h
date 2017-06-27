@@ -53,6 +53,8 @@ public:
                                 const QString& fontsize, const QString& fontcolor);
     QVector<QStringList> getGroupOfflineMessage(const QString &groupid);
 
+    QString getGroupIcon(const QString &groupid);
+
 signals:
     void setGroupMemberFinished();
 public slots:

@@ -197,6 +197,8 @@ QString DataBase::getFriendName(const QString &friendid)
     sql_query.prepare(sql);
     sql_query.exec();
 
+    sql_query.next();
+
     return sql_query.value(0).toString();
 }
 
@@ -208,6 +210,8 @@ QString DataBase::getFriendImage(const QString &friendid)
     QSqlQuery sql_query;
     sql_query.prepare(sql);
     sql_query.exec();
+
+    sql_query.next();
 
     return sql_query.value(0).toString();
 }
@@ -424,6 +428,18 @@ void DataBase::setGroupOfflineMessage(const QString& groupid, const QString& sen
     sql_query.exec();
 }
 
+QString DataBase::getGroupIcon(const QString &groupid)
+{
+    QString sql = "select distinct groupimage from chat_group where groupid=?;";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.addBindValue(groupid);
+    sql_query.exec();
+    sql_query.next();
+
+    return sql_query.value(0).toString();
+}
 
 QVector<QStringList> DataBase::getGroupOfflineMessage(const QString &groupid)
 {
@@ -448,6 +464,10 @@ QVector<QStringList> DataBase::getGroupOfflineMessage(const QString &groupid)
 
         vec.append(list);
     }
+    sql = "delete from chat_group_offline_message where groupid = ?;";
+    sql_query.prepare(sql);
+    sql_query.addBindValue(groupid);
 
+    sql_query.exec();
     return vec;
 }

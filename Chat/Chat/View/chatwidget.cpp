@@ -1,6 +1,7 @@
 #include "chatwidget.h"
 #include "../allvariable.h"
 #include "DataBase/database.h"
+#include "NetWork/httpconnect.h"
 #include "View/skinmanagewidget.h"
 #include "BasicControls/headicon.h"
 #include "NetWork/connecttoserver.h"
@@ -183,7 +184,17 @@ void ChatWidget::setUserid(const QString &userid)
 
 void ChatWidget::setIcon(const QString &path)
 {
-    headIcon->setPixmap(QPixmap(path));
+    if(QFile(QUrl(path).fileName()).exists())
+        headIcon->setPixmap(QPixmap(QUrl(path).fileName()));
+    else
+    {
+        HttpConnect *http = new HttpConnect();
+        http->loadFileFormUrl(path);
+
+        connect(http, &HttpConnect::loadCompleted, this, [this, http](){
+            headIcon->setPixmap(QPixmap(http->getFilePath()));
+        });
+    }
 }
 
 

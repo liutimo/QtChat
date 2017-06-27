@@ -4,6 +4,7 @@
 #include <BasicControls/messageitemwidget.h>
 #include "View/chatwidget.h"
 #include <QListWidget>
+#include <QDebug>
 MessageListWidget::MessageListWidget(QWidget *parent) : BasicWidget(parent)
 {
     listwidget = new QListWidget(this);
@@ -35,9 +36,11 @@ void MessageListWidget::updateMessage()
     {
         QListWidgetItem *item = new QListWidgetItem();
         MessageItemWidget *w = new MessageItemWidget();
+        qDebug() << "friend name " << DataBase::getInstance()->getFriendName(s.key(elem));
         w->setFriendName(DataBase::getInstance()->getFriendName(s.key(elem)));
         w->setNumber(elem->size());
         w->setId(s.key(elem));
+        w->setIcon(DataBase::getInstance()->getFriendImage(s.key(elem)));
         connect(w, &MessageItemWidget::itemclicked, this, &MessageListWidget::showChatWidget);
         listwidget->insertItem(listwidget->count(), item);
         listwidget->setItemWidget(item, w);
@@ -51,6 +54,8 @@ void MessageListWidget::updateMessage()
         w->setFriendName(DataBase::getInstance()->getGroupName(g.key(elem)));
         w->setNumber(elem);
         w->setId(g.key(elem));
+        w->setIcon(DataBase::getInstance()->getGroupIcon(g.key(elem)));
+
         connect(w, &MessageItemWidget::itemclicked, this, &MessageListWidget::showGroupChatWidget);
         listwidget->insertItem(listwidget->count(), item);
         listwidget->setItemWidget(item, w);
@@ -109,6 +114,8 @@ void MessageListWidget::showGroupChatWidget(const QString groupid)
         w = new GroupChatWidget();
         w->setGroupId(groupid);
         w->setGroupName(DataBase::getInstance()->getGroupName(groupid));
+        w->setIcon(DataBase::getInstance()->getGroupIcon(groupid));
+        w->initMemberList();
         map.insert(groupid, w);
     }
 
