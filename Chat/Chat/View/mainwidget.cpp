@@ -124,12 +124,16 @@ void MainWidget::init()
     stackwidget->addWidget(recentList);
 
 
+    btn_main_menu = new QToolButton(this);
+    btn_main_menu->move(5, height() - 28);
+    btn_main_menu->setFixedSize(24, 24);
+    btn_main_menu->setObjectName("btn_main_menu");
+
     btn_add_friend = new QToolButton(this);
     btn_add_friend->move(50, height() - 30);
     btn_add_friend->resize(70, 28);
-    btn_add_friend->setStyleSheet("QToolButton{border:0px;border-image: url(:/Resource/mainwidget/main_search_bkg.png);}"
-                             "QToolButton:hover{border:0px;border-image: url(:/Resource/mainwidget/main_search_bkg_2"
-                                  ".png);}");
+    btn_add_friend->setStyleSheet("QToolButton{border:0px;border-image: url(':/Resource/mainwidget/main_search_bkg.png');}"
+                       "QToolButton:hover{border:0px;border-image: url(':/Resource/mainwidget/menu_btn2_highlight@2x.png'}");
 
     connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
     connect(tb_contact, &QToolButton::clicked, this, &MainWidget::changSelectedButton);

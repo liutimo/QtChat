@@ -404,3 +404,11 @@ QPushButton#btn_hide_list[selected="false"]:pressed
 {
     border-image:url(:/Resource/chatwidget/aio_splitbutton_right_down.png);
 }
+
+
+QToolButton#btn_main_menu{
+    border:0px;border-image: url(':/Resource/mainwidget/menu_btn2_normal@2x.png');
+}
+QToolButton#btn_main_menu:hover{
+    border:0px;border-image: url(':/Resource/mainwidget/menu_btn2_highlight@2x.png');
+}

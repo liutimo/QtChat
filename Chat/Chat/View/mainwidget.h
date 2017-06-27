@@ -99,6 +99,8 @@ private:
 
     QToolButton *btn_add_friend;
 
+    QToolButton *btn_main_menu;
+
     QMenu *menu;
     QAction *state_online;
     QAction *state_busy;

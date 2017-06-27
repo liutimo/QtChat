@@ -329,5 +329,10 @@
         <file>Resource/chatwidget/aio_splitbutton_left_normal.png</file>
         <file>Resource/chatwidget/aio_splitbutton_left_hover.png</file>
         <file>Resource/chatwidget/aio_splitbutton_left_down.png</file>
+        <file>Resource/mainwidget/menu_pressed.png</file>
+        <file>Resource/mainwidget/menu_normal.png</file>
+        <file>Resource/mainwidget/menu_hover.png</file>
+        <file>Resource/mainwidget/menu_btn2_normal@2x.png</file>
+        <file>Resource/mainwidget/menu_btn2_highlight@2x.png</file>
     </qresource>
 </RCC>
