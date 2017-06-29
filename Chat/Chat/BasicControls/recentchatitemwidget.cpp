@@ -138,11 +138,9 @@ void RecentChatItemWidget::moveFriendTo()
 
 void RecentChatItemWidget::setMessage(const QString &message)
 {
-    qDebug() << message;
     QString p("</em><br/>(.*)</html>");
     QRegExp rx(p);
     rx.indexIn(message);
     QString msg = rx.cap(1);
-    qDebug() << msg;
     m_chatmessage->setText(msg);
 }

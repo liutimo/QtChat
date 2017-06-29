@@ -144,8 +144,6 @@ char *get_userinfo_json(const char *userid)
 
     sprintf(sql_getuserinfo, "select username, personalizedsignature, imagepath from userinfo where userid='%s';", userid);
 
-
-    printf("%s\n", sql_getuserinfo);
     //get group
     if (execute_mysql(sql_getuserinfo) == -1)
         print_error_mysql(sql_getuserinfo);
@@ -174,7 +172,7 @@ void set_chatlog(const char *sender, const char *receiver, const char *content, 
 
     sprintf(sql_insert_chatlog, "insert into chatlog(senderid, receiverid, content, fontfamliy, fontsize, fontcolor) "
                                 "values('%s', '%s', '%s', '%s', '%s', '%s')", sender, receiver, content, fontfamliy, fontsize, fontcolor);
-    printf("%s\n", sql_insert_chatlog);
+
     if (execute_mysql(sql_insert_chatlog) == -1)
         print_error_mysql(sql_insert_chatlog);
 }
@@ -185,7 +183,6 @@ void set_offline_message(const char *sender, const char *receiver, const char *c
 
     sprintf(sql_insert_offlinemessage, "insert into offlinemessage(senderid, receiverid, content, fontfamliy, fontsize, fontcolor) "
                                 "values('%s', '%s', '%s', '%s', '%s', '%s')", sender, receiver, content, fontfamliy, fontsize, fontcolor);
-    printf("%s\n", sql_insert_offlinemessage);
     if (execute_mysql(sql_insert_offlinemessage) == -1)
         print_error_mysql(sql_insert_offlinemessage);
 }
@@ -289,7 +286,7 @@ char *get_group(const char*userid)
     sprintf(sql_get_group, "select chat_group.groupid, groupname, groupimage from chat_group, chat_groupmember "
                             "where chat_group.groupid=chat_groupmember.groupid and chat_groupmember.memberid='%s';", userid);
 
-    printf("%s\n", sql_get_group);
+//    printf("%s\n", sql_get_group);
 
     if(execute_mysql(sql_get_group) == -1)
         print_error_mysql(sql_get_group);
@@ -322,7 +319,7 @@ char *get_group_member(const char *userid)
 
     cJSON *root = cJSON_CreateObject();
 
-    printf("%s\n", sql_get_groupid);
+//    /*printf*/("%s\n", sql_get_groupid);
 
     if(execute_mysql(sql_get_groupid) == -1)
         print_error_mysql(sql_get_groupid);
@@ -339,7 +336,7 @@ char *get_group_member(const char *userid)
         print_error_mysql(sql_get_groupmember);
 
     mysql_res = mysql_store_result(mysql);
-    printf("%s\n", sql_get_groupmember);
+//    printf("%s\n", sql_get_groupmember);
 
     while((mysql_row = mysql_fetch_row(mysql_res)) != NULL)
     {
@@ -405,7 +402,7 @@ void set_group_chatlog(const char *senderid, const char *groupid, const char *co
 
     sprintf(sql_insert_groupchatlog, "insert into chat_group_chatrecord(senderid, groupid, content, fontfamliy, fontsize, fontcolor) "
                                 "values('%s', '%s', '%s', '%s', '%s', '%s')", senderid, groupid, content, fontfamliy, fontsize, fontcolor);
-    printf("%s\n", sql_insert_groupchatlog);
+//    printf("%s\n", sql_insert_groupchatlog);
     if (execute_mysql(sql_insert_groupchatlog) == -1)
         print_error_mysql(sql_insert_groupchatlog);
 }
@@ -416,7 +413,7 @@ void set_group_offlinechatlog(const char *sender,const char *groupid ,const char
 
     sprintf(sql_insert_offlinemessage, "insert into chat_group_offlinemessage(senderid, groupid,receiverid, content, fontfamliy, fontsize, fontcolor) "
                                 "values('%s', '%s', '%s' ,'%s', '%s', '%s', '%s')", sender, groupid, receiver, content, fontfamliy, fontsize, fontcolor);
-    printf("%s\n", sql_insert_offlinemessage);
+//    printf("%s\n", sql_insert_offlinemessage);
     if (execute_mysql(sql_insert_offlinemessage) == -1)
         print_error_mysql(sql_insert_offlinemessage);
 }

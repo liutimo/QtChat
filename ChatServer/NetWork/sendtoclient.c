@@ -1,5 +1,5 @@
 #include "sendtoclient.h"
-
+#include "DataStructure/onlinehashtable.h"
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -14,26 +14,32 @@ void sendMsg(int fd, MsgType msgtype, char *data, ssize_t size)
     pthread_mutex_lock(&mutex);
     char *buf = (char*)malloc((sizeof(Msg) + size));
     Msg *msg = (Msg*)buf;
-	msg->type = msgtype;
-	msg->len = size;
-	memcpy(msg->data, data, msg->len);
+    msg->m_uiCheckCrc = 0xAFAFAFAF;
+    msg->type = msgtype;
+    msg->len = size;
+    memcpy(msg->data, data, msg->len);
 
     int n = writen(fd, (void*)msg, size + sizeof(Msg));
 
-    if(n==size + sizeof(Msg))
-        printf("send data len = %d\n",  size + sizeof(Msg));
+    if(n == 0){
+        close(fd);
+        free(msg);
+        pthread_mutex_unlock(&mutex);
+        return;
+    }
 
 
-	free(msg);
-    pthread_mutex_unlock(&mutex);
+    printf("成功发送%d字节数据\n", size + sizeof(Msg));
+    free(msg);
+     pthread_mutex_unlock(&mutex);
+
 }
 
 void sendResponseHeartBeatMsg(int fd)
 {
-	HeartBeatMsg heartbeatmsg;
-	heartbeatmsg.status = 'a';
-
-	sendMsg(fd, HEARTBEAT, &heartbeatmsg, sizeof(HeartBeatMsg));
+    HeartBeatMsg heartbeatmsg;
+    heartbeatmsg.status = 'a';
+    sendMsg(fd, HEARTBEAT, &heartbeatmsg, sizeof(HeartBeatMsg));
 }
 
 void sendResponseLoginMsg(int fd, ResponseLoginMsg *r_msg)

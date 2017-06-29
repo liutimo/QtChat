@@ -130,7 +130,6 @@ void ListViewItemWidget::setImage(const QString& url)
     http->loadFileFormUrl(url);
 
     connect(http, &HttpConnect::loadCompleted, this, [this, http](){
-        qDebug() << "设置头像";
         imagePath = http->getFilePath();
         m_headicon->setPixmap(QPixmap(imagePath));
     });

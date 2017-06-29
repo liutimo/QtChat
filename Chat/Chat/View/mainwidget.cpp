@@ -38,6 +38,7 @@ MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     resize(300, 600);
 
     setWidgetTitle("这是一个主窗口");
+
 }
 
 void MainWidget::init()
@@ -97,6 +98,7 @@ void MainWidget::init()
                              "QToolButton:hover{border:0px;background-color: rgba(255, 255, 255, 255);}");
     tb_status->setIcon(QIcon(":/Resource/status/imonline@2x.png"));
 
+    //主界面状态菜单
     menu = new QMenu;
     init_menu();
     connect(tb_status, &QToolButton::clicked, this, [this](){menu->exec(mapToGlobal(tb_status->geometry().bottomLeft()));});
@@ -129,25 +131,43 @@ void MainWidget::init()
     btn_main_menu->setFixedSize(24, 24);
     btn_main_menu->setObjectName("btn_main_menu");
 
+
+    //主界面菜单
+    main_menu = new QMenu();
+    main_menu->addAction(new QAction("设置"));
+    main_menu->addAction(new QAction("查看资料"));
+    main_menu->addAction(new QAction("修改资料"));
+    main_menu->addAction(new QAction("注销登陆"));
+    main_menu->addAction(new QAction("退出"));
+
+    btn_main_menu->setMenu(main_menu);
+    btn_main_menu->setPopupMode(QToolButton::InstantPopup);
+    //隐藏掉菜单的指示箭头
+    btn_main_menu->setStyleSheet("QToolButton::menu-indicator{image:none;}");
+
     btn_add_friend = new QToolButton(this);
     btn_add_friend->move(50, height() - 30);
     btn_add_friend->resize(70, 28);
     btn_add_friend->setStyleSheet("QToolButton{border:0px;border-image: url(':/Resource/mainwidget/main_search_bkg.png');}"
-                       "QToolButton:hover{border:0px;border-image: url(':/Resource/mainwidget/menu_btn2_highlight@2x.png'}");
+                                  "QToolButton:hover{border:0px;border-image: url(':/Resource/mainwidget/menu_btn2_highlight@2x.png'}");
 
     connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
     connect(tb_contact, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
     connect(tb_group, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
     connect(tb_last, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
 
+
+
+
     RequestUserInfoMsg r;
     ConnectToServer::getInstance()->sendRequestUserInfoMsg(&r);
+
     ConnectToServer::getInstance()->sendRequestOfflineMessage();
-    ConnectToServer::getInstance()->sendRequestGroupInfo();
 
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseUserInfo, this, &MainWidget::receiveUserInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedOfflineMessage, this, &MainWidget::receiveOfflineMessage);
+
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupInfo, this, &MainWidget::receivedGroupInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupMemberInfo, this, &MainWidget::receivedGroupMemberInfo);
 }
@@ -269,7 +289,11 @@ void MainWidget::changSelectedButton()
     if(tb_sender == tb_contact)
         stackwidget->setCurrentIndex(0);
     else if(tb_sender == tb_group)
+    {
         stackwidget->setCurrentIndex(1);
+        if (!isSend)
+            ConnectToServer::getInstance()->sendRequestGroupInfo();
+    }
     else
     {
         stackwidget->setCurrentIndex(2);
@@ -294,6 +318,7 @@ void MainWidget::receiveFriendList(const QByteArray& bytearray)
     QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
 
     listwidget->setList(friends, groups);
+
     emit loadFinished();
 }
 
@@ -301,25 +326,25 @@ void MainWidget::receiveFriendList(const QByteArray& bytearray)
 void MainWidget::init_menu()
 {
     state_online = new QAction(QIcon(":/Resource/status/imonline@2x.png"), "在线");
-//    state_busy = new QAction(QIcon(":/Resource/status/busy@2x.png"), "忙碌");
+    //    state_busy = new QAction(QIcon(":/Resource/status/busy@2x.png"), "忙碌");
     state_hide = new QAction(QIcon(":/Resource/status/invisible@2x.png"), "隐身");
-//    state_away = new QAction(QIcon(":/Resource/status/away@2x.png"), "离开");
+    //    state_away = new QAction(QIcon(":/Resource/status/away@2x.png"), "离开");
     state_offline = new QAction(QIcon(":/Resource/status/imoffline@2x.png"), "离线");
-//    state_notdisturb = new QAction(QIcon(":/Resource/status/mute@2x.png"), "请勿打扰");
+    //    state_notdisturb = new QAction(QIcon(":/Resource/status/mute@2x.png"), "请勿打扰");
 
     menu->addAction(state_online);
-//    menu->addAction(state_busy);
+    //    menu->addAction(state_busy);
     menu->addAction(state_hide);
-//    menu->addAction(state_away);
+    //    menu->addAction(state_away);
     menu->addAction(state_offline);
-//    menu->addAction(state_notdisturb);
+    //    menu->addAction(state_notdisturb);
 
     connect(state_online, &QAction::triggered, this, &MainWidget::changeStatus);
-//    connect(state_busy, &QAction::triggered, this, &MainWidget::changeStatus);
+    //    connect(state_busy, &QAction::triggered, this, &MainWidget::changeStatus);
     connect(state_hide, &QAction::triggered, this, &MainWidget::changeStatus);
-//    connect(state_away, &QAction::triggered, this, &MainWidget::changeStatus);
+    //    connect(state_away, &QAction::triggered, this, &MainWidget::changeStatus);
     connect(state_offline, &QAction::triggered, this, &MainWidget::changeStatus);
-//    connect(state_notdisturb, &QAction::triggered, this, &MainWidget::changeStatus);
+    //    connect(state_notdisturb, &QAction::triggered, this, &MainWidget::changeStatus);
 
 }
 
@@ -334,28 +359,28 @@ void MainWidget::changeStatus()
         tb_status->setIcon(QIcon(":/Resource/status/imonline@2x.png"));
         u = UserOnLine;
     }
-//    else if (action == state_busy)
-//    {
-//        tb_status->setIcon(QIcon(":/Resource/status/busy@2x.png"));
-//    }
+    //    else if (action == state_busy)
+    //    {
+    //        tb_status->setIcon(QIcon(":/Resource/status/busy@2x.png"));
+    //    }
     else if (action == state_hide)
     {
         u = UserHide;
         tb_status->setIcon(QIcon(":/Resource/status/invisible@2x.png"));
     }
-//    else if (action == state_away)
-//    {
-//        tb_status->setIcon(QIcon(":/Resource/status/away@2x.png"));
-//    }
+    //    else if (action == state_away)
+    //    {
+    //        tb_status->setIcon(QIcon(":/Resource/status/away@2x.png"));
+    //    }
     else if (action == state_offline)
     {
         tb_status->setIcon(QIcon(":/Resource/status/imoffline@2x.png"));
         u = UserOffLine;
     }
-//    else if (action == state_notdisturb)
-//    {
-//        tb_status->setIcon(QIcon(":/Resource/status/mute@2x.png"));
-//    }
+    //    else if (action == state_notdisturb)
+    //    {
+    //        tb_status->setIcon(QIcon(":/Resource/status/mute@2x.png"));
+    //    }
 
     ConnectToServer::getInstance()->sendRequestChangeStatus(u);
 }
@@ -417,6 +442,7 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
         qDebug() << error.errorString();
 
     DataBase::getInstance()->setFriendList(friends);
+
 }
 
 
@@ -508,6 +534,9 @@ void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
         qDebug() << error.errorString();
 
     emit updateMessageBox();
+
+    ConnectToServer::getInstance()->sendRequestAckOfflineMsg();
+
 }
 
 void MainWidget::parseGroup(const QByteArray&json)
@@ -543,6 +572,7 @@ void MainWidget::parseGroup(const QByteArray&json)
 
 void MainWidget::receivedGroupInfo(const QByteArray&json)
 {
+    isSend = true;
     parseGroup(json);
 
     QVector<QStringList> lists = DataBase::getInstance()->getGroupInfo();
@@ -551,6 +581,7 @@ void MainWidget::receivedGroupInfo(const QByteArray&json)
     listwidget->setGroupList(lists);
 
     ConnectToServer::getInstance()->sendRequestGroupMemberInfo();
+    //    emit loadFinished();
 }
 
 void MainWidget::receivedGroupMemberInfo(const QByteArray &json)

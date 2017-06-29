@@ -187,12 +187,12 @@ void ChatInput::setDefault()
 
 void ChatInput::focusInEvent(QFocusEvent *event)
 {
-    qDebug() << "focus in";
+
 }
 
 void ChatInput::focusOutEvent(QFocusEvent *event)
 {
-    qDebug() << "focus out";
+
 }
 
 void ChatInput::btn_send_clicked()

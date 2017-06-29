@@ -2,7 +2,14 @@
 #define RECVFROMCLIENT_H
 #include "msgstructure.h"
 
+
+void recvConnectionMsg(int socketfd);
+
 void recvMsg(int fd);
+
+
+
+void handle(Msg *msg, int fd);
 
 void handleLoginMsg(int fd, Msg *msg);
 

@@ -36,7 +36,7 @@ void MessageListWidget::updateMessage()
     {
         QListWidgetItem *item = new QListWidgetItem();
         MessageItemWidget *w = new MessageItemWidget();
-        qDebug() << "friend name " << DataBase::getInstance()->getFriendName(s.key(elem));
+//        qDebug() << "friend name " << DataBase::getInstance()->getFriendName(s.key(elem));
         w->setFriendName(DataBase::getInstance()->getFriendName(s.key(elem)));
         w->setNumber(elem->size());
         w->setId(s.key(elem));

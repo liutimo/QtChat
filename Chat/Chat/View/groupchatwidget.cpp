@@ -230,7 +230,7 @@ void GroupChatWidget::setIcon(const QString &path)
         http->loadFileFormUrl(path);
 
         connect(http, &HttpConnect::loadCompleted, this, [this, http](){
-            qDebug() << "设置头像";
+//            qDebug() << "设置头像";
             headIcon->setPixmap(QPixmap(http->getFilePath()));
         });
     }

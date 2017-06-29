@@ -108,6 +108,11 @@ private:
     QAction *state_away;
     QAction *state_offline;
     QAction *state_notdisturb;
+
+
+    QMenu *main_menu;
+
+    bool isSend = false;
 };
 
 #endif // MAINWIDGET_H

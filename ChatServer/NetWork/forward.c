@@ -12,7 +12,7 @@
 void forwardmessage(int fd, int friend_fd, RequestForwordMessageMsg *fmsg)
 {
 
-    write(STDOUT_FILENO, fmsg->message, fmsg->length);
+//    write(STDOUT_FILENO, fmsg->message, fmsg->length);
 
     ssize_t length = sizeof(ReceivedMessageMsg) + fmsg->length;
 

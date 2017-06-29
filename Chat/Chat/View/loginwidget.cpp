@@ -75,7 +75,6 @@ void LoginWidget::init()
     cb_autologin->setFixedSize(70, 20);
     cb_autologin->move(le_password->x() + 200 - cb_autologin->width(), 280);
 
-
     btn_login = new QPushButton("登录", this);
     btn_login->setFixedSize(200, 30);
     btn_login->move((w - btn_login->width()) / 2, 310);
@@ -104,7 +103,7 @@ void LoginWidget::init()
     connect(server, &ConnectToServer::receivedMessage, this, &LoginWidget::handleMessage);
     connect(server, &ConnectToServer::receivedGroupMessage, this, &LoginWidget::handleGroupMessage);
     connect(server, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
-          this, &LoginWidget::socketError);
+            this, &LoginWidget::socketError);
 }
 
 void LoginWidget::addSetting(int status)
@@ -143,7 +142,6 @@ void LoginWidget::loadSetting()
         cb_username->setCurrentText(p.first);
         le_password->setText("");
     }
-
 }
 
 void LoginWidget::btn_login_clicked()
@@ -189,13 +187,14 @@ void LoginWidget::loginStatus(LoginStatus ls)
 
         QThread::sleep(1);
         mainwidget = new MainWidget();
+
         connect(mainwidget, &MainWidget::loadFinished, this, &LoginWidget::showMainWidget);
         connect(mainwidget, &MainWidget::updateMessageBox, this, [this](){
             timer->start();
             action_newmessage->setEnabled(true);
             l->updateMessage();
             l->setFixedSize(200, l->getHeight());
-//            ConnectToServer::getInstance();
+            //            ConnectToServer::getInstance();
         });
         startTimer(1000);
         break;
@@ -220,17 +219,21 @@ void LoginWidget::loginStatus(LoginStatus ls)
 void LoginWidget::recvHeartBeat()
 {
     i = 0;
-//    qDebug() << "收到心跳包回复";
+    //    qDebug() << "收到心跳包回复";
 }
 
 void LoginWidget::timerEvent(QTimerEvent *event)
 {
-//    qDebug() << "发送心跳包";
+    //    qDebug() << "发送心跳包";
     if(i == 3)
     {
-        qDebug() << "离线";
+//        qDebug() << "离线";
         i = 0;
         mainwidget->setSatus(Offline);
+
+        if(exit)
+            QApplication::quit();
+
         killTimer(event->timerId());
     }
     else
@@ -255,6 +258,7 @@ void LoginWidget::showMainWidget()
 {
     hide();
     mainwidget->show();
+
 }
 void LoginWidget::init_traymenu()
 {
@@ -280,7 +284,8 @@ void LoginWidget::init_traymenu()
     QAction *action_exit = new QAction("退出");
 
     connect(action_exit, &QAction::triggered, this, [this](){
-        QApplication::quit();
+        ConnectToServer::getInstance()->sendRequestExitMessage();
+        exit = true;
     });
 
     connect(action_show, &QAction::triggered, this, [this](){
@@ -415,7 +420,7 @@ void LoginWidget::setTrayIcon()
 }
 void LoginWidget::iconIsActived(QSystemTrayIcon::ActivationReason e)
 {
-    qDebug() << 11;
+//    qDebug() << 11;
 }
 
 void LoginWidget::showMessageBox()

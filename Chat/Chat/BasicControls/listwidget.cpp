@@ -161,7 +161,6 @@ void ListWidget::setList(QVector<QStringList> lists)
         setItemWidget(newItem, itemwidget);
 
         connect(itemwidget, &RecentChatItemWidget::delOneItem, this, [this,newItem](){
-            qDebug() << "ssss";
             removeItemWidget(newItem);
             delete newItem;
         });

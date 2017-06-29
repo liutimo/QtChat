@@ -25,8 +25,9 @@ typedef enum _MsgType {
     RESPONSEGROUPMEMBERINFO,        //回应群组成员信息
     REQUESTCHANGESTATUS,            //更改状态
     RESPONSEFRIENDSTATUSCHANGE,     //告知客户端好友状态改变
-    FORWARDGROUPMESSAGE      //请求服务器转发群组消息
+    REQUESTFORWARDGROUPMESSAGE      //请求服务器转发群组消息
 }MsgType;
+
 
 typedef enum _UserStauts {
     UserOnLine = 0,                     //在线
@@ -59,6 +60,7 @@ typedef struct _Response {
 
 //通用消息结构
 typedef struct _Msg {
+    unsigned int m_uiCheckCrc;            //消息校验 0xAFAFAFAF
     MsgType type;   //消息类型
     int len;        //消息长度
     char data[0];   //消息
@@ -184,5 +186,10 @@ typedef struct _ForwordGroupMessage {
     long length;
     char message[0];
 }ForwordGroupMessage;
+
+//退出消息
+typedef struct _RequestExit {
+
+}RequestExit;
 
 #endif // MSGSTRUCTURE_H

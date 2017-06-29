@@ -13,63 +13,255 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
+
 
 extern struct epoll_event ev;
 extern int epoll_fd ;
 
+#define RECV_BUF_MAX_SIZE 4096
+
+char* memstr(char* full_data, int full_data_len, char* substr)
+{
+    if (full_data == NULL || full_data_len <= 0 || substr == NULL) {
+        return NULL;
+    }
+
+    if (*substr == '\0') {
+        return NULL;
+    }
+
+    int sublen = strlen(substr);
+
+    int i;
+    char* cur = full_data;
+    int last_possible = full_data_len - sublen + 1;
+    for (i = 0; i < last_possible; i++) {
+        if (*cur == *substr) {
+            //assert(full_data_len - i >= sublen);
+            if (memcmp(cur, substr, sublen) == 0) {
+                //found
+                return cur;
+            }
+        }
+        cur++;
+    }
+
+    return NULL;
+}
+
+void recvConnectionMsg(int socketfd)
+{
+    Msg *msg = NULL, *sendMsg = NULL;
+    //接收缓存
+    char *recvBuf = (char *)malloc((2 * RECV_BUF_MAX_SIZE + 1) * sizeof(char));
+    memset(recvBuf, 0, 2 * RECV_BUF_MAX_SIZE * sizeof(char));
+    //recvBuf尾部指针，用于接收数据
+    char *pRearBuf = recvBuf;
+    //recvBuf头部指针，用于传递数据
+    char *pHeadBuf = recvBuf;
+    //实际接收到得字节数量
+    int recvRet = 0;
+    //消息长度
+    int msgLen = 0;
+    int clientSocketfd = socketfd;
+    int msgStructLen = sizeof(Msg);
+    //发送的数据包不会超过RECV_BUF_MAX_SIZE
+    //如果超过RECV_BUF_MAX_SIZE可能出现了TCP
+    //粘包现象
+    while(recvRet = recv(clientSocketfd, pRearBuf, RECV_BUF_MAX_SIZE, 0))
+    {
+        //读数据错误
+        if(recvRet < 0)
+        {
+            if(errno == EAGAIN)
+            {
+                //这次没有数据了，下次再来
+                break;
+            }
+            else
+            {
+                ev.data.fd = clientSocketfd;
+                epoll_ctl(epoll_fd, EPOLL_CTL_DEL, clientSocketfd, &ev);
+                close(clientSocketfd);
+                break;
+            }
+        }
+        msgLen += recvRet;
+        if (msgLen > 2 * RECV_BUF_MAX_SIZE)
+        {
+            //消息长度大于缓存长度
+            exit(-1);
+        }
+        //接收到总数据已经大于了RECV_BUF_MAX_SIZE
+        //为了安全做一定处理
+        if(msgLen > RECV_BUF_MAX_SIZE)
+        {
+            unsigned char crc[5];
+            memset(crc, 0xAF, 4);
+            //在收到得buf中查找0xAFAFAFAF标志位
+            void *findMove = memstr(pHeadBuf, msgLen, (void *)crc);
+            if(findMove)
+            {
+                int move = (char *)findMove - recvBuf;
+                msgLen -= move;
+                memcpy(recvBuf, findMove, msgLen);
+                pHeadBuf = recvBuf;
+                pRearBuf += msgLen;
+            }
+            else
+            {
+
+                break;
+            }
+        }
+        //如果收到包长度小于结构体长度，暂定为丢弃
+        //实际可能会出现拆包情况，收到小于包长度得
+        //数据包
+        if(msgLen < msgStructLen)
+        {
+            //指正移到缓存后
+            pRearBuf += msgLen;
+            continue;
+        }
+        recvBuf[msgLen] = '\0';
+        //暂时没有想到好的解决方法
+        //当且仅当发生TCP粘包时会执行这个loop
+        //其它情况都无视这个loop
+        stickyPackageLoop:
+        //翻译buf
+        msg = (Msg *)pHeadBuf;
+        //校验位是否正确，如果正确则执行下一步
+        if(msg->m_uiCheckCrc != (unsigned int)0xAFAFAFAF)
+        {
+            //矫正
+            //尽量校正，校正成功则继续
+            //否则continue，直到这个数据包被放弃
+            unsigned char crc[5];
+            memset(crc, 0xAF, 4);
+            //在收到得buf中查找0xAFAFAFAF标志位
+            void *findMove = memstr(pHeadBuf, msgLen, (void *)crc);
+            if(findMove)
+            {
+                //找到标志位
+                pHeadBuf = (char *)findMove;
+                msgLen -= (pRearBuf - pHeadBuf);
+                //重新翻译buf
+                msg = (Msg *)pHeadBuf;
+            }
+            else
+            {
+                //没有找到标志位
+                continue;
+            }
+        }
+
+        if(msgLen < msgStructLen + msg->len)
+        {
+            //拆包
+            pRearBuf += msgLen;
+            continue;
+        }
+        //投递数据包
+        //现在消息是异步的，所以需要malloc一段空间用来存放msg消息
+        sendMsg = (Msg *)malloc(msgStructLen + msg->len);
+        memcpy(sendMsg, msg, msgStructLen + msg->len);
+        handle(sendMsg, clientSocketfd);
+        sendMsg = NULL;
+        msgLen -= msgStructLen + msg->len;
+        if(msgLen > 0)
+        {
+            //黏包
+            pHeadBuf = pHeadBuf + msgStructLen + msg->len;
+            goto stickyPackageLoop;
+        }
+        //一轮结束pRearBuf和pHeadBuf指针重新指向recvBuf
+        pRearBuf = recvBuf;
+        pHeadBuf = recvBuf;
+    }
+    free(recvBuf);
+}
+
+
+
 void recvMsg(int fd)
 {
-    char *buf = (char *)malloc(sizeof(Request));
-    readn(fd, buf, sizeof(Request));
+    ssize_t size = sizeof(Request);
 
-    Request *r = (Request*)buf;
-    ssize_t length = r->len;
+    while(1)
+    {
+        char *buf = (char *)malloc(sizeof(Request));
+        int flag = read(fd, buf, size);
+        if(flag < 0)
+        {
+            if(errno == EAGAIN)
+            {
+                //无数据可读
+                free(buf);
+                break;
+            }
+            else
+                return;
+        }
+        else
+        {
+            Request *r = (Request*)buf;
+            ssize_t length = r->len;
 
-    free(buf);
-    buf = NULL;
+            free(buf);
 
-    if (length < 0){
-        //???????
-//        e.data.fd = fd;
-//        delOvnlineUserWithFd(fd);
-//        ev.events = EPOLLIN|EPOLLET;
-//        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
-        printf("client error occur \n");
-//        close(fd);
-        return;
+            buf = (char*)malloc(length);
+
+            int flag2 = read(fd, buf, length);
+
+            if(flag2 < 0)
+            {
+                if(errno == EAGAIN)
+                {
+                    //无数据可读
+                    free(buf);
+                    break;
+                }
+            }
+            else
+            {
+                Msg *msg = (Msg*)buf;
+
+                handle(msg, fd);
+
+                free(msg);
+            }
+        }
     }
 
-    buf = (char *)malloc(sizeof(char) * length);
-    int len = readn(fd, buf, length);
-    if (len != length){
-//        ev.data.fd = fd;
-//        delOnlineUserWithFd(fd);
-//        ev.events = EPOLLIN|EPOLLET;
-//        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
-        printf("read data error\n");
-//        close(fd);
-        return;
-    }
+}
 
-    Msg *msg = (Msg*)buf;
+void handle(Msg *msg, int fd)
+{
     switch (msg->type)
     {
+
     case REQUESTLOGIN:
+        printf("REQUESTLOGIN\n");
         handleLoginMsg(fd, msg);
         break;
     case HEARTBEAT:
+        printf("HEARTBEAT\n");
         handleHeartBeatMsg(fd);
         break;
     case REQUESTFORWORDMESSAGE:
+        printf("REQUESTFORWORDMESSAGE\n");
         handleForwordMessageMsg(fd, msg);
         break;
     case REQUESTUSERINFO: {
+        printf("REQUESTUSERINFO\n");
         init_mysql();
         sendResponseUserInfo(fd, get_userinfo_json(findOnlineUserWithFd(fd)));
         close_mysql();
         break;
     }
     case REQUESTOFFLINEMESSAGE: {
+        printf("REQUESTOFFLINEMESSAGE\n");
         init_mysql();
         char *json = get_offline_message(findOnlineUserWithFd(fd));
         ResponseOfflineMessage *rom = (ResponseOfflineMessage*)malloc(sizeof(ResponseOfflineMessage) + strlen(json));
@@ -79,12 +271,15 @@ void recvMsg(int fd)
         free(rom);
         free(json);
         close_mysql();
+        break;
     }
     case RESPONSACKOFFLINEMSG: {
+        printf("RESPONSACKOFFLINEMSG\n");
         handleOfflineAckMessage(fd);
         break;
     }
     case REQUESTMOVEFRIENDTOGROUP: {
+        printf("REQUESTMOVEFRIENDTOGROUP\n");
         RequestMoveFriendToGroup *rmsg = (RequestMoveFriendToGroup*)malloc(sizeof(RequestMoveFriendToGroup));
         memset(rmsg, 0, sizeof(RequestMoveFriendToGroup));
         memcpy(rmsg, msg->data, msg->len);
@@ -93,6 +288,7 @@ void recvMsg(int fd)
         break;
     }
     case REQUESTUPDATESIGNAURE: {
+        printf("REQUESTUPDATESIGNAURE\n");
         RequestUpdateSignature *rmsg = (RequestUpdateSignature*)malloc(msg->len);
         memcpy(rmsg, msg->data, msg->len);
         handleUpdateSignature(fd, rmsg);
@@ -100,27 +296,35 @@ void recvMsg(int fd)
         break;
     }
     case REQUESTGROUPINFO: {
+        printf("REQUESTGROUPINFO\n");
         handleRequestGroupMessage(fd);
         break;
     }
     case REQUESTGROUPMEMBERINFO: {
+        printf("REQUESTGROUPMEMBERINFO\n");
         handleRequestGroupMemberMessage(fd);
         break;
     }
     case REQUESTCHANGESTATUS: {
+        printf("REQUESTCHANGESTATUS\n");
         handleRequestChangeStatus(fd, msg);
         break;
     }
     case REQUESTFORWARDGROUPMESSAGE: {
+        printf("REQUESTFORWARDGROUPMESSAGE\n");
         handleFrowardGroupMsg(fd, msg);
+        break;
+    }
+    case EXIT: {
+        printf("EXIT\n");
+        handleExitMsg(fd);
+        break;
     }
     default:
         break;
     }
 
-    free(buf);
 }
-
 
 void handleLoginMsg(int fd, Msg *msg)
 {
@@ -177,8 +381,14 @@ void handleHeartBeatMsg(int fd)
 
 void handleExitMsg(int fd)
 {
+
+    printf("%s离线\n", findOnlineUserWithFd(fd));
+    //从在线用户中移除
+    delOnlineUserWithUid(findOnlineUserWithFd(fd));
+    delOnlineUserWithFd(fd);
+
+    //从epoll监听中移除
     ev.data.fd = fd;
-    ev.events = EPOLLIN|EPOLLET;
     epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
     close(fd);
 }
@@ -195,7 +405,7 @@ void handleForwordMessageMsg(int fd, Msg *msg)
     strcpy(message, fmsg->message);
     message[fmsg->length] = '\0';
 
-//    /("%d  |||  %s\n", fmsg->length, message);
+    //    /("%d  |||  %s\n", fmsg->length, message);
 
     init_mysql();
     set_chatlog(findOnlineUserWithFd(fd), fmsg->friendid, message, fmsg->font, fmsg->size, fmsg->color);
@@ -253,6 +463,7 @@ void handleRequestGroupMessage(int fd)
     //根据fd找到对应的用户id
     //然后查找数据库找到所有的群
 
+
     init_mysql();
     char *group = get_group(findOnlineUserWithFd(fd));
     close_mysql();
@@ -261,11 +472,13 @@ void handleRequestGroupMessage(int fd)
         return;
 
     ResponseGroupInfo *msg = (ResponseGroupInfo*)malloc(sizeof(ResponseGroupInfo) + strlen(group));
-    printf("%s\n", group);
+
     msg->length = strlen(group);
     strcpy(msg->json, group);
 
     sendGroupInfo(fd, msg);
+
+    printf("send 群列表 %s\n", group);
 
     free(msg);
     free(group);

@@ -102,6 +102,8 @@ private:
     void setTrayIcon();
     int flag = 0;
     MessageListWidget *l;
+
+    bool exit = false;
 };
 
 #endif // LOGINWIDGET_H

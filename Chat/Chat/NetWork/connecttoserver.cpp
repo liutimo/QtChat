@@ -42,7 +42,7 @@ void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
     Msg *msg = (Msg*)buf;
 
     memset(msg, 0, memsize);
-
+    msg->m_uiCheckCrc = 0xAFAFAFAF;
     msg->type = msgtype;
     msg->len = size;
 
@@ -149,7 +149,14 @@ void ConnectToServer::sendRequestChangeStatus(UserStatus status)
 
 void ConnectToServer::sendForwordGroupMessage(ForwordGroupMessage *msg)
 {
-    send(FORWARDGROUPMESSAGE, (char*)msg, msg->length + sizeof(ForwordGroupMessage));
+    send(REQUESTFORWARDGROUPMESSAGE, (char*)msg, msg->length + sizeof(ForwordGroupMessage));
+}
+
+void ConnectToServer::sendRequestExitMessage()
+{
+    RequestExit *msg = new RequestExit;
+    send(EXIT, (char*)msg, sizeof(RequestExit));
+    delete msg;
 }
 
 /*****************************???????????????**************************************/
@@ -161,6 +168,7 @@ void ConnectToServer::recv()
 
     switch (msg->type) {
     case RESPONSELOGIN: {
+        qDebug() << "登陆回应";
         ResponseLoginMsg *rlm = new ResponseLoginMsg;
         memcpy(rlm, msg->data, sizeof(ResponseLoginMsg));
         emit loginStatus(rlm->ls);
@@ -168,19 +176,21 @@ void ConnectToServer::recv()
         break;
     }
     case HEARTBEAT: {
+        qDebug() << "心跳回应";
         emit responseHeartBeat();
         break;
     }
     case RESPONSEFRIENDLIST: {
+        qDebug() << "好友列表回应";
         char *buf = new char[msg->len];
         ResponseFriendList *rf = (ResponseFriendList*)buf;
         memcpy(rf, msg->data, msg->len);
-        qDebug() << rf->friendlist;
         emit responseFriendList(QByteArray(rf->friendlist));
         delete []buf;
         break;
     }
     case RESPONSEUSERINFO: {
+        qDebug() << "用户信息回应";
         ResponseUserinfo *rui = (ResponseUserinfo*)new char[msg->len];
         memcpy(rui, msg->data, msg->len);
         emit responseUserInfo(QByteArray(rui->userinfo));
@@ -188,12 +198,14 @@ void ConnectToServer::recv()
         break;
     }
     case RECEIVEDMESSAGE: {
+        qDebug() << "消息回应";
         ReceivedMessageMsg *rmsg = (ReceivedMessageMsg*)new char[msg->len];
         memcpy(rmsg, msg->data, msg->len);
         emit receivedMessage(rmsg);
         break;
     }
     case RESPONSEOFFLINEMESSAGE: {
+        qDebug() << "离线消息回应";
         ResponseOfflineMessage *rom = (ResponseOfflineMessage*)new char[msg->len + 1];
         memcpy(rom, msg->data, msg->len);
         rom->json[rom->length] = '\0';
@@ -202,6 +214,7 @@ void ConnectToServer::recv()
         break;
     }
     case RESPONSEGROUPINFO: {
+        qDebug() << "群组信息回应";
         ResponseGroupInfo *rgi = (ResponseGroupInfo*)new char[msg->len];
         memcpy(rgi, msg->data, msg->len);
         emit receivedGroupInfo(QByteArray(rgi->json));
@@ -209,6 +222,7 @@ void ConnectToServer::recv()
         break;
     }
     case RESPONSEGROUPMEMBERINFO: {
+        qDebug() << "群成员信息回应";
         ResponseGroupMemberInfo *info = (ResponseGroupMemberInfo*)new char[msg->len];
         memcpy(info,msg->data, msg->len);
         emit receivedGroupMemberInfo(info->json);
@@ -216,22 +230,21 @@ void ConnectToServer::recv()
         break;
     }
     case RESPONSEFRIENDSTATUSCHANGE: {
+        qDebug() << "状态改变回应";
         ResponseFriendStatusChange *rfsc = new ResponseFriendStatusChange;
         memcmp(rfsc, msg->data, msg->len);
-        qDebug() << rfsc->userid << rfsc->status;
-
         delete rfsc;
         break;
     }
-    case FORWARDGROUPMESSAGE: {
+    case REQUESTFORWARDGROUPMESSAGE: {
+        qDebug() << "群消息回应";
         ForwordGroupMessage *rmsg = (ForwordGroupMessage*)new char[msg->len];
         memcpy(rmsg,msg->data, msg->len);
-        qDebug() << rmsg->groupid << rmsg->message;
         emit receivedGroupMessage(rmsg);
-//        delete rmsg;
         break;
     }
     default:
+        qDebug() << "未知";
         break;
     }
 }

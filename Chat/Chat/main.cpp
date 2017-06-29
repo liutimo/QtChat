@@ -21,10 +21,10 @@ int main(int argc, char *argv[])
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
 //    ShowInfoWidget w;
-//      LoginWidget w;
+      LoginWidget w;
 //    GroupChatWidget w;
-    MainWidget w;
-    //    EditInformation w;
+//    MainWidget w;
+//        EditInformation w;
     //MessageListWidget w;
     w.show();
     return a.exec();

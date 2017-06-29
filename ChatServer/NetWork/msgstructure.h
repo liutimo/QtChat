@@ -59,6 +59,7 @@ typedef struct _Response {
 
 //通用消息结构
 typedef struct _Msg {
+    unsigned int m_uiCheckCrc;            //消息校验 0xAFAFAFAF
     MsgType type;   //消息类型
     int len;        //消息长度
     char data[0];   //消息
@@ -184,5 +185,10 @@ typedef struct _RequestForwordGroupMessage {
     long length;
     char message[0];
 }RequestForwordGroupMessage;
+
+//退出消息
+typedef struct _RequestExit {
+
+}RequestExit;
 
 #endif // MSGSTRUCTURE_H

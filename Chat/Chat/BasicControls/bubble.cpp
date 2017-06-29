@@ -42,7 +42,6 @@ void  Bubble::setText(const QString &text)
             if (fm.width(line) > 370)
             {
                 _text.append('\r');
-                qDebug() << _text;
                 line.clear();
             }
         }
@@ -75,7 +74,6 @@ void Bubble::paintEvent(QPaintEvent *event)
         p.drawRoundedRect(0, 0, width() - 8, height(), 5, 5);
         QPoint point[3] = { QPoint(width() - 8, 10), QPoint(width() - 8, 20), QPoint(width(), 15) };
         p.drawPolygon(point, 3);
-        qDebug() << "Right bubble size" << size();
     }
 
     QLabel::paintEvent(event);

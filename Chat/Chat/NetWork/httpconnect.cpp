@@ -18,7 +18,6 @@ void HttpConnect::loadFileFormUrl(const QString& _url)
     if(filename.isEmpty())
         emit urlInvalid();
     file = new QFile(filename);
-    qDebug() << filename;
     if(!file->open(QIODevice::WriteOnly))
         emit urlInvalid();
 
@@ -33,7 +32,6 @@ void HttpConnect::startRequest(const QUrl &url)
 void HttpConnect::httpFinished()
 {
     if(file){
-        qDebug() << 1;
         QFileInfo f(*file);
         filepath = f.absoluteFilePath();
         file->close();

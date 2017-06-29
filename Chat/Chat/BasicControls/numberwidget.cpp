@@ -32,7 +32,6 @@ void NumberWidget::paintEvent(QPaintEvent *event)
         int w = f.width(text);
         int h = f.height();
 
-        qDebug() << height() << "  " << h;
         p.drawText(QPoint((width() - w) / 2, 16), text);
     }
     else
