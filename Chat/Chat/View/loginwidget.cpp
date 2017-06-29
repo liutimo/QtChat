@@ -196,7 +196,9 @@ void LoginWidget::loginStatus(LoginStatus ls)
             l->setFixedSize(200, l->getHeight());
             //            ConnectToServer::getInstance();
         });
-        startTimer(1000);
+
+        //20s 发送一次心跳包
+        startTimer(20000);
         break;
     }
     case LOGINPWERROR:

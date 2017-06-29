@@ -137,7 +137,7 @@ void ConnectToServer::sendRequestGroupMemberInfo()
     delete msg;
 }
 
-void ConnectToServer::sendRequestChangeStatus(UserStatus status)
+void ConnectToServer::sendRequestChangeStatus(int status)
 {
     RequestChangeStatus *s = new RequestChangeStatus;
     s->status = status;
@@ -232,7 +232,9 @@ void ConnectToServer::recv()
     case RESPONSEFRIENDSTATUSCHANGE: {
         qDebug() << "状态改变回应";
         ResponseFriendStatusChange *rfsc = new ResponseFriendStatusChange;
-        memcmp(rfsc, msg->data, msg->len);
+        memcpy(rfsc, msg->data, msg->len);
+        qDebug() << rfsc->status;
+        emit friendStatusChange(rfsc->userid, rfsc->status == 1 ? 1 : 2);
         delete rfsc;
         break;
     }

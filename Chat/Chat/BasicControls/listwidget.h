@@ -4,6 +4,12 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QLineEdit>
+
+
+QT_BEGIN_NAMESPACE
+class ListViewItemWidget;
+QT_END_NAMESPACE
+
 //自定义QListWidget
 class ListWidget : public QListWidget //继承QListWidget，可以使用它本身自带的函数，更方便
 {
@@ -18,6 +24,7 @@ public:
     void setList(QVector<QStringList> lists, int);
 
     void setGroupList(QVector<QStringList> lists);
+    void updateFriendStatus(const QString &userid, int status);
 
 private slots:
     void listWidgetMenuTriggered();
@@ -36,6 +43,7 @@ private:
     //保存每个分组的最后一个item的index
     //QMap<QString, int> groupItemIndexMap;
     QVector<QPair<QString, int>*> groupItemIndex;
+    QMap<QString, ListViewItemWidget*> friendmap;//用户和widget的关联map
 
     QPoint item_point;  //menu show on this point
 signals:

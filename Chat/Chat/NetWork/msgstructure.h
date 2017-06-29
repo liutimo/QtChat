@@ -168,12 +168,12 @@ typedef struct _ResponseGroupMemberInfo {
 
 //请求更改状态
 typedef struct _RequestChangeStatus {
-    UserStatus status;
+    int status;
 }RequestChangeStatus;
 
 typedef struct _ResponseFriendStatusChange {
     char userid[USERIDMAXLEN];
-    UserStatus status;
+    int status;
 }ResponseFriendStatusChange;
 
 

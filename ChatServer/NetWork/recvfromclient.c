@@ -368,8 +368,31 @@ void handleLoginMsg(int fd, Msg *msg)
     if (loginSuccess)
     {
         init_mysql();
-        sendResponseFriendList(fd, get_friendlist_json(lmsg.userid));
+        char *json = get_friendlist_json(lmsg.userid);
+        char** friends = get_friends(findOnlineUserWithFd(fd));
+        sendResponseFriendList(fd, json);
+        printf("%s\n", json);
+        free(json);
         close_mysql();
+
+        int  i = 0;
+
+
+        ResponseFriendStatusChange *rfsc = (ResponseFriendStatusChange*)malloc(sizeof(ResponseFriendStatusChange));
+        strcpy(rfsc->userid, findOnlineUserWithFd(fd));
+
+        while (friends[i] != NULL) {
+            int fd;
+            if((fd = findOnlineUserWithUid(friends[i])) != -1)
+            {
+                rfsc->status = 1;
+                sendFriendStatusChange(fd, rfsc);
+                printf("发送%s上线信息给%s\n", rfsc->userid, friends[i]);
+            }
+            ++i;
+        }
+        free(rfsc);
+        free(friends);
     }
 
 }
@@ -521,23 +544,22 @@ void handleRequestChangeStatus(int fd, Msg*msg)
     OnlineUserNode *node = findWithFd(fd);
 
     switch (rcs->status) {
-    case UserOffLine:                               //离线做离线处理
-        node->user.status = UserOffLine;
+    case 1:                                //用户上线
+        rfsc->status = 1;
+        node->user.status = UserOnLine;
+        break;
+    case 2:                                  //用户隐身
+        rfsc->status = 2;
+        node->user.status = UserHide;
+        break;
+    case 3:                               //离线做离线处理
+        node->user.status = 3;
         ev.data.fd = fd;
-        ev.events = EPOLLIN|EPOLLET;
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
         close(fd);
 
         delOnlineUserWithUid(findOnlineUserWithFd(fd));
         delOnlineUserWithFd(fd);
-        break;
-    case UserOnLine:                                //用户上线
-        rfsc->status = UserOnLine;
-        node->user.status = UserOnLine;
-        break;
-    case UserHide:                                  //用户隐身
-        rfsc->status = UserHide;
-        node->user.status = UserHide;
         break;
     default:
         break;

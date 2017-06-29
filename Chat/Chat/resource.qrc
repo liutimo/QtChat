@@ -334,5 +334,7 @@
         <file>Resource/mainwidget/menu_hover.png</file>
         <file>Resource/mainwidget/menu_btn2_normal@2x.png</file>
         <file>Resource/mainwidget/menu_btn2_highlight@2x.png</file>
+        <file>Resource/status/online.png</file>
+        <file>Resource/status/offline.png</file>
     </qresource>
 </RCC>

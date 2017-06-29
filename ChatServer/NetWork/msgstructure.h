@@ -172,7 +172,7 @@ typedef struct _RequestChangeStatus {
 
 typedef struct _ResponseFriendStatusChange {
     char userid[USERIDMAXLEN];
-    UserStatus status;
+    int status;
 }ResponseFriendStatusChange;
 
 

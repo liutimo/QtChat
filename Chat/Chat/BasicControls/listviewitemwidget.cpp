@@ -28,6 +28,13 @@ void ListViewItemWidget::init()
     m_nickname->setTextFormat(Qt::RichText);
 
     m_nickname->setText("<b>我是昵称</b> 我是个性签名啊！！！！");
+    m_nickname->move(40, 5);
+    m_nickname->resize(width() - 80, height() - 10);
+
+    m_status = new QLabel(this);
+    m_status->setFixedSize(32, 32);
+    m_status->move(width() - 50, 5);
+    m_status->setPixmap(QPixmap(":/Resource/status/offline.png").scaled(32,32, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
     personMenu = new QMenu();
     movetoMenu = new QMenu("移动好友至", this);
@@ -64,6 +71,8 @@ void ListViewItemWidget::init()
 void ListViewItemWidget::resizeEvent(QResizeEvent *event)
 {
     m_headicon->move(5, (height() - 30) / 2);
+
+    m_status->move(width() - 40, 5);
 
     m_nickname->resize(width() - 80, height() - 10);
     m_nickname->move(40, 5);
@@ -141,4 +150,18 @@ void ListViewItemWidget::moveFriendTo()
     DataBase::getInstance()->moveFriendToGroup(userid, s->text());
     ConnectToServer::getInstance()->sendRequestMoveFriendToGroup(userid, s->text());
     emit updateListWidget();
+}
+
+void ListViewItemWidget::setStatus(int status)
+{
+    switch (status) {
+    case 1:
+        m_status->setPixmap(QPixmap(":/Resource/status/online.png").scaled(32,32, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        break;
+    case 2:
+        m_status->setPixmap(QPixmap(":/Resource/status/offline.png").scaled(32,32, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        break;
+    default:
+        break;
+    }
 }

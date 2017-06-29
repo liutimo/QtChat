@@ -25,7 +25,7 @@ public:
     void sendRequestUpdateSignature(const QString &signature);
     void sendRequestGroupInfo();
     void sendRequestGroupMemberInfo();
-    void sendRequestChangeStatus(UserStatus status);
+    void sendRequestChangeStatus(int status);
     void sendForwordGroupMessage(ForwordGroupMessage *msg);
     void sendRequestExitMessage();
 protected:
@@ -42,6 +42,7 @@ signals:
     void receivedOfflineMessage(QByteArray);
     void receivedGroupInfo(const QByteArray&);
     void receivedGroupMemberInfo(const QByteArray&);
+    void friendStatusChange(const QString, int);
 private:
     ConnectToServer(QObject *parent = Q_NULLPTR);
 

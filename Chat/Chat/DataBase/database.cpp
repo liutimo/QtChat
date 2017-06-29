@@ -69,15 +69,15 @@ void DataBase::setFriendList(QList<QVector<QString>> friends)
 {
     QString sql = "insert into friendlist(userid, friendid, username, remark, "
                   "personalizedsignature, grouptype, imagepath, birthofdate"
-                  ", sex, mobile, mail) values('%1', '%2', '%3', '%4', '%5', '%6', '%7', '%8', '%9', '%10', '%11')";
-
-    QSqlQuery sql_query;
+                  ", sex, mobile, mail, status) values('%1', '%2', '%3', '%4', '%5', '%6', '%7', '%8', '%9', '%10', '%11', '%12')";
 
     for (QVector<QString> onefriend : friends)
     {
         QString s = sql.arg(AllVariable::getLoginUserId(),onefriend[0], onefriend[1], onefriend[2], onefriend[3],
-                onefriend[4], onefriend[5], onefriend[6], onefriend[7]).arg(onefriend[8], onefriend[9]);
-//        qDebug() << s;
+                onefriend[4], onefriend[5], onefriend[6], onefriend[7]).arg(onefriend[8], onefriend[9],
+                onefriend[10] == "online" ? "1" : "2");
+        qDebug() << s;
+        QSqlQuery sql_query;
         sql_query.prepare(s);
         sql_query.exec();
     }
@@ -89,7 +89,7 @@ QList<QVector<QString>> DataBase::getFriendList()
 {
     QList<QVector<QString>> friends;
 
-    QString sql = "select friendid, username, remark, grouptype, personalizedsignature, imagepath from friendlist where userid='%1';";
+    QString sql = "select friendid, username, remark, grouptype, personalizedsignature, imagepath, status from friendlist where userid='%1';";
 
     sql =sql.arg(AllVariable::getLoginUserId());
 
@@ -106,7 +106,7 @@ QList<QVector<QString>> DataBase::getFriendList()
         QString grouptype = sql_query.value(3).toString();
         QString personalizedsignature = sql_query.value(4).toString();
         QString imagepath = sql_query.value(5).toString();
-
+        QString status = sql_query.value(6).toString();
         QVector<QString> oneFriend;
         oneFriend.append(friendid);
         oneFriend.append(username);
@@ -114,7 +114,7 @@ QList<QVector<QString>> DataBase::getFriendList()
         oneFriend.append(grouptype);
         oneFriend.append(personalizedsignature);
         oneFriend.append(imagepath);
-//        qDebug() << imagepath;
+        oneFriend.append(status);
         friends.append(oneFriend);
     }
 

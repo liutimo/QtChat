@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "NetWork/msgstructure.h"
+
 QT_BEGIN_NAMESPACE
 class QLabel;
 class HeadIcon;
@@ -18,6 +20,8 @@ public:
     void setImage(const QString& url);
     QString getUsername();
     QString getUserid();
+    void setStatus(int status);
+
 signals:
     void updateListWidget();
 public slots:
@@ -42,6 +46,8 @@ private:
 
     QMenu *personMenu;//点击人上的菜单
     QMenu *movetoMenu;
+
+    QLabel *m_status;
 };
 
 #endif // LISTVIEWITEMWIDGET_H

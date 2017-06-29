@@ -38,7 +38,7 @@ MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     resize(300, 600);
 
     setWidgetTitle("这是一个主窗口");
-
+    ConnectToServer::getInstance()->sendRequestOfflineMessage();
 }
 
 void MainWidget::init()
@@ -162,12 +162,11 @@ void MainWidget::init()
     RequestUserInfoMsg r;
     ConnectToServer::getInstance()->sendRequestUserInfoMsg(&r);
 
-    ConnectToServer::getInstance()->sendRequestOfflineMessage();
 
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseUserInfo, this, &MainWidget::receiveUserInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedOfflineMessage, this, &MainWidget::receiveOfflineMessage);
-
+    connect(ConnectToServer::getInstance(), &ConnectToServer::friendStatusChange, this, &MainWidget::friendStatusChange);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupInfo, this, &MainWidget::receivedGroupInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupMemberInfo, this, &MainWidget::receivedGroupMemberInfo);
 }
@@ -352,12 +351,12 @@ void MainWidget::changeStatus()
 {
     QAction *action = static_cast<QAction*>(sender());
 
-    UserStatus u;
+    int u;
 
     if (action == state_online)
     {
         tb_status->setIcon(QIcon(":/Resource/status/imonline@2x.png"));
-        u = UserOnLine;
+        u = 1;
     }
     //    else if (action == state_busy)
     //    {
@@ -365,7 +364,7 @@ void MainWidget::changeStatus()
     //    }
     else if (action == state_hide)
     {
-        u = UserHide;
+        u = 2;
         tb_status->setIcon(QIcon(":/Resource/status/invisible@2x.png"));
     }
     //    else if (action == state_away)
@@ -375,7 +374,7 @@ void MainWidget::changeStatus()
     else if (action == state_offline)
     {
         tb_status->setIcon(QIcon(":/Resource/status/imoffline@2x.png"));
-        u = UserOffLine;
+        u = 3;
     }
     //    else if (action == state_notdisturb)
     //    {
@@ -411,16 +410,18 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
                 for(int i = 0; i < size; ++i)
                 {
                     QVector<QString> onefriend;
-                    QString friendid = array.at(i).toObject().value("friendid").toString();
-                    QString username = array.at(i).toObject().value("username").toString();
-                    QString remark = array.at(i).toObject().value("remark").toString();
-                    QString grouptype = array.at(i).toObject().value("grouptype").toString();
-                    QString personalizedsignature = array.at(i).toObject().value("personalizedsignature").toString();
-                    QString imagepath = array.at(i).toObject().value("imagepath").toString();
-                    QString birthofdate = array.at(i).toObject().value("birthofdate").toString();
-                    QString sex = array.at(i).toObject().value("sex").toString();
-                    QString mobile = array.at(i).toObject().value("mobile").toString();
-                    QString mail = array.at(i).toObject().value("mail").toString();
+                    QJsonObject o = array.at(i).toObject();
+                    QString friendid = o.value("friendid").toString();
+                    QString username = o.value("username").toString();
+                    QString remark = o.value("remark").toString();
+                    QString grouptype = o.value("grouptype").toString();
+                    QString personalizedsignature = o.value("personalizedsignature").toString();
+                    QString imagepath = o.value("imagepath").toString();
+                    QString birthofdate = o.value("birthofdate").toString();
+                    QString sex = o.value("sex").toString();
+                    QString mobile = o.value("mobile").toString();
+                    QString mail = o.value("mail").toString();
+                    QString stauts = o.value("status").toString();
 
                     onefriend.append(friendid);
                     onefriend.append(username);
@@ -432,6 +433,7 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
                     onefriend.append(sex);
                     onefriend.append(mobile);
                     onefriend.append(mail);
+                    onefriend.append(stauts);
 
                     friends.append(onefriend);
                 }
@@ -622,6 +624,13 @@ void MainWidget::receivedGroupMemberInfo(const QByteArray &json)
         qDebug() << error.errorString();
 
     DataBase::getInstance()->setGroupMemberInfo(map);
+}
+
+void MainWidget::friendStatusChange(const QString &userid, int status)
+{
+    ListWidget *listwidget = static_cast<ListWidget*>(stackwidget->widget(0));
+    qDebug() << userid << "当前状态" << status;
+    listwidget->updateFriendStatus(userid, status);
 }
 
 void MainWidget::setSatus(Status status)

@@ -107,11 +107,20 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         listmap.insert(group, new QVector<QListWidgetItem*>());
     }
 
+    int i;
     for(QVector<QString> onefriend : friends)
     {
         ListViewItemWidget *frienditem=new ListViewItemWidget();
         frienditem->setUserinfo(onefriend.at(0), onefriend.at(1), onefriend.at(4));
         frienditem->setImage(onefriend.at(5));
+        frienditem->setStatus(onefriend.at(6).toInt());
+        frienditem->resize(width(), 40);
+        friendmap.insert(onefriend.at(0), frienditem);
+        if(i % 2== 0)
+            frienditem->setStatus(UserOnLine);
+        else
+            frienditem->setStatus(UserOffLine);
+
         connect(frienditem, &ListViewItemWidget::updateListWidget, this, [this](){
             QStringList groups = DataBase::getInstance()->getGroup();
             QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
@@ -121,6 +130,7 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         QString groupname = onefriend.at(3);
 
         QListWidgetItem *newItem = new QListWidgetItem();
+
         int index = 0;
 
         for(int i = 0; i < groupItemIndex.size(); ++i)
@@ -202,4 +212,9 @@ void ListWidget::setList(QVector<QStringList> lists, int)
 
 void ListWidget::listWidgetMenuTriggered()
 {
+}
+
+void ListWidget::updateFriendStatus(const QString &userid, int status)
+{
+    friendmap.value(userid)->setStatus(status);
 }

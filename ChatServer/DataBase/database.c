@@ -1,7 +1,7 @@
 #include "database.h"
 #include "NetWork/marco.h"
 #include "Utility/cJSON.h"
-
+#include "DataStructure/onlinehashtable.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -124,6 +124,11 @@ char *get_friendlist_json(const char *userid)
                 cJSON_AddStringToObject(tmp, "sex", mysql_row[7]);
                 cJSON_AddStringToObject(tmp, "mobile", mysql_row[8]);
                 cJSON_AddStringToObject(tmp, "mail", mysql_row[9]);
+                OnlineUserNode* u = findWithUid(mysql_row[0]);
+                if(u != NULL)
+                    cJSON_AddStringToObject(tmp, "status", "online");
+                else
+                    cJSON_AddStringToObject(tmp, "status", "offline");
                 cJSON_AddItemToArray(node, tmp);
             }
             node = node->next;
