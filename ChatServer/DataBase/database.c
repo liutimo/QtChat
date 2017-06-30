@@ -80,10 +80,13 @@ char *get_friendlist_json(const char *userid)
     memset(sql_getgroup, 0, DATABASE_SQLMAXLENGTH);
     memset(sql_getfriends, 0, DATABASE_SQLMAXLENGTH);
 
-    sprintf(sql_getgroup, "select distinct grouptype from friendlist where userid='%s';", userid);
-    sprintf(sql_getfriends, "select friendid, username, remark, grouptype, personalizedsignature,imagepath,"
-                            "birthofdate, sex, mobile, mail from friendlist, userinfo "
-                            "where friendlist.userid='%s' and friendid = userinfo.userid;", userid);
+    sprintf(sql_getgroup, "select groupname from chat_friend_group where userid='%s';", userid);
+    sprintf(sql_getfriends, "select friendid, username, remark, groupname, personalizedsignature,imagepath,"
+                            "birthofdate, sex, mobile, mail from friendlist, userinfo, chat_friend_group "
+                            "where chat_friend_group.userid = userinfo.userid and friendlist.userid='%s' "
+                            "and friendid = userinfo.userid;", userid);
+
+    printf("%s\n", sql_getgroup);
 
     //get group
     if (execute_mysql(sql_getgroup) == -1)
@@ -117,7 +120,7 @@ char *get_friendlist_json(const char *userid)
                 cJSON_AddStringToObject(tmp, "friendid", mysql_row[0]);
                 cJSON_AddStringToObject(tmp, "username", mysql_row[1]);
                 cJSON_AddStringToObject(tmp, "remark", mysql_row[2]);
-                cJSON_AddStringToObject(tmp, "grouptype", mysql_row[3]);
+                cJSON_AddStringToObject(tmp, "groupname", mysql_row[3]);
                 cJSON_AddStringToObject(tmp, "personalizedsignature", mysql_row[4]);
                 cJSON_AddStringToObject(tmp, "imagepath", mysql_row[5]);
                 cJSON_AddStringToObject(tmp, "birthofdate", mysql_row[6]);
@@ -455,4 +458,49 @@ char **get_memberid(const char *groupid)
     }
 
     return members;
+}
+
+void deleteOneFriend(const char *userid, const char* friendid)
+{
+    char sql_delete_friend[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql_delete_friend, "delete from friendlist where friendid='%s' and userid='%s';", friendid, userid);
+
+    if(execute_mysql(sql_delete_friend) == -1)
+        print_error_mysql(sql_delete_friend);
+}
+
+void insert_friend_group(const char *userid, const char *groupname)
+{
+    char sql_insert_friend_group[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql_insert_friend_group, "insert into chat_friend_group(userid, groupname) values('%s', '%s');"
+            , userid, groupname);
+
+    if(execute_mysql(sql_insert_friend_group) == -1)
+        print_error_mysql(sql_insert_friend_group);
+}
+
+char* get_friend_info(const char *userid)
+{
+    char sql_get_friend[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql_get_friend, "select userid, username, imagepath from userinfo where userid='%s';", userid);
+
+    if (execute_mysql(sql_get_friend) == -1)
+        print_error_mysql(sql_get_friend);
+
+    mysql_res = mysql_store_result(mysql);
+
+    cJSON *root = NULL;
+
+    root = cJSON_CreateObject();
+
+    if((mysql_row = mysql_fetch_row(mysql_res)) != NULL) {
+        cJSON_AddStringToObject(root, "userid", mysql_row[0]);
+        cJSON_AddStringToObject(root, "username", mysql_row[1]);
+        cJSON_AddStringToObject(root, "imagepath", mysql_row[2]);
+    }
+
+    return cJSON_PrintUnformatted(root);
 }

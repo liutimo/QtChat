@@ -28,11 +28,9 @@ void sendMsg(int fd, MsgType msgtype, char *data, ssize_t size)
         return;
     }
 
-
     printf("成功发送%d字节数据\n", size + sizeof(Msg));
     free(msg);
     pthread_mutex_unlock(&mutex);
-
 }
 
 void sendResponseHeartBeatMsg(int fd)
@@ -108,4 +106,10 @@ void sendGroupMessage(const int fd, RequestForwordGroupMessage* rmsg)
 {
     printf("发送群消息\n");
     sendMsg(fd, REQUESTFORWARDGROUPMESSAGE, rmsg, rmsg->length + sizeof(RequestForwordGroupMessage));
+}
+
+void sendSearchResult(const int fd, ResponseSearchFriend *rmsg)
+{
+    printf("发送搜索结果\n");
+    sendMsg(fd, RESPONSESEARCHFRIEND, rmsg, rmsg->length + sizeof(ResponseSearchFriend));
 }

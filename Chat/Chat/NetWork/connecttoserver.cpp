@@ -36,7 +36,7 @@ void ConnectToServer::closeServer()
 
 void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
 {
-//    mutex->lock();
+    mutex->lock();
     int memsize = (sizeof(Msg) + size) *sizeof(char);
     char *buf = new char[memsize];
     Msg *msg = (Msg*)buf;
@@ -63,7 +63,7 @@ void ConnectToServer::send(MsgType msgtype, char *data, ssize_t size)
 
     delete []buf;
 
-//    mutex->unlock();
+    mutex->unlock();
 }
 
 void ConnectToServer::sendLoginMsg(LoginMsg *loginmsg)
@@ -159,6 +159,35 @@ void ConnectToServer::sendRequestExitMessage()
     delete msg;
 }
 
+void ConnectToServer::sendRequestDeleteFriend(const QString &friendid)
+{
+    RequestDeleteFriend *msg = new RequestDeleteFriend;
+    strcpy(msg->friendid, friendid.toUtf8().data());
+    send(REQUESTDELETEFRIEND, (char*)msg, sizeof(RequestDeleteFriend));
+    delete msg;
+}
+
+void ConnectToServer::sendRequestCreateGroup(const QString &groupname)
+{
+    RequestCreateGroup *msg = (RequestCreateGroup*)new char[sizeof(RequestCreateGroup) + groupname.toUtf8().length() + 1];
+
+    msg->length = groupname.toUtf8().length() + 1;
+    strcpy(msg->groupname, groupname.toUtf8().data());
+
+    send(REQUESTCREATEGROUP, (char*)msg, sizeof(RequestCreateGroup) + groupname.toUtf8().length() + 1);
+    delete msg;
+}
+
+void ConnectToServer::sendRequestSearchFriend(const QString &userid)
+{
+    RequestSearchFriend *rmsg = new RequestSearchFriend;
+    strcpy(rmsg->userid, userid.toUtf8().data());
+
+    send(REQUESTSEARCHFRIEND, (char*)rmsg, sizeof(RequestSearchFriend));
+
+    delete rmsg;
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
@@ -166,6 +195,7 @@ void ConnectToServer::recv()
     QByteArray bytearray = this->readAll();
     Msg *msg = (Msg*)bytearray.data();
 
+    qDebug() << msg->type << RESPONSEOFFLINEMESSAGE;
     switch (msg->type) {
     case RESPONSELOGIN: {
         qDebug() << "登陆回应";
@@ -243,6 +273,20 @@ void ConnectToServer::recv()
         ForwordGroupMessage *rmsg = (ForwordGroupMessage*)new char[msg->len];
         memcpy(rmsg,msg->data, msg->len);
         emit receivedGroupMessage(rmsg);
+        break;
+    }
+    case RESPONSESEARCHFRIEND: {
+        qDebug() << "搜索结果回应";
+        ResponseSearchFriend *rmsg = (ResponseSearchFriend*)new char[msg->len];
+        memcpy(rmsg, msg->data, msg->len);
+
+        char *message = new char[msg->len + 1];
+        strcpy(message, rmsg->json);
+        message[msg->len] = '\0';
+
+        emit receivedSearchResult(message);
+
+        qDebug() << rmsg->json;
         break;
     }
     default:

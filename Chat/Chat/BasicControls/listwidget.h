@@ -25,6 +25,7 @@ public:
 
     void setGroupList(QVector<QStringList> lists);
     void updateFriendStatus(const QString &userid, int status);
+    void setShowBlankMenu(bool flag = false);
 
 private slots:
     void listWidgetMenuTriggered();
@@ -37,6 +38,7 @@ private:
 
     QMap<QString, QVector<QListWidgetItem*>*> listmap;
     QMap<QListWidgetItem*, bool> isHide;
+    QMap<QString, int> ishide;
     QLineEdit *groupNameEdit;//组的名字，重命名的时候需要用到
     QListWidgetItem *currentItem;//当前的项
 
@@ -46,6 +48,8 @@ private:
     QMap<QString, ListViewItemWidget*> friendmap;//用户和widget的关联map
 
     QPoint item_point;  //menu show on this point
+
+    bool showBlankMenu;                         //是否在空白处显示菜单
 signals:
 
 public slots:

@@ -76,4 +76,11 @@ void set_group_offlinechatlog(const char *sender,const char *groupid ,const char
 
 //通过群组id获取成员id
 char **get_memberid(const char *groupid);
+
+//删除一个好友
+void deleteOneFriend(const char *userid, const char* friendid);
+
+void insert_friend_group(const char *userid, const char *groupname);
+
+char* get_friend_info(const char *userid);
 #endif // !DATABASE_H

@@ -55,6 +55,10 @@ public:
 
     QString getGroupIcon(const QString &groupid);
 
+    void deleteFriend(const QString &friendid);
+
+    void addFriendGroup(const QString &groupname);
+
 signals:
     void setGroupMemberFinished();
 public slots:

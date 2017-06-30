@@ -1,15 +1,17 @@
-#ifndef LINEEDIT_H
-#define LINEEDIT_H
+#ifndef SEARCHLINEEDIT_H
+#define SEARCHLINEEDIT_H
+
+
 
 #include <QLineEdit>
 class QLabel;
 class QPushButton;
 
-class LineEdit : public QLineEdit
+class SearchLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:
-    LineEdit(QWidget *parent = Q_NULLPTR);
+    SearchLineEdit(QWidget *parent = Q_NULLPTR);
     void hideButton();
 protected slots:
     void textChange(const QString &text);
@@ -29,5 +31,4 @@ private:
     QLabel *pix_label; // 显示图片
     QPushButton *btn_clear;
 };
-
-#endif // LINEEDIT_H
+#endif // SEARCHLINEEDIT_H

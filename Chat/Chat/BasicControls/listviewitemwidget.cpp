@@ -16,7 +16,7 @@
 ListViewItemWidget::ListViewItemWidget(QWidget *parent) : QWidget(parent)
 {
     init();
-    resize(200, 40);
+    resize(300, 50);
 }
 
 void ListViewItemWidget::init()
@@ -47,17 +47,7 @@ void ListViewItemWidget::init()
     }
 
     QAction *sendMsg = new QAction(QIcon(":/Resource/mainwidget/sendmsg.png"), "发送即时消息", this);
-    connect(sendMsg, &QAction::triggered, this, &ListViewItemWidget::listWidgetMenuTriggered);
-
     QAction *showinfo = new QAction(QIcon(":/Resource/mainwidget/msgmgr.png"), "查看资料",this);
-    connect(showinfo, &QAction::triggered, this, [this](){
-        ShowInfoWidget *w = new ShowInfoWidget;
-
-        w->setInfo(DataBase::getInstance()->getFriendInfo(userid));
-
-        w->show();
-    });
-
     QAction *updateremark = new QAction(QIcon(":/Resource/mainwidget/name.png"), "修改备注", this);
     QAction *del = new QAction(QIcon(":/Resource/mainwidget/deluser.png"), "删除好友", this);
 
@@ -66,6 +56,22 @@ void ListViewItemWidget::init()
     personMenu->addAction(updateremark);
     personMenu->addMenu(movetoMenu);
     personMenu->addAction(del);
+
+    connect(showinfo, &QAction::triggered, this, [this](){
+        ShowInfoWidget *w = new ShowInfoWidget;
+
+        w->setInfo(DataBase::getInstance()->getFriendInfo(userid));
+
+        w->show();
+    });
+
+    connect(sendMsg, &QAction::triggered, this, &ListViewItemWidget::listWidgetMenuTriggered);
+
+    connect(del, &QAction::triggered, this, [this](){
+         DataBase::getInstance()->deleteFriend(userid);
+         ConnectToServer::getInstance()->sendRequestDeleteFriend(userid);
+         emit deleteFriend();
+    });
 }
 
 void ListViewItemWidget::resizeEvent(QResizeEvent *event)
@@ -76,7 +82,10 @@ void ListViewItemWidget::resizeEvent(QResizeEvent *event)
 
     m_nickname->resize(width() - 80, height() - 10);
     m_nickname->move(40, 5);
+
+    QWidget::resizeEvent(event);
 }
+
 void ListViewItemWidget::setUserinfo(const QString &userid, const QString &username, const QString &signature)
 {
     this->userid = userid;

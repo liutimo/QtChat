@@ -25,7 +25,11 @@ typedef enum _MsgType {
     RESPONSEGROUPMEMBERINFO,        //回应群组成员信息
     REQUESTCHANGESTATUS,            //更改状态
     RESPONSEFRIENDSTATUSCHANGE,     //告知客户端好友状态改变
-    REQUESTFORWARDGROUPMESSAGE      //请求服务器转发群组消息
+    REQUESTFORWARDGROUPMESSAGE,     //请求服务器转发群组消息
+    REQUESTDELETEFRIEND,            //请求删除一个好友
+    REQUESTCREATEGROUP,             //请求创建分组
+    REQUESTSEARCHFRIEND,            //请求搜索好友
+    RESPONSESEARCHFRIEND            //响应客户端搜索好友的消息
 }MsgType;
 
 typedef enum _UserStauts {
@@ -190,5 +194,24 @@ typedef struct _RequestForwordGroupMessage {
 typedef struct _RequestExit {
 
 }RequestExit;
+
+//请求删除一个好友
+typedef struct _RequestDeleteFriend {
+    char friendid[USERIDMAXLEN];
+}RequestDeleteFriend;
+
+typedef struct _RequestCreateGroup {
+    int length;
+    char groupname[0];
+}RequestCreateGroup;
+
+typedef struct _RequestSearchFriend {
+    char userid[USERIDMAXLEN];
+}RequestSearchFriend;
+
+typedef struct _ResponseSearchFriend {
+    int length;
+    char json[0];
+}ResponseSearchFriend;
 
 #endif // MSGSTRUCTURE_H

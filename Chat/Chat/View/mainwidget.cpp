@@ -32,13 +32,13 @@ MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     init();
     loadSetting();
 
-    setAdjustmentSize(true);
+    setAdjustmentSize(false);
     setAutoFillBackground(true);
     setMinimumWidth(300);
-    resize(300, 600);
+    setFixedSize(300, 600);
 
     setWidgetTitle("这是一个主窗口");
-    ConnectToServer::getInstance()->sendRequestOfflineMessage();
+    init_main_menu();
 }
 
 void MainWidget::init()
@@ -121,6 +121,9 @@ void MainWidget::init()
     ListWidget *groupList = new ListWidget;
     ListWidget *recentList = new ListWidget;
 
+
+    friendList->setShowBlankMenu(true);
+
     stackwidget->addWidget(friendList);
     stackwidget->addWidget(groupList);
     stackwidget->addWidget(recentList);
@@ -132,24 +135,10 @@ void MainWidget::init()
     btn_main_menu->setObjectName("btn_main_menu");
 
 
-    //主界面菜单
-    main_menu = new QMenu();
-    main_menu->addAction(new QAction("设置"));
-    main_menu->addAction(new QAction("查看资料"));
-    main_menu->addAction(new QAction("修改资料"));
-    main_menu->addAction(new QAction("注销登陆"));
-    main_menu->addAction(new QAction("退出"));
-
-    btn_main_menu->setMenu(main_menu);
-    btn_main_menu->setPopupMode(QToolButton::InstantPopup);
-    //隐藏掉菜单的指示箭头
-    btn_main_menu->setStyleSheet("QToolButton::menu-indicator{image:none;}");
-
     btn_add_friend = new QToolButton(this);
     btn_add_friend->move(50, height() - 30);
     btn_add_friend->resize(70, 28);
-    btn_add_friend->setStyleSheet("QToolButton{border:0px;border-image: url(':/Resource/mainwidget/main_search_bkg.png');}"
-                                  "QToolButton:hover{border:0px;border-image: url(':/Resource/mainwidget/menu_btn2_highlight@2x.png'}");
+
 
     connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
     connect(tb_contact, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
@@ -157,11 +146,9 @@ void MainWidget::init()
     connect(tb_last, &QToolButton::clicked, this, &MainWidget::changSelectedButton);
 
 
-
-
     RequestUserInfoMsg r;
     ConnectToServer::getInstance()->sendRequestUserInfoMsg(&r);
-
+    ConnectToServer::getInstance()->sendRequestOfflineMessage();
 
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseUserInfo, this, &MainWidget::receiveUserInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
@@ -211,6 +198,7 @@ void MainWidget::resizeEvent(QResizeEvent *event)
 
     username->move(88, 43);
     personsignal->move(88, 75);
+
 }
 
 void MainWidget::paintEvent(QPaintEvent*event)
@@ -344,7 +332,6 @@ void MainWidget::init_menu()
     //    connect(state_away, &QAction::triggered, this, &MainWidget::changeStatus);
     connect(state_offline, &QAction::triggered, this, &MainWidget::changeStatus);
     //    connect(state_notdisturb, &QAction::triggered, this, &MainWidget::changeStatus);
-
 }
 
 void MainWidget::changeStatus()
@@ -358,28 +345,16 @@ void MainWidget::changeStatus()
         tb_status->setIcon(QIcon(":/Resource/status/imonline@2x.png"));
         u = 1;
     }
-    //    else if (action == state_busy)
-    //    {
-    //        tb_status->setIcon(QIcon(":/Resource/status/busy@2x.png"));
-    //    }
     else if (action == state_hide)
     {
         u = 2;
         tb_status->setIcon(QIcon(":/Resource/status/invisible@2x.png"));
     }
-    //    else if (action == state_away)
-    //    {
-    //        tb_status->setIcon(QIcon(":/Resource/status/away@2x.png"));
-    //    }
     else if (action == state_offline)
     {
         tb_status->setIcon(QIcon(":/Resource/status/imoffline@2x.png"));
         u = 3;
     }
-    //    else if (action == state_notdisturb)
-    //    {
-    //        tb_status->setIcon(QIcon(":/Resource/status/mute@2x.png"));
-    //    }
 
     ConnectToServer::getInstance()->sendRequestChangeStatus(u);
 }
@@ -392,6 +367,8 @@ void MainWidget::receiveUserInfo(const QByteArray& bytearry)
 void MainWidget::parseFriend(const QByteArray& bytearray)
 {
     QList<QVector<QString>> friends;
+
+    qDebug() << bytearray;
 
     QJsonParseError error;
     QJsonDocument document = QJsonDocument::fromJson(bytearray, &error);
@@ -407,6 +384,9 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
             {
                 QJsonArray array = object.value(name).toArray();
                 int size = array.size();
+
+                DataBase::getInstance()->addFriendGroup(name);
+
                 for(int i = 0; i < size; ++i)
                 {
                     QVector<QString> onefriend;
@@ -414,7 +394,7 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
                     QString friendid = o.value("friendid").toString();
                     QString username = o.value("username").toString();
                     QString remark = o.value("remark").toString();
-                    QString grouptype = o.value("grouptype").toString();
+//                    QString grouptype = o.value("groupname").toString();
                     QString personalizedsignature = o.value("personalizedsignature").toString();
                     QString imagepath = o.value("imagepath").toString();
                     QString birthofdate = o.value("birthofdate").toString();
@@ -427,7 +407,7 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
                     onefriend.append(username);
                     onefriend.append(remark);
                     onefriend.append(personalizedsignature);
-                    onefriend.append(grouptype);
+//                    onefriend.append(grouptype);
                     onefriend.append(imagepath);
                     onefriend.append(birthofdate);
                     onefriend.append(sex);
@@ -658,4 +638,29 @@ void MainWidget::setSatus(Status status)
         break;
     }
 }
+
+void MainWidget::init_main_menu()
+{
+    QAction *setting = new QAction("设置");
+    QAction *addfriend = new QAction("添加好友");
+
+    //主界面菜单
+    main_menu = new QMenu();
+    main_menu->addAction(setting);
+    main_menu->addAction(addfriend);
+    main_menu->addAction(new QAction("修改资料"));
+    main_menu->addAction(new QAction("注销登陆"));
+    main_menu->addAction(new QAction("退出"));
+
+    btn_main_menu->setMenu(main_menu);
+    btn_main_menu->setPopupMode(QToolButton::InstantPopup);
+    //隐藏掉菜单的指示箭头
+    btn_main_menu->setStyleSheet("QToolButton::menu-indicator{image:none;}");
+
+    connect(addfriend, &QAction::triggered, this, [this](){
+
+    });
+}
+
+
 

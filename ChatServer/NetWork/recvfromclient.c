@@ -264,13 +264,13 @@ void handle(Msg *msg, int fd)
         printf("REQUESTOFFLINEMESSAGE\n");
         init_mysql();
         char *json = get_offline_message(findOnlineUserWithFd(fd));
+        close_mysql();
         ResponseOfflineMessage *rom = (ResponseOfflineMessage*)malloc(sizeof(ResponseOfflineMessage) + strlen(json));
         rom->length = strlen(json);
-        memcpy(rom->json, json, rom->length);
+        strcpy(rom->json, json);
         sendfflineMessage(fd, rom);
         free(rom);
         free(json);
-        close_mysql();
         break;
     }
     case RESPONSACKOFFLINEMSG: {
@@ -318,6 +318,21 @@ void handle(Msg *msg, int fd)
     case EXIT: {
         printf("EXIT\n");
         handleExitMsg(fd);
+        break;
+    }
+    case REQUESTDELETEFRIEND: {
+        printf("REQUESTDELETEFRIEND\n");
+        handleDeleteFriendMsg(fd, msg);
+        break;
+    }
+    case REQUESTCREATEGROUP:{
+        printf("REQUESTCREATEGROUP\n");
+        handleCreateGroupMsg(fd, msg);
+        break;
+    }
+    case REQUESTSEARCHFRIEND: {
+        printf("REQUESTSEARCHFRIEND\n");
+        handleSearchFriendMsg(fd, msg);
         break;
     }
     default:
@@ -371,7 +386,7 @@ void handleLoginMsg(int fd, Msg *msg)
         char *json = get_friendlist_json(lmsg.userid);
         char** friends = get_friends(findOnlineUserWithFd(fd));
         sendResponseFriendList(fd, json);
-        printf("%s\n", json);
+//        printf("%s\n", json);
         free(json);
         close_mysql();
 
@@ -387,10 +402,13 @@ void handleLoginMsg(int fd, Msg *msg)
             {
                 rfsc->status = 1;
                 sendFriendStatusChange(fd, rfsc);
-                printf("发送%s上线信息给%s\n", rfsc->userid, friends[i]);
+//                printf("发送%s上线信息给%s\n", rfsc->userid, friends[i]);
             }
             ++i;
         }
+
+
+
         free(rfsc);
         free(friends);
     }
@@ -585,34 +603,55 @@ void handleFrowardGroupMsg(int fd, Msg *msg)
     memcpy(rmsg, msg->data, msg->len);
 
     forwardgroupmessage(fd, rmsg);
+
+    free(rmsg);
 }
 
+void handleDeleteFriendMsg(int fd, Msg *msg)
+{
+    RequestDeleteFriend *rmsg = (RequestDeleteFriend*)malloc(msg->len);
+    memcpy(rmsg, msg->data, msg->len);
 
+    printf("%s 请求删除 好友%s\n", findOnlineUserWithFd(fd), rmsg->friendid);
 
+    free(rmsg);
+}
 
+void handleCreateGroupMsg(int fd, Msg*msg)
+{
+    RequestCreateGroup *rmsg = (RequestCreateGroup*)malloc(msg->len);
 
+    memcpy(rmsg, msg->data, msg->len);
 
+    char *groupname = malloc(sizeof(char) * rmsg->length);
 
+    strcpy(groupname, rmsg->groupname);
+    groupname[rmsg->length - 1] = '\0';
 
+    init_mysql();
+    insert_friend_group(findOnlineUserWithFd(fd), groupname);
+    close_mysql();
+    free(groupname);
+    free(rmsg);
+}
 
+void handleSearchFriendMsg(int fd, Msg*msg)
+{
+    RequestSearchFriend *rmsg1 = (RequestSearchFriend*)malloc(msg->len);
+    memcpy(rmsg1, msg->data, msg->len);
 
+    init_mysql();
+    char *json = get_friend_info(rmsg1->userid);
+    printf("%s\n", json);
+    close_mysql();
 
+    int len = strlen(json);
 
+    ResponseSearchFriend *rmsg2 = (ResponseSearchFriend*)malloc(sizeof(ResponseSearchFriend) + len);
+    rmsg2->length = len;
+    strcpy(rmsg2->json, json);
 
+    sendSearchResult(fd, rmsg2);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    free(json);
+}

@@ -28,6 +28,9 @@ public:
     void sendRequestChangeStatus(int status);
     void sendForwordGroupMessage(ForwordGroupMessage *msg);
     void sendRequestExitMessage();
+    void sendRequestDeleteFriend(const QString &friendid);
+    void sendRequestCreateGroup(const QString &groupname);
+    void sendRequestSearchFriend(const QString &userid);
 protected:
     void recv();
 
@@ -43,6 +46,7 @@ signals:
     void receivedGroupInfo(const QByteArray&);
     void receivedGroupMemberInfo(const QByteArray&);
     void friendStatusChange(const QString, int);
+    void receivedSearchResult(const QByteArray&);
 private:
     ConnectToServer(QObject *parent = Q_NULLPTR);
 

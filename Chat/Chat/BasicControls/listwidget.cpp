@@ -3,13 +3,14 @@
 #include "recentchatitemwidget.h"
 #include "groupitemwidget.h"
 #include "DataBase/database.h"
+#include "NetWork/connecttoserver.h"
 #include <View/chatwidget.h>
 #include <QAction>
 #include <QIcon>
 #include <QDebug>
 
 ListWidget::ListWidget(QWidget *parent) :
-    QListWidget(parent)
+    QListWidget(parent), showBlankMenu(false)
 {
     setFocusPolicy(Qt::NoFocus);       // 去除item选中时的虚线边框
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//水平滚动条关闭
@@ -18,7 +19,7 @@ ListWidget::ListWidget(QWidget *parent) :
 //初始化菜单
 void ListWidget::initMenu()
 {
-    //初始化：
+
     blankMenu = new QMenu();
     groupMenu = new QMenu();
 
@@ -27,14 +28,28 @@ void ListWidget::initMenu()
     QAction *addGroup = new QAction("添加分组", this);
     QAction *delGroup = new QAction("删除该组", this);
     QAction *rename = new QAction("重命名", this);
-    //设置：
-    groupNameEdit->setParent(this);  //设置父类
-    groupNameEdit->hide(); //设置初始时隐藏
-    groupNameEdit->setPlaceholderText("未命名");//设置初始时的内容
-    //布局：
+
+    groupNameEdit->setParent(this);
+    groupNameEdit->hide();
+    groupNameEdit->setPlaceholderText("未命名");
+
     blankMenu->addAction(addGroup);
     groupMenu->addAction(delGroup);
     groupMenu->addAction(rename);
+
+    connect(addGroup, &QAction::triggered, this, [this](){
+        QListWidgetItem *newItem=new QListWidgetItem(QIcon(":/Resource/mainwidget/arrowright.png"),"未命名");    //创建一个Item
+        newItem->setSizeHint(QSize(this->width(),25));//设置宽度、高度
+        addItem(newItem);         //加到QListWidget中
+        groupNameEdit->raise();
+        groupNameEdit->setText(tr("未命名")); //设置默认内容
+        groupNameEdit->selectAll();        //设置全选
+        groupNameEdit->setGeometry(this->visualItemRect(newItem).left() + 15,this->visualItemRect(newItem).top()+1,
+                                   this->visualItemRect(newItem).width() - 15, this->visualItemRect(newItem).height()-2);//出现的位置
+        groupNameEdit->show();              //显示
+        groupNameEdit->setFocus();          //获取焦点
+        currentItem = newItem;     // 因为要给group命名，所以当前的currentItem设为该group
+    });
 }
 //鼠标点击事件
 void ListWidget::mousePressEvent(QMouseEvent *event)
@@ -43,8 +58,20 @@ void ListWidget::mousePressEvent(QMouseEvent *event)
 
     if(groupNameEdit->isVisible() && !(groupNameEdit->rect().contains(event->pos())))
     {
-        if(groupNameEdit->text()!=NULL)
-            currentItem->setText(groupNameEdit->text());
+        QString groupname = groupNameEdit->text();
+
+        //如果 当前的分组名存在， 并且不为空就创建分组
+        if(!groupname.isEmpty() && ishide.value(groupname) == 0) {
+            currentItem->setText(groupname);
+            ishide.insert(groupname, 1);
+            listmap.insert(groupname, new QVector<QListWidgetItem*>());
+            ConnectToServer::getInstance()->sendRequestCreateGroup(groupname);
+        }
+        else
+        {
+            removeItemWidget(currentItem);
+            delete currentItem;
+        }
         groupNameEdit->setText("");
         groupNameEdit->hide();
     }
@@ -56,7 +83,8 @@ void ListWidget::mousePressEvent(QMouseEvent *event)
         if(v==NULL)
             return;
 
-        if(isHide.value(currentItem)) {
+        if(ishide.value(currentItem->text()) == 1) {
+            ishide.insert(currentItem->text(), 2);
             for(int i = 0; i < v->size(); ++i)
             {
                 v->at(i)->setHidden(false);
@@ -66,6 +94,7 @@ void ListWidget::mousePressEvent(QMouseEvent *event)
         }
         else
         {
+            ishide.insert(currentItem->text(), 1);
             for(int i = 0; i < v->size(); ++i)
             {
                 v->at(i)->setHidden(true);
@@ -80,7 +109,7 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QListWidget::contextMenuEvent(event);
 
-    if(currentItem == NULL)
+    if(currentItem == NULL && showBlankMenu)
     {
         blankMenu->exec(QCursor::pos());
         return;
@@ -92,35 +121,45 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
     clear();
     groupItemIndex.clear();
     listmap.clear();
+    friendmap.clear();
 
     for(int i = 0; i < groups.size(); ++i)
     {
         QString group = groups.at(i);
         QListWidgetItem *newItem=new QListWidgetItem(group);
-        newItem->setIcon(QIcon(":/Resource/mainwidget/arrowright.png"));
         newItem->setSizeHint(QSize(this->width(),25));
         this->addItem(newItem);
 
         isHide.insert(newItem, true);
 
+        int flag = ishide.value(group);
+        if (flag== 0)
+        {
+            ishide.insert(group, 1);
+            newItem->setIcon(QIcon(":/Resource/mainwidget/arrowright.png"));
+        }
+        else if (flag == 1)
+        {
+            newItem->setIcon(QIcon(":/Resource/mainwidget/arrowright.png"));
+        }
+        else
+        {
+            newItem->setIcon(QIcon(":/Resource/mainwidget/arrowdow.png"));
+        }
         groupItemIndex.append(new QPair<QString, int>(group, i));
         listmap.insert(group, new QVector<QListWidgetItem*>());
+
+
     }
 
-    int i;
     for(QVector<QString> onefriend : friends)
     {
         ListViewItemWidget *frienditem=new ListViewItemWidget();
         frienditem->setUserinfo(onefriend.at(0), onefriend.at(1), onefriend.at(4));
         frienditem->setImage(onefriend.at(5));
         frienditem->setStatus(onefriend.at(6).toInt());
-        frienditem->resize(width(), 40);
         friendmap.insert(onefriend.at(0), frienditem);
-        if(i % 2== 0)
-            frienditem->setStatus(UserOnLine);
-        else
-            frienditem->setStatus(UserOffLine);
-
+        frienditem->setFixedSize(300, 50);
         connect(frienditem, &ListViewItemWidget::updateListWidget, this, [this](){
             QStringList groups = DataBase::getInstance()->getGroup();
             QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
@@ -144,8 +183,26 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
 
         insertItem(groupItemIndex.at(index)->second + 1,newItem);
         setItemWidget(newItem, frienditem);
-        newItem->setHidden(true);
+        newItem->setSizeHint(QSize(250,50));
+        qDebug() << newItem->sizeHint();
+
+        int flag = ishide.value(groupname);
+        if(flag == 1)
+        {
+            newItem->setHidden(true);
+        }
+        else
+            newItem->setHidden(false);
+
         listmap.value(groupname)->append(newItem);
+
+        connect(frienditem, &ListViewItemWidget::deleteFriend, this, [this,newItem, frienditem](){
+//            removeItemWidget(newItem);
+//            delete newItem;
+            QStringList groups = DataBase::getInstance()->getGroup();
+            QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
+            setList(friends, groups);
+        });
 
         for(int i = index; i < groupItemIndex.size(); ++i)
         {
@@ -182,7 +239,6 @@ void ListWidget::setGroupList(QVector<QStringList> lists)
     clear();
     for(QStringList elem : lists)
     {
-
         GroupItemWidget *itemwidget = new GroupItemWidget;
         itemwidget->setGroupInfo(elem.at(0), elem.at(1));
         itemwidget->setImage(elem.at(2));
@@ -217,4 +273,9 @@ void ListWidget::listWidgetMenuTriggered()
 void ListWidget::updateFriendStatus(const QString &userid, int status)
 {
     friendmap.value(userid)->setStatus(status);
+}
+
+void ListWidget::setShowBlankMenu(bool flag)
+{
+    showBlankMenu = flag;
 }

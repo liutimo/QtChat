@@ -71,6 +71,7 @@ private:
     void parseUserInfo(const QByteArray&);
     void parseGroup(const QByteArray&);
     void init_menu();
+    void init_main_menu();
 
     //标题栏按钮
     QPushButton *btn_mini;

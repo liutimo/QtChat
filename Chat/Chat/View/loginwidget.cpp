@@ -101,6 +101,9 @@ void LoginWidget::init()
 
     /*message hite*/
     connect(server, &ConnectToServer::receivedMessage, this, &LoginWidget::handleMessage);
+    connect(server, &ConnectToServer::disconnected, this, [this](){
+        QApplication::quit();
+        ;});
     connect(server, &ConnectToServer::receivedGroupMessage, this, &LoginWidget::handleGroupMessage);
     connect(server, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
             this, &LoginWidget::socketError);
@@ -287,6 +290,7 @@ void LoginWidget::init_traymenu()
 
     connect(action_exit, &QAction::triggered, this, [this](){
         ConnectToServer::getInstance()->sendRequestExitMessage();
+        ConnectToServer::getInstance()->close();
         exit = true;
     });
 

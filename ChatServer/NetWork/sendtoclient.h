@@ -41,6 +41,7 @@ void sendFriendStatusChange(int fd, ResponseFriendStatusChange *msg);
 //发送群组消息
 void sendGroupMessage(const int fd, RequestForwordGroupMessage* rmsg);
 
+void sendSearchResult(const int fd, ResponseSearchFriend *msg);
 //发生异常时需要发送的消息
 
 

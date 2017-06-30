@@ -24,6 +24,7 @@ public:
 
 signals:
     void updateListWidget();
+    void deleteFriend();
 public slots:
 
 private slots:

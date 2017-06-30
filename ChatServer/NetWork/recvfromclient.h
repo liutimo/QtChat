@@ -32,5 +32,11 @@ void handleRequestGroupMemberMessage(int fd);
 void handleRequestChangeStatus(int fd, Msg*msg);
 
 void handleFrowardGroupMsg(int fd, Msg *msg);
+
+void handleDeleteFriendMsg(int fd, Msg *msg);
+
+void handleCreateGroupMsg(int fd, Msg*msg);
+
+void handleSearchFriendMsg(int fd, Msg*msg);
 #endif // !RECVFROMCLIENT_H
 

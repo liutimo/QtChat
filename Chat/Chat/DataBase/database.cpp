@@ -125,10 +125,11 @@ QList<QVector<QString>> DataBase::getFriendList()
 QStringList DataBase::getGroup()
 {
     QStringList groups;
-    QString sql = "select distinct grouptype from friendlist;";
+    QString sql = "select groupname from chat_friend_group where userid=?;";
 
     QSqlQuery sql_query;
     sql_query.prepare(sql);
+    sql_query.addBindValue(AllVariable::getLoginUserId());
     sql_query.exec();
 
     while(sql_query.next())
@@ -464,10 +465,40 @@ QVector<QStringList> DataBase::getGroupOfflineMessage(const QString &groupid)
 
         vec.append(list);
     }
+
     sql = "delete from chat_group_offline_message where groupid = ?;";
     sql_query.prepare(sql);
     sql_query.addBindValue(groupid);
 
     sql_query.exec();
     return vec;
+}
+
+void DataBase::deleteFriend(const QString &friendid)
+{
+    QString sql = "delete from friendlist where userid=? and friendid=?;";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.addBindValue(AllVariable::getLoginUserId());
+    sql_query.addBindValue(friendid);
+
+    sql_query.exec();
+}
+
+void DataBase::addFriendGroup(const QString &groupname)
+{
+    QString sql1 = "delete from chat_friend_group where groupname=? and userid=?;";
+    QString sql2 = "insert into chat_friend_group(userid, groupname) values(?, ?);";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql1);
+    sql_query.addBindValue(groupname);
+    sql_query.addBindValue(AllVariable::getLoginUserId());
+    sql_query.exec();
+
+    sql_query.prepare(sql2);
+    sql_query.addBindValue(AllVariable::getLoginUserId());
+    sql_query.addBindValue(groupname);
+    sql_query.exec();
 }

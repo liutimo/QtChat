@@ -6,6 +6,7 @@
 #include "View/loginwidget.h"
 #include "View/chatwidget.h"
 #include "View/mainwidget.h"
+#include "View/findwidget.h"
 #include "View/messagelistwidget.h"
 #include <QApplication>
 #include <QFile>
@@ -20,12 +21,9 @@ int main(int argc, char *argv[])
     QFile f(":/style.qss");
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
-//    ShowInfoWidget w;
-      LoginWidget w;
-//    GroupChatWidget w;
-//    MainWidget w;
-//        EditInformation w;
-    //MessageListWidget w;
+//      LoginWidget w;
+
+    FindWidget w;
     w.show();
     return a.exec();
 }

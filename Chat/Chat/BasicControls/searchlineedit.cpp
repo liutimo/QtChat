@@ -1,4 +1,4 @@
-#include "lineedit.h"
+#include "searchlineedit.h"
 #include "DataBase/database.h"
 
 #include <QPixmap>
@@ -9,18 +9,18 @@
 #include <QMouseEvent>
 #include <QPushButton>
 
-LineEdit::LineEdit(QWidget *parent ) : QLineEdit(parent)
+SearchLineEdit::SearchLineEdit(QWidget *parent ) : QLineEdit(parent)
 {
     init();
 
-    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 175);color:rgb(170,170,170);text-align:center;font:15px}");
+    setStyleSheet("QLineEdit{boder-radius:12px;background-color: rgba(255, 255, 255, 200);color:rgb(170,170,170);text-align:center;font:15px}");
 
-    connect(this, &LineEdit::textChanged, this, &LineEdit::textChange);
+    connect(this, &SearchLineEdit::textChanged, this, &SearchLineEdit::textChange);
 }
-void LineEdit::init()
+void SearchLineEdit::init()
 {
     resize(200, 30);
-    setPlaceholderText("搜索");
+    setPlaceholderText("输入用户帐号");
 
     pix_label = new QLabel(this);
     pix_label->setPixmap(QPixmap(":/Resource/mainwidget/search_icon.png"));
@@ -35,12 +35,12 @@ void LineEdit::init()
     connect(btn_clear, &QPushButton::clicked, this, [this](){
         btn_clear->hide();
         this->clear();
-        setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 50);color:rgb(170,170,170);text-align:center;font:15px}");
+        setStyleSheet("QLineEdit{background-color: rgba(255, 255, 255, 200);color:rgb(170,170,170);text-align:center;font:15px}");
     });
 }
 
 
-void LineEdit::resizeEvent(QResizeEvent *event)
+void SearchLineEdit::resizeEvent(QResizeEvent *event)
 {
     pix_label->resize(22, height());
 
@@ -49,29 +49,30 @@ void LineEdit::resizeEvent(QResizeEvent *event)
     setTextMargins(26, 0, 32, 0);
 }
 
-void LineEdit::focusOutEvent(QFocusEvent *e)
+void SearchLineEdit::focusOutEvent(QFocusEvent *e)
 {
     QLineEdit::focusOutEvent(e);
     //btn_clear->hide();
-    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 175);color:rgb(170,170,170);text-align:center;font:15px}");
+    setStyleSheet("QLineEdit{background-color: rgba(255, 255, 255, 200);color:rgb(170,170,170);text-align:center;font:15px}");
     emit LineEditFocusOut();
 }
 
-void LineEdit::focusInEvent(QFocusEvent *e)
+void SearchLineEdit::focusInEvent(QFocusEvent *e)
 {
     QLineEdit::focusInEvent(e);
     btn_clear->show();
-    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 255);color:rgb(170,170,170);text-align:center;font:15px}");
+    setStyleSheet("QLineEdit{background-color: rgba(255, 255, 255, 255);color:rgb(170,170,170);text-align:center;font:15px}");
     emit LineEditFocusIn();
 }
 
-void LineEdit::textChange(const QString &text)
+void SearchLineEdit::textChange(const QString &text)
 {
     if(!text.isEmpty())
     emit searachResult(DataBase::getInstance()->searachFriend(text));
 }
 
-void LineEdit::hideButton()
+void SearchLineEdit::hideButton()
 {
     btn_clear->hide();
 }
+
