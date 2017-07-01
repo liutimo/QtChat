@@ -128,7 +128,7 @@ void recvConnectionMsg(int socketfd)
         //暂时没有想到好的解决方法
         //当且仅当发生TCP粘包时会执行这个loop
         //其它情况都无视这个loop
-        stickyPackageLoop:
+stickyPackageLoop:
         //翻译buf
         msg = (Msg *)pHeadBuf;
         //校验位是否正确，如果正确则执行下一步
@@ -335,6 +335,16 @@ void handle(Msg *msg, int fd)
         handleSearchFriendMsg(fd, msg);
         break;
     }
+    case REQUESTADDFRIENDACK: {
+        printf("REQUESTADDFRIENDACK\n");
+        handleAddFriendMsg(fd, msg);
+        break;
+    }
+    case ADDFRIENDSTATUS: {
+        printf("ADDFRIENDSTATUS\n");
+        handleAddFriendAckMsg(fd, msg);
+        break;
+    }
     default:
         break;
     }
@@ -386,7 +396,7 @@ void handleLoginMsg(int fd, Msg *msg)
         char *json = get_friendlist_json(lmsg.userid);
         char** friends = get_friends(findOnlineUserWithFd(fd));
         sendResponseFriendList(fd, json);
-//        printf("%s\n", json);
+        //        printf("%s\n", json);
         free(json);
         close_mysql();
 
@@ -402,7 +412,7 @@ void handleLoginMsg(int fd, Msg *msg)
             {
                 rfsc->status = 1;
                 sendFriendStatusChange(fd, rfsc);
-//                printf("发送%s上线信息给%s\n", rfsc->userid, friends[i]);
+                printf("发送%s上线信息给%s\n", rfsc->userid, friends[i]);
             }
             ++i;
         }
@@ -614,6 +624,11 @@ void handleDeleteFriendMsg(int fd, Msg *msg)
 
     printf("%s 请求删除 好友%s\n", findOnlineUserWithFd(fd), rmsg->friendid);
 
+    init_mysql();
+    deletefriend(findOnlineUserWithFd(fd), rmsg->friendid);
+    deletefriend(rmsg->friendid, findOnlineUserWithFd(fd));
+    close_mysql();
+
     free(rmsg);
 }
 
@@ -654,4 +669,53 @@ void handleSearchFriendMsg(int fd, Msg*msg)
     sendSearchResult(fd, rmsg2);
 
     free(json);
+}
+
+void handleAddFriendMsg(int fd, Msg*msg)
+{
+    RequestAddFriendAck *rmsg = (RequestAddFriendAck*)malloc(msg->len);
+    memcpy(rmsg, msg->data, msg->len);
+
+    int f = findOnlineUserWithUid(rmsg->friendid);
+
+    ForwardAddFriendAck *s = (ForwardAddFriendAck*)malloc(sizeof(ForwardAddFriendAck) + rmsg->length);
+    strcpy(s->sendid, findOnlineUserWithFd(fd));
+    s->length = rmsg->length;
+    if(s->length != 0)
+        strcpy(s->validate, rmsg->validate);
+
+     init_mysql();
+    if (f != -1) {
+        sendFrowardAddFriendAck(f, s);
+        add_friend_reply(findOnlineUserWithFd(fd),rmsg->friendid, rmsg->group, rmsg->validate, 1);
+    }
+    else
+    {
+        add_friend_reply(findOnlineUserWithFd(fd),rmsg->friendid, rmsg->group, rmsg->validate, 2);
+    }
+    close_mysql();
+    free(s);
+}
+
+void handleAddFriendAckMsg(int fd, Msg *msg)
+{
+    AddFriendResult *rmsg = (AddFriendResult*)malloc(msg->len);
+    memcpy(rmsg, msg->data, msg->len);
+
+    if(rmsg->status == 1)
+    {
+        //添加进数据库  fd是需要验证方。
+        init_mysql();
+        char *groupid1 = get_gorupid(rmsg->userid, get_addfriend_reply_group(rmsg->userid, findOnlineUserWithFd(fd)));
+        char *groupid2 = get_gorupid(findOnlineUserWithFd(fd), rmsg->group);
+        add_friend(rmsg->userid, findOnlineUserWithFd(fd), groupid1);
+        add_friend(findOnlineUserWithFd(fd), rmsg->userid, groupid2);
+        close_mysql();
+
+    }
+    else if(rmsg->status == 2)
+    {
+
+    }
+
 }

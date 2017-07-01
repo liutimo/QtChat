@@ -342,5 +342,8 @@
         <file>Resource/loading.gif</file>
         <file>Resource/AddUser_hover@2x.png</file>
         <file>Resource/AddUser@2x.png</file>
+        <file>Resource/btn_normal.png</file>
+        <file>Resource/btnhover.png</file>
+        <file>Resource/btndown.png</file>
     </qresource>
 </RCC>

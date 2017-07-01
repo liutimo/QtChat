@@ -1,4 +1,5 @@
 #include "findwidget.h"
+#include "validatewidget.h"
 #include "BasicControls/headicon.h"
 #include "BasicControls/searchlineedit.h"
 #include "NetWork/httpconnect.h"
@@ -21,6 +22,7 @@ FindWidget::FindWidget(QWidget *parent) : BasicWidget(parent)
     setBackgroundColor(QColor(140, 180, 200));
     init();
 
+    this->setStyleSheet("QLabel{color:white;}");
 }
 
 
@@ -33,7 +35,7 @@ void FindWidget::init()
     btn_searach = new QPushButton("查找", this);
     btn_searach->setFixedSize(100, 50);
     btn_searach->move(460, 100);
-    btn_searach->setStyleSheet("QPushButton{border:0px; color:white;}"
+    btn_searach->setStyleSheet("QPushButton{border-radius:6px; color:white;}"
                                "QPushButton{border-image:url(:/Resource/mainwidget/blue_normal.png);}"
                                "QPushButton:hover{border-image:url(:/Resource/mainwidget/blue_hover.png);}"
                                "QPushButton:pressed{border-image:url(:/Resource/mainwidget/blue_down.png);}");
@@ -72,9 +74,12 @@ void FindWidget::init()
                                "QPushButton:pressed{border-image:url(':/Resource/AddUser@2x.png');}");
 
     add_button->move(330, 275);
+    add_button->hide();
     connect(btn_searach, &QPushButton::clicked, this, &FindWidget::searchUser);
+    connect(add_button, &QPushButton::clicked, this, &FindWidget::addFriend);
 
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedSearchResult, this, &FindWidget::parseUserInfo);
+
 }
 
 void FindWidget::searchUser()
@@ -92,7 +97,6 @@ void FindWidget::parseUserInfo(const QByteArray& json)
 {
     label->hide();
     movie->stop();
-
     QJsonParseError error;
     QJsonDocument document = QJsonDocument::fromJson(json, &error);
 
@@ -105,14 +109,20 @@ void FindWidget::parseUserInfo(const QByteArray& json)
             QString b = object.value("userid").toString();
             QString c = object.value("username").toString();
 
-            if(a.isEmpty())
-            {
-                qDebug() << "没有这个人哦";
-            }
 
+            add_button->show();
             username->setText(c);
             userid->setText(b);
 
+            if(a.isEmpty())
+            {
+                userid->setText("<span style=\"color:red;\">没有该用户</span>");
+                headicon->hide();
+                add_button->hide();
+                return;
+            }
+            headicon->show();
+            add_button->show();
             QString filename = QUrl(a).fileName();
             if(QFile(filename).exists())
             {
@@ -129,9 +139,27 @@ void FindWidget::parseUserInfo(const QByteArray& json)
                 });
             }
         }
-        else
-            qDebug() << "s";
     }
     else
         qDebug() << error.errorString();
+}
+
+void FindWidget::addFriend()
+{
+    ValidateWidget *w = new ValidateWidget();
+    w->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+    w->setAttribute(Qt::WA_ShowModal);
+    w->setWindowModality(Qt::ApplicationModal);
+    w->show();
+    QRect rect = this->geometry();
+    int hcenter = width() / 2 + rect.topLeft().x();
+    int vcenter = height() / 2 + rect.topLeft().y();
+    w->move(hcenter - w->width() / 2, vcenter - w->height() / 2);
+
+    connect(w, &ValidateWidget::info, this, &FindWidget::sendRequest);
+}
+
+void FindWidget::sendRequest(const QString& content, const QString &group)
+{
+    ConnectToServer::getInstance()->sendRequestAddFriendAck(userid->text(), group, content);
 }

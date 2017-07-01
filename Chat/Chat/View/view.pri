@@ -6,7 +6,9 @@ HEADERS += \
     $$PWD/chatwidget.h \
     $$PWD/messagelistwidget.h \
     $$PWD/groupchatwidget.h \
-    $$PWD/findwidget.h
+    $$PWD/findwidget.h \
+    $$PWD/validatewidget.h \
+    $$PWD/addackwidget.h
 
 SOURCES += \
     $$PWD/basicwidget.cpp \
@@ -16,4 +18,6 @@ SOURCES += \
     $$PWD/chatwidget.cpp \
     $$PWD/messagelistwidget.cpp \
     $$PWD/groupchatwidget.cpp \
-    $$PWD/findwidget.cpp
+    $$PWD/findwidget.cpp \
+    $$PWD/validatewidget.cpp \
+    $$PWD/addackwidget.cpp

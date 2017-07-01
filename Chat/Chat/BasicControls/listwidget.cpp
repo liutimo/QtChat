@@ -114,6 +114,13 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *event)
         blankMenu->exec(QCursor::pos());
         return;
     }
+    else if(listmap.value(currentItem->text()) != NULL)
+    {
+        groupMenu->exec(QCursor::pos());
+        return;
+    }
+
+
 }
 
 void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)

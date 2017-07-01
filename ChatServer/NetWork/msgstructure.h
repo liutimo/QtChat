@@ -29,7 +29,11 @@ typedef enum _MsgType {
     REQUESTDELETEFRIEND,            //请求删除一个好友
     REQUESTCREATEGROUP,             //请求创建分组
     REQUESTSEARCHFRIEND,            //请求搜索好友
-    RESPONSESEARCHFRIEND            //响应客户端搜索好友的消息
+    RESPONSESEARCHFRIEND,           //响应客户端搜索好友的消息
+    REQUESTADDFRIENDACK,            //发送添加好友确认请求
+    FORWARDADDFRIENDACK,            //转发添加好友请求
+    ADDFRIENDSTATUS,                //添加好友的结果  同意或者拒绝
+    Test
 }MsgType;
 
 typedef enum _UserStauts {
@@ -214,4 +218,22 @@ typedef struct _ResponseSearchFriend {
     char json[0];
 }ResponseSearchFriend;
 
+typedef struct _RequestAddFriendAck {
+    char friendid[USERIDMAXLEN];
+    char group[USERIDMAXLEN];
+    int length;
+    char validate[0];
+}RequestAddFriendAck;
+
+typedef struct _ForwardAddFriendAck {
+    char sendid[USERIDMAXLEN];
+    int length;
+    char validate[0];
+}ForwardAddFriendAck ;
+
+typedef struct _AddFriendResult {
+    char userid[USERIDMAXLEN];  // 请求添加好友的id
+    char group[64];
+    int status;                 //1同意， 2 拒绝
+}AddFriendResult;
 #endif // MSGSTRUCTURE_H

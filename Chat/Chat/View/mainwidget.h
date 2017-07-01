@@ -59,6 +59,7 @@ private slots:
     void receivedGroupMemberInfo(const QByteArray&);
     void changeStatus();
     void friendStatusChange(const QString &, int);
+    void receivedFriendAddRequest(const QString &sendid, const QString &validate);
 private:
     typedef enum _SkinType{
         PURECOLOR = 0,          //纯色

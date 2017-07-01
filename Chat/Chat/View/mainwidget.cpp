@@ -1,5 +1,7 @@
 #include "../allvariable.h"
 #include "mainwidget.h"
+#include "addackwidget.h"
+#include "findwidget.h"
 #include "skinmanagewidget.h"
 #include "Setting/rwsetting.h"
 #include "BasicControls/headicon.h"
@@ -156,6 +158,7 @@ void MainWidget::init()
     connect(ConnectToServer::getInstance(), &ConnectToServer::friendStatusChange, this, &MainWidget::friendStatusChange);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupInfo, this, &MainWidget::receivedGroupInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupMemberInfo, this, &MainWidget::receivedGroupMemberInfo);
+    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedFriendAddRequest, this, &MainWidget::receivedFriendAddRequest);
 }
 
 void MainWidget::loadSetting()
@@ -394,7 +397,7 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
                     QString friendid = o.value("friendid").toString();
                     QString username = o.value("username").toString();
                     QString remark = o.value("remark").toString();
-//                    QString grouptype = o.value("groupname").toString();
+                    QString groupname = o.value("groupname").toString();
                     QString personalizedsignature = o.value("personalizedsignature").toString();
                     QString imagepath = o.value("imagepath").toString();
                     QString birthofdate = o.value("birthofdate").toString();
@@ -407,7 +410,8 @@ void MainWidget::parseFriend(const QByteArray& bytearray)
                     onefriend.append(username);
                     onefriend.append(remark);
                     onefriend.append(personalizedsignature);
-//                    onefriend.append(grouptype);
+                    onefriend.append(groupname);
+
                     onefriend.append(imagepath);
                     onefriend.append(birthofdate);
                     onefriend.append(sex);
@@ -658,9 +662,17 @@ void MainWidget::init_main_menu()
     btn_main_menu->setStyleSheet("QToolButton::menu-indicator{image:none;}");
 
     connect(addfriend, &QAction::triggered, this, [this](){
-
+        FindWidget *w = new FindWidget();
+        w->show();
     });
 }
 
 
 
+void MainWidget::receivedFriendAddRequest(const QString &sendid, const QString &validate)
+{
+    AddAckWidget *w = new AddAckWidget();
+    w->setWindowModality(Qt::ApplicationModal);
+    w->show();
+    w->setText(sendid, validate);
+}

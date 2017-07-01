@@ -31,6 +31,8 @@ public:
     void sendRequestDeleteFriend(const QString &friendid);
     void sendRequestCreateGroup(const QString &groupname);
     void sendRequestSearchFriend(const QString &userid);
+    void sendRequestAddFriendAck(const QString &friendid, const QString& group, const QString &content);
+    void sendAddFriendResult(const QString &userid, const QString &groupname, const int status);
 protected:
     void recv();
 
@@ -47,6 +49,9 @@ signals:
     void receivedGroupMemberInfo(const QByteArray&);
     void friendStatusChange(const QString, int);
     void receivedSearchResult(const QByteArray&);
+    void receivedFriendAddRequest(const QString &sendid, const QString &validate);
+
+
 private:
     ConnectToServer(QObject *parent = Q_NULLPTR);
 

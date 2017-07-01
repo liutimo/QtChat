@@ -23,6 +23,8 @@ signals:
 
 private slots:
     void searchUser();
+    void addFriend();
+    void sendRequest(const QString &, const QString&);
 private:
     void init();
     void parseUserInfo(const QByteArray&);
@@ -37,6 +39,7 @@ private:
     QLabel *username;
 
     QPushButton *add_button;
+
 
 };
 

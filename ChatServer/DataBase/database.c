@@ -81,12 +81,13 @@ char *get_friendlist_json(const char *userid)
     memset(sql_getfriends, 0, DATABASE_SQLMAXLENGTH);
 
     sprintf(sql_getgroup, "select groupname from chat_friend_group where userid='%s';", userid);
-    sprintf(sql_getfriends, "select friendid, username, remark, groupname, personalizedsignature,imagepath,"
-                            "birthofdate, sex, mobile, mail from friendlist, userinfo, chat_friend_group "
-                            "where chat_friend_group.userid = userinfo.userid and friendlist.userid='%s' "
-                            "and friendid = userinfo.userid;", userid);
+    sprintf(sql_getfriends, "select friendid, username, remark, groupname, personalizedsignature,imagepath,birthofdate, sex, mobile, mail "
+                            "from friendlist, userinfo, chat_friend_group "
+                            "where friendlist.userid='%s' and "
+                            "chat_friend_group.groupid = friendlist.groupid and "
+                            "friendlist.friendid = userinfo.userid;", userid);
 
-    printf("%s\n", sql_getgroup);
+    printf("%s\n", sql_getfriends);
 
     //get group
     if (execute_mysql(sql_getgroup) == -1)
@@ -119,7 +120,10 @@ char *get_friendlist_json(const char *userid)
                 cJSON *tmp = cJSON_CreateObject();
                 cJSON_AddStringToObject(tmp, "friendid", mysql_row[0]);
                 cJSON_AddStringToObject(tmp, "username", mysql_row[1]);
-                cJSON_AddStringToObject(tmp, "remark", mysql_row[2]);
+                if(mysql_row[2] != NULL)
+                    cJSON_AddStringToObject(tmp, "remark", mysql_row[2]);
+                else
+                    cJSON_AddStringToObject(tmp, "remark", "");
                 cJSON_AddStringToObject(tmp, "groupname", mysql_row[3]);
                 cJSON_AddStringToObject(tmp, "personalizedsignature", mysql_row[4]);
                 cJSON_AddStringToObject(tmp, "imagepath", mysql_row[5]);
@@ -503,4 +507,73 @@ char* get_friend_info(const char *userid)
     }
 
     return cJSON_PrintUnformatted(root);
+}
+
+
+char* get_gorupid(const char*userid, const char *groupname)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+    sprintf(sql, "select groupid from chat_friend_group where userid='%s' and groupname='%s';", userid, groupname);
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+
+    mysql_res = mysql_store_result(mysql);
+
+    mysql_row = mysql_fetch_row(mysql_res);
+
+
+    return mysql_row[0];
+}
+
+void add_friend(const char *userid, const char *friendid, const char *groupid)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql, "insert into friendlist(userid, friendid, groupid, infochanged) values('%s', '%s', '%s', '%s');", userid, friendid, groupid, "0");
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+
+}
+
+void add_friend_reply(const char*userid, const char* friendid, const char*groupname,
+                      const char*validate, const int handle)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql, "insert into chat_add_friend_reply(userid, friendid, groupname, validate"
+                 ", handle) values('%s', '%s', '%s', '%s', %d);", userid, friendid, groupname
+            ,validate, handle);
+    printf("%s\n", sql);
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+}
+
+
+char* get_addfriend_reply_group(const char*userid, const char*friendid)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+    sprintf(sql, "select groupname from chat_add_friend_reply where userid='%s' and friendid='%s';", userid, friendid);
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+
+    mysql_res = mysql_store_result(mysql);
+
+    mysql_row = mysql_fetch_row(mysql_res);
+
+    return mysql_row[0];
+}
+
+void deletefriend(const char*userid, const char*friendid)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql, "delete from friendlist where userid='%s' and friendid='%s';", userid, friendid);
+    printf("%s\n", sql);
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
 }

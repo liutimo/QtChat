@@ -161,6 +161,7 @@ void ConnectToServer::sendRequestExitMessage()
 
 void ConnectToServer::sendRequestDeleteFriend(const QString &friendid)
 {
+    qDebug() << "send delete ";
     RequestDeleteFriend *msg = new RequestDeleteFriend;
     strcpy(msg->friendid, friendid.toUtf8().data());
     send(REQUESTDELETEFRIEND, (char*)msg, sizeof(RequestDeleteFriend));
@@ -184,6 +185,31 @@ void ConnectToServer::sendRequestSearchFriend(const QString &userid)
     strcpy(rmsg->userid, userid.toUtf8().data());
 
     send(REQUESTSEARCHFRIEND, (char*)rmsg, sizeof(RequestSearchFriend));
+
+    delete rmsg;
+}
+
+void ConnectToServer::sendRequestAddFriendAck(const QString &friendid, const QString& group, const QString &content)
+{
+    RequestAddFriendAck *rmsg = (RequestAddFriendAck *)new char[strlen(content.toUtf8().data()) + sizeof(RequestAddFriendAck)];
+    strcpy(rmsg->friendid, friendid.toUtf8().data());
+    strcpy(rmsg->group, group.toUtf8().data());
+    rmsg->length = content.toUtf8().length();
+    if(rmsg->length != 0)
+        strcpy(rmsg->validate, content.toUtf8().data());
+    send(REQUESTADDFRIENDACK, (char*)rmsg, sizeof(RequestAddFriendAck) + rmsg->length);
+
+    delete rmsg;
+}
+
+void ConnectToServer::sendAddFriendResult(const QString &userid, const QString &groupname, const int status)
+{
+    AddFriendResult *rmsg = new AddFriendResult;
+    strcpy(rmsg->userid, userid.toUtf8().data());
+    strcpy(rmsg->group, groupname.toUtf8().data());
+    rmsg->status = status;
+
+    send(ADDFRIENDSTATUS, (char*)rmsg, sizeof(AddFriendResult));
 
     delete rmsg;
 }
@@ -286,7 +312,16 @@ void ConnectToServer::recv()
 
         emit receivedSearchResult(message);
 
-        qDebug() << rmsg->json;
+        break;
+    }
+    case FORWARDADDFRIENDACK: {
+        qDebug() << "添加好友请求";
+        ForwardAddFriendAck *rmsg = (ForwardAddFriendAck*)new char[msg->len];
+        memcpy(rmsg, msg->data, msg->len);
+        char *message = new char[rmsg->length + 1];
+        strcpy(message, rmsg->validate);
+        message[rmsg->length] = '\0';
+        emit receivedFriendAddRequest(rmsg->sendid, message);
         break;
     }
     default:

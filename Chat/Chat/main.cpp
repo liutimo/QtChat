@@ -7,12 +7,13 @@
 #include "View/chatwidget.h"
 #include "View/mainwidget.h"
 #include "View/findwidget.h"
+#include "View/validatewidget.h"
 #include "View/messagelistwidget.h"
 #include <QApplication>
 #include <QFile>
 #include <QDebug>
 #include <QTextCodec>
-
+#include <View/addackwidget.h>
 
 int main(int argc, char *argv[])
 {
@@ -21,9 +22,10 @@ int main(int argc, char *argv[])
     QFile f(":/style.qss");
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
-//      LoginWidget w;
-
-    FindWidget w;
+      LoginWidget w;
+//    ValidateWidget w;
+//   FindWidget w;
+//    AddAckWidget w;
     w.show();
     return a.exec();
 }

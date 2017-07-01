@@ -113,3 +113,9 @@ void sendSearchResult(const int fd, ResponseSearchFriend *rmsg)
     printf("发送搜索结果\n");
     sendMsg(fd, RESPONSESEARCHFRIEND, rmsg, rmsg->length + sizeof(ResponseSearchFriend));
 }
+
+void sendFrowardAddFriendAck(const int fd, ForwardAddFriendAck *rmsg)
+{
+    printf("转发添加好友请求\n");
+    sendMsg(fd, FORWARDADDFRIENDACK, rmsg, rmsg->length + sizeof(ForwardAddFriendAck));
+}

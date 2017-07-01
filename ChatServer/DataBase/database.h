@@ -83,4 +83,15 @@ void deleteOneFriend(const char *userid, const char* friendid);
 void insert_friend_group(const char *userid, const char *groupname);
 
 char* get_friend_info(const char *userid);
+
+void add_friend(const char *userid, const char *friendid, const char *groupid);
+
+char* get_gorupid(const char*userid, const char *groupname);
+
+void add_friend_reply(const char*userid, const char* friendid, const char*groupname,
+                      const char*validate, const int handle);
+
+char* get_addfriend_reply_group(const char*userid, const char*friendid);
+
+void deletefriend(const char*userid, const char*friendid);
 #endif // !DATABASE_H
