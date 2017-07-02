@@ -67,6 +67,14 @@ void DataBase::setLoaclUserInfo(const QString& userid, const QString &password)
 //保存好友列表信息
 void DataBase::setFriendList(QList<QVector<QString>> friends)
 {
+
+    QString sql_clear = "delete from friendlist where userid=?;";
+    QSqlQuery s;
+    s.prepare(sql_clear);
+    s.addBindValue(AllVariable::getLoginUserId());
+    s.exec();
+
+
     QString sql = "insert into friendlist(userid, friendid, username, remark, "
                   "personalizedsignature, grouptype, imagepath, birthofdate"
                   ", sex, mobile, mail, status) values('%1', '%2', '%3', '%4', '%5', '%6', '%7', '%8', '%9', '%10', '%11', '%12')";
@@ -497,8 +505,21 @@ void DataBase::addFriendGroup(const QString &groupname)
     sql_query.addBindValue(AllVariable::getLoginUserId());
     sql_query.exec();
 
-    sql_query.prepare(sql2);
+    QSqlQuery sql_query2;
+    sql_query2.prepare(sql2);
+    sql_query2.addBindValue(AllVariable::getLoginUserId());
+    sql_query2.addBindValue(groupname);
+    sql_query2.exec();
+}
+
+void DataBase::deleteFriendGroup(const QString &groupname)
+{
+    QString sql = "delete from chat_friend_group where userid=? and groupname=?;";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
     sql_query.addBindValue(AllVariable::getLoginUserId());
     sql_query.addBindValue(groupname);
+
     sql_query.exec();
 }

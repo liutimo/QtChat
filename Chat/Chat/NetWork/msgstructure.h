@@ -33,6 +33,7 @@ typedef enum _MsgType {
     REQUESTADDFRIENDACK,            //发送添加好友确认请求
     FORWARDADDFRIENDACK,            //转发添加好友请求
     ADDFRIENDSTATUS,                //添加好友的结果  同意或者拒绝
+    DELETEGROUP,                    //删除分组
     Test
 }MsgType;
 
@@ -240,5 +241,9 @@ typedef struct _AddFriendResult {
     char group[64];
     int status;                 //1同意， 2 拒绝
 }AddFriendResult;
+
+typedef struct _DeleteGroup {
+    char groupname[64];
+}DeleteGroup;
 
 #endif // MSGSTRUCTURE_H

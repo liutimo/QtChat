@@ -58,7 +58,7 @@ char *get_offline_message(const char *userid);
 void del_offline_message(const char *userid);
 
 //移动好友
-void move_friend_to_group(char *userid, char *friendid, char *grouptype);
+void move_friend_to_group(char *userid, char *friendid, char *groupid);
 
 //更新个性签名
 void update_user_signature(const char *userid, const char *sig);
@@ -86,7 +86,7 @@ char* get_friend_info(const char *userid);
 
 void add_friend(const char *userid, const char *friendid, const char *groupid);
 
-char* get_gorupid(const char*userid, const char *groupname);
+char* get_groupid(const char*userid, const char *groupname);
 
 void add_friend_reply(const char*userid, const char* friendid, const char*groupname,
                       const char*validate, const int handle);
@@ -94,4 +94,8 @@ void add_friend_reply(const char*userid, const char* friendid, const char*groupn
 char* get_addfriend_reply_group(const char*userid, const char*friendid);
 
 void deletefriend(const char*userid, const char*friendid);
-#endif // !DATABASE_H
+
+void delete_friend_group(const char*userid, const char*groupname);
+
+void update_friend_group(const char *userid, const char *oldid, const char *newid);
+#endif // !DATABASE_H;

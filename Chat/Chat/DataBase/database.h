@@ -59,6 +59,8 @@ public:
 
     void addFriendGroup(const QString &groupname);
 
+    void deleteFriendGroup(const QString &groupname);
+
 signals:
     void setGroupMemberFinished();
 public slots:

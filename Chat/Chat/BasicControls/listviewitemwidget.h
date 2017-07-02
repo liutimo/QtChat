@@ -21,7 +21,7 @@ public:
     QString getUsername();
     QString getUserid();
     void setStatus(int status);
-
+    void updateGroupMenu();
 signals:
     void updateListWidget();
     void deleteFriend();

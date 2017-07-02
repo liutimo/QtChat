@@ -205,7 +205,6 @@ void LoginWidget::loginStatus(LoginStatus ls)
         break;
     }
     case LOGINPWERROR:
-        break;
     case LOGINUNKNOW:
     {
         showStatusBar("密码错误，请重新输入密码!");

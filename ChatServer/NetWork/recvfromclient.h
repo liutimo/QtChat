@@ -42,5 +42,7 @@ void handleSearchFriendMsg(int fd, Msg*msg);
 void handleAddFriendMsg(int fd, Msg*msg);
 
 void handleAddFriendAckMsg(int fd, Msg *msg);
+
+void handleDeleteGroupMsg(int fd, Msg *msg);
 #endif // !RECVFROMCLIENT_H
 

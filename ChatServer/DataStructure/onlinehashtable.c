@@ -95,6 +95,9 @@ void delOnlineUserWithFd(const int fd)
 
 void delOnlineUserWithUid(const char *uid)
 {
+    if(uid == NULL)
+        return;
+
     OnlineUserNode *current1= uid_head[atoi(uid) %123456];
     OnlineUserNode *before1 = current1;
 

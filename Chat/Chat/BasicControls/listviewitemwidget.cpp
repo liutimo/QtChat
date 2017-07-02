@@ -174,3 +174,15 @@ void ListViewItemWidget::setStatus(int status)
         break;
     }
 }
+
+
+void ListViewItemWidget::updateGroupMenu()
+{
+    movetoMenu->clear();
+    for(QString group : DataBase::getInstance()->getGroup())
+    {
+        QAction *action = new QAction(group, this);
+        movetoMenu->addAction(action);
+        connect(action, &QAction::triggered, this, &ListViewItemWidget::moveFriendTo);
+    }
+}

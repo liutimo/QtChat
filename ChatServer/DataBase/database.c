@@ -272,11 +272,12 @@ void del_offline_message(const char *userid)
         print_error_mysql(sql_del_offline);
 }
 
-void move_friend_to_group(char *userid, char *friendid, char *grouptype)
+void move_friend_to_group(char *userid, char *friendid, char *groupid)
 {
     char sql_move_to_group[DATABASE_SQLMAXLENGTH];
-    sprintf(sql_move_to_group, "update friendlist set grouptype='%s' where userid='%s' and friendid='%s';"
-            , grouptype, userid, friendid);
+
+    sprintf(sql_move_to_group, "update friendlist set groupid='%s' where userid='%s' and friendid='%s';"
+            , groupid, userid, friendid);
 
     if(execute_mysql(sql_move_to_group) == -1)
         print_error_mysql(sql_move_to_group);
@@ -510,8 +511,11 @@ char* get_friend_info(const char *userid)
 }
 
 
-char* get_gorupid(const char*userid, const char *groupname)
+char* get_groupid(const char*userid, const char *groupname)
 {
+
+    if(groupname == NULL)
+        return NULL;
     char sql[DATABASE_SQLMAXLENGTH];
     sprintf(sql, "select groupid from chat_friend_group where userid='%s' and groupname='%s';", userid, groupname);
 
@@ -522,6 +526,8 @@ char* get_gorupid(const char*userid, const char *groupname)
 
     mysql_row = mysql_fetch_row(mysql_res);
 
+    if(mysql_row == NULL)
+        return NULL;
 
     return mysql_row[0];
 }
@@ -567,6 +573,30 @@ char* get_addfriend_reply_group(const char*userid, const char*friendid)
     return mysql_row[0];
 }
 
+void delete_friend_group(const char*userid, const char*groupid)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql, "delete from chat_friend_group where groupid=%s;", groupid);
+
+    printf("%s\n", sql);
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+}
+
+void update_friend_group(const char *userid, const char *oldid, const char *newid)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql, "update friendlist set groupid='%s' where userid='%s' and groupid='%s';", newid, userid, oldid);
+
+    printf("%s\n", sql);
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+}
+
 void deletefriend(const char*userid, const char*friendid)
 {
     char sql[DATABASE_SQLMAXLENGTH];
@@ -577,3 +607,5 @@ void deletefriend(const char*userid, const char*friendid)
     if(execute_mysql(sql) == -1)
         print_error_mysql(sql);
 }
+
+

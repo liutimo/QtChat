@@ -49,6 +49,26 @@ void ListWidget::initMenu()
         groupNameEdit->show();              //显示
         groupNameEdit->setFocus();          //获取焦点
         currentItem = newItem;     // 因为要给group命名，所以当前的currentItem设为该group
+
+        vec.push_back(newItem);
+    });
+
+
+    connect(delGroup, &QAction::triggered, this, [this](){
+        ConnectToServer::getInstance()->sendDeleteGroupMsg(currentItem->text());
+        DataBase::getInstance()->deleteFriendGroup(currentItem->text());
+        removeItemWidget(currentItem);
+        ishide.remove(currentItem->text());
+        for(auto iter = vec.begin(); iter != vec.end(); ++iter)
+        {
+            if(*iter == currentItem)
+            {
+                vec.erase(iter);
+                break;
+            }
+        }
+        emit updateFriendGroupMenu();
+        delete currentItem;
     });
 }
 //鼠标点击事件
@@ -65,6 +85,9 @@ void ListWidget::mousePressEvent(QMouseEvent *event)
             currentItem->setText(groupname);
             ishide.insert(groupname, 1);
             listmap.insert(groupname, new QVector<QListWidgetItem*>());
+
+            DataBase::getInstance()->addFriendGroup(groupname);
+            emit updateFriendGroupMenu();
             ConnectToServer::getInstance()->sendRequestCreateGroup(groupname);
         }
         else
@@ -114,7 +137,7 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *event)
         blankMenu->exec(QCursor::pos());
         return;
     }
-    else if(listmap.value(currentItem->text()) != NULL)
+    else if(currentItem != NULL && vec.contains(currentItem))
     {
         groupMenu->exec(QCursor::pos());
         return;
@@ -134,6 +157,7 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
     {
         QString group = groups.at(i);
         QListWidgetItem *newItem=new QListWidgetItem(group);
+        vec.push_back(newItem);
         newItem->setSizeHint(QSize(this->width(),25));
         this->addItem(newItem);
 
@@ -155,8 +179,6 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         }
         groupItemIndex.append(new QPair<QString, int>(group, i));
         listmap.insert(group, new QVector<QListWidgetItem*>());
-
-
     }
 
     for(QVector<QString> onefriend : friends)
@@ -167,6 +189,13 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         frienditem->setStatus(onefriend.at(6).toInt());
         friendmap.insert(onefriend.at(0), frienditem);
         frienditem->setFixedSize(300, 50);
+
+        frienditem->updateGroupMenu();
+
+        connect(this, &ListWidget::updateFriendGroupMenu, frienditem, [frienditem](){
+           frienditem->updateGroupMenu();
+        });
+
         connect(frienditem, &ListViewItemWidget::updateListWidget, this, [this](){
             QStringList groups = DataBase::getInstance()->getGroup();
             QList<QVector<QString>> friends = DataBase::getInstance()->getFriendList();
@@ -176,7 +205,7 @@ void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
         QString groupname = onefriend.at(3);
 
         QListWidgetItem *newItem = new QListWidgetItem();
-
+        newItem->setText("");
         int index = 0;
 
         for(int i = 0; i < groupItemIndex.size(); ++i)

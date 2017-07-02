@@ -26,7 +26,8 @@ public:
     void setGroupList(QVector<QStringList> lists);
     void updateFriendStatus(const QString &userid, int status);
     void setShowBlankMenu(bool flag = false);
-
+signals:
+    void updateFriendGroupMenu();
 private slots:
     void listWidgetMenuTriggered();
 private:
@@ -35,6 +36,9 @@ private:
     QMenu *blankMenu;//点击空白上的菜单
     QMenu *groupMenu;//点击组上的菜单
     QMenu *movetoMenu;
+
+
+    QVector<QListWidgetItem*> vec;
 
     QMap<QString, QVector<QListWidgetItem*>*> listmap;
     QMap<QListWidgetItem*, bool> isHide;

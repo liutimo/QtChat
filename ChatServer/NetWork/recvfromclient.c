@@ -345,6 +345,11 @@ void handle(Msg *msg, int fd)
         handleAddFriendAckMsg(fd, msg);
         break;
     }
+    case DELETEGROUP: {
+        printf("DELETEGROUP\n");
+        handleDeleteGroupMsg(fd, msg);
+        break;
+    }
     default:
         break;
     }
@@ -433,6 +438,27 @@ void handleHeartBeatMsg(int fd)
 void handleExitMsg(int fd)
 {
 
+    init_mysql();
+    char** friends = get_friends(findOnlineUserWithFd(fd));
+    close_mysql();
+
+    ResponseFriendStatusChange *rfsc = (ResponseFriendStatusChange*)malloc(sizeof(ResponseFriendStatusChange));
+    strcpy(rfsc->userid, findOnlineUserWithFd(fd));
+    rfsc->status = 2;
+
+    int  i = 0;
+    while (friends[i] != NULL) {
+        int fd;
+        if((fd = findOnlineUserWithUid(friends[i])) != -1)
+        {
+            sendFriendStatusChange(fd, rfsc);
+        }
+        ++i;
+    }
+
+    free(rfsc);
+    free(friends);
+
     printf("%s离线\n", findOnlineUserWithFd(fd));
     //从在线用户中移除
     delOnlineUserWithUid(findOnlineUserWithFd(fd));
@@ -442,6 +468,8 @@ void handleExitMsg(int fd)
     ev.data.fd = fd;
     epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
     close(fd);
+
+
 }
 
 void handleForwordMessageMsg(int fd, Msg *msg)
@@ -493,7 +521,8 @@ void handleMoveFriendToGroup(int fd, RequestMoveFriendToGroup *rmsg)
     //rmsg->userid, rmsg->grouptype
 
     init_mysql();
-    move_friend_to_group(findOnlineUserWithFd(fd), rmsg->userid, rmsg->grouptype);
+    char *groupid = get_groupid(findOnlineUserWithFd(fd), rmsg->grouptype);
+    move_friend_to_group(findOnlineUserWithFd(fd), rmsg->userid, groupid);
     close_mysql();
 }
 
@@ -660,15 +689,17 @@ void handleSearchFriendMsg(int fd, Msg*msg)
     printf("%s\n", json);
     close_mysql();
 
-    int len = strlen(json);
+    int len = strlen(json) + 1;
 
     ResponseSearchFriend *rmsg2 = (ResponseSearchFriend*)malloc(sizeof(ResponseSearchFriend) + len);
     rmsg2->length = len;
     strcpy(rmsg2->json, json);
-
+    rmsg2->json[strlen(json)] = '\0';
     sendSearchResult(fd, rmsg2);
 
+    free(rmsg1);
     free(json);
+    free(rmsg2);
 }
 
 void handleAddFriendMsg(int fd, Msg*msg)
@@ -706,10 +737,18 @@ void handleAddFriendAckMsg(int fd, Msg *msg)
     {
         //添加进数据库  fd是需要验证方。
         init_mysql();
-        char *groupid1 = get_gorupid(rmsg->userid, get_addfriend_reply_group(rmsg->userid, findOnlineUserWithFd(fd)));
-        char *groupid2 = get_gorupid(findOnlineUserWithFd(fd), rmsg->group);
+        char *groupid1 = get_groupid(rmsg->userid, get_addfriend_reply_group(rmsg->userid, findOnlineUserWithFd(fd)));
+        char *groupid2 = get_groupid(findOnlineUserWithFd(fd), rmsg->group);
         add_friend(rmsg->userid, findOnlineUserWithFd(fd), groupid1);
         add_friend(findOnlineUserWithFd(fd), rmsg->userid, groupid2);
+        close_mysql();
+        init_mysql();
+        char *json1 = get_friendlist_json(rmsg->userid);
+        char* json2 = get_friendlist_json(findOnlineUserWithFd(fd));
+        sendResponseFriendList(fd, json2);
+        sendResponseFriendList(findOnlineUserWithUid(rmsg->userid), json1);
+        free(json1);
+        free(json2);
         close_mysql();
 
     }
@@ -718,4 +757,42 @@ void handleAddFriendAckMsg(int fd, Msg *msg)
 
     }
 
+}
+
+void handleDeleteGroupMsg(int fd, Msg *msg)
+{
+
+
+    DeleteGroup *group = (DeleteGroup *)malloc(msg->len);
+    memcpy(group, msg->data, msg->len);
+
+    if(strcmp(group->groupname, "我的好友") == 0)
+    {
+        free(group);
+        return;
+    }
+    //删除分组， 首先找到要删除的组id， 然后找到默认组id， 将该组的所有好友的组id改成默认组id
+    init_mysql();
+    //获取删除组的id
+    char *groupid = get_groupid(findOnlineUserWithFd(fd), group->groupname);
+
+    if(groupid == NULL)
+        return;
+
+    char *default_groupid = get_groupid(findOnlineUserWithFd(fd), "我的好友");
+
+    //移动该组好友到默认分组
+    update_friend_group(findOnlineUserWithFd(fd), groupid, default_groupid);
+
+    //删除分组
+    delete_friend_group(findOnlineUserWithFd(fd), groupid);
+
+    char *json = get_friendlist_json(findOnlineUserWithFd(fd));
+    sendResponseFriendList(fd, json);
+
+    close_mysql();
+
+    printf("%s\n", group->groupname);
+
+    free(group);
 }

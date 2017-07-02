@@ -214,6 +214,16 @@ void ConnectToServer::sendAddFriendResult(const QString &userid, const QString &
     delete rmsg;
 }
 
+void ConnectToServer::sendDeleteGroupMsg(const QString &groupname)
+{
+    DeleteGroup *rmsg = new DeleteGroup;
+    strcpy(rmsg->groupname, groupname.toUtf8().data());
+
+    send(DELETEGROUP, (char*)rmsg, sizeof(DeleteGroup));
+
+    delete rmsg;
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
