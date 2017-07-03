@@ -202,6 +202,7 @@ void LoginWidget::loginStatus(LoginStatus ls)
 
         //20s 发送一次心跳包
         startTimer(20000);
+        tray->setToolTip(AllVariable::getLoginUserId());
         break;
     }
     case LOGINPWERROR:
@@ -278,12 +279,12 @@ void LoginWidget::init_traymenu()
     action_newmessage = new QAction("查看新消息");
     connect(action_newmessage, &QAction::triggered, this, &LoginWidget::showMessageBox);
 
-    QAction *state_online = new QAction(QIcon(":/Resource/status/imonline@2x.png"), "在线");
-    QAction *state_busy = new QAction(QIcon(":/Resource/status/away@2x.png"), "忙碌");
-    QAction *state_hide = new QAction(QIcon(":/Resource/status/invisible@2x.png"), "隐身");
-    QAction *state_away = new QAction(QIcon(":/Resource/status/away@2x.png"), "离开");
-    QAction *state_Qme = new QAction(QIcon(":/Resource/status/imoffline@2x.png"), "离线");
-    QAction *state_notdisturb = new QAction(QIcon(":/Resource/status/mute@2x.png"), "请勿打扰");
+//    QAction *state_online = new QAction(QIcon(":/Resource/status/imonline@2x.png"), "在线");
+//    QAction *state_busy = new QAction(QIcon(":/Resource/status/away@2x.png"), "忙碌");
+//    QAction *state_hide = new QAction(QIcon(":/Resource/status/invisible@2x.png"), "隐身");
+//    QAction *state_away = new QAction(QIcon(":/Resource/status/away@2x.png"), "离开");
+//    QAction *state_Qme = new QAction(QIcon(":/Resource/status/imoffline@2x.png"), "离线");
+//    QAction *state_notdisturb = new QAction(QIcon(":/Resource/status/mute@2x.png"), "请勿打扰");
     QAction *action_show = new QAction("打开主窗口");
     QAction *action_exit = new QAction("退出");
 
@@ -304,13 +305,13 @@ void LoginWidget::init_traymenu()
 
     action_newmessage->setEnabled(false);
     tray_menu->addAction(action_newmessage);
-    tray_menu->addSeparator();
-    tray_menu->addAction(state_online);
-    tray_menu->addAction(state_busy);
-    tray_menu->addAction(state_hide);
-    tray_menu->addAction(state_away);
-    tray_menu->addAction(state_Qme);
-    tray_menu->addAction(state_notdisturb);
+//    tray_menu->addSeparator();
+//    tray_menu->addAction(state_online);
+//    tray_menu->addAction(state_busy);
+//    tray_menu->addAction(state_hide);
+//    tray_menu->addAction(state_away);
+//    tray_menu->addAction(state_Qme);
+//    tray_menu->addAction(state_notdisturb);
     tray_menu->addSeparator();
     tray_menu->addAction(action_show);
     tray_menu->addSeparator();

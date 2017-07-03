@@ -350,6 +350,11 @@ void handle(Msg *msg, int fd)
         handleDeleteGroupMsg(fd, msg);
         break;
     }
+    case RENAMEFRIENDGROUP: {
+        printf("RENAMEFRIENDGROUP\n");
+        handleRenameFriendGroup(fd, msg);
+        break;
+    }
     default:
         break;
     }
@@ -409,6 +414,7 @@ void handleLoginMsg(int fd, Msg *msg)
 
 
         ResponseFriendStatusChange *rfsc = (ResponseFriendStatusChange*)malloc(sizeof(ResponseFriendStatusChange));
+        bzero(rfsc, sizeof(ResponseFriendStatusChange));
         strcpy(rfsc->userid, findOnlineUserWithFd(fd));
 
         while (friends[i] != NULL) {
@@ -443,6 +449,7 @@ void handleExitMsg(int fd)
     close_mysql();
 
     ResponseFriendStatusChange *rfsc = (ResponseFriendStatusChange*)malloc(sizeof(ResponseFriendStatusChange));
+    bzero(rfsc, sizeof(ResponseFriendStatusChange));
     strcpy(rfsc->userid, findOnlineUserWithFd(fd));
     rfsc->status = 2;
 
@@ -474,20 +481,24 @@ void handleExitMsg(int fd)
 
 void handleForwordMessageMsg(int fd, Msg *msg)
 {
-    RequestForwordMessageMsg *fmsg = (RequestForwordMessageMsg*)malloc(msg->len * sizeof(char));
+    RequestForwordMessageMsg *fmsg = (RequestForwordMessageMsg*)malloc(msg->len);
+    bzero(fmsg, msg->len);
     memcpy(fmsg, msg->data, msg->len);
 
     int friend_fd = findOnlineUserWithUid(fmsg->friendid);
 
 
-    char *message = (char *)malloc(sizeof(char) *fmsg->length + 1);
+    char *message = malloc(fmsg->length + 1);
+    bzero(message, fmsg->length + 1);
     strcpy(message, fmsg->message);
     message[fmsg->length] = '\0';
 
-    //    /("%d  |||  %s\n", fmsg->length, message);
+    printf("%d  |||  %s\n", fmsg->length, message);
 
     init_mysql();
+
     set_chatlog(findOnlineUserWithFd(fd), fmsg->friendid, message, fmsg->font, fmsg->size, fmsg->color);
+
     close_mysql();
 
 
@@ -501,6 +512,7 @@ void handleForwordMessageMsg(int fd, Msg *msg)
     else if(friend_fd > 0)
     {
         //forward
+        printf("开始转发消息\n");
         forwardmessage(fd, friend_fd, fmsg);
     }
     free(message);
@@ -531,9 +543,13 @@ void handleUpdateSignature(int fd, RequestUpdateSignature *msg)
     init_mysql();
 
     char*message = malloc(msg->length + 1);
+    bzero(message, msg->length + 1);
+
     strcpy(message, msg->sig);
     message[msg->length] = '\0';
+
     update_user_signature(findOnlineUserWithFd(fd), message);
+
     free(message);
     close_mysql();
 }
@@ -551,7 +567,9 @@ void handleRequestGroupMessage(int fd)
     if(group == NULL)
         return;
 
-    ResponseGroupInfo *msg = (ResponseGroupInfo*)malloc(sizeof(ResponseGroupInfo) + strlen(group));
+    ssize_t length = sizeof(ResponseGroupInfo) + strlen(group);
+    ResponseGroupInfo *msg = (ResponseGroupInfo*)malloc(length);
+    bzero(msg, length);
 
     msg->length = strlen(group);
     strcpy(msg->json, group);
@@ -575,6 +593,7 @@ void handleRequestGroupMemberMessage(int fd)
 
     size_t size = sizeof(ResponseGroupMemberInfo) + strlen(memberinfo) + 1;
     ResponseGroupMemberInfo *info = (ResponseGroupMemberInfo*)malloc(size);
+    bzero(info, size);
 
     info->length = strlen(memberinfo) + 1;
     strcpy(info->json, memberinfo);
@@ -595,6 +614,8 @@ void handleRequestChangeStatus(int fd, Msg*msg)
     close_mysql();
 
     ResponseFriendStatusChange *rfsc = (ResponseFriendStatusChange*)malloc(sizeof(ResponseFriendStatusChange));
+    bzero(rfsc, sizeof(ResponseFriendStatusChange));
+
     strcpy(rfsc->userid, findOnlineUserWithFd(fd));
 
 
@@ -639,6 +660,8 @@ void handleRequestChangeStatus(int fd, Msg*msg)
 void handleFrowardGroupMsg(int fd, Msg *msg)
 {
     RequestForwordGroupMessage *rmsg = (RequestForwordGroupMessage*)malloc(msg->len);
+    bzero(rmsg, sizeof(rmsg));
+
     memcpy(rmsg, msg->data, msg->len);
 
     forwardgroupmessage(fd, rmsg);
@@ -649,6 +672,8 @@ void handleFrowardGroupMsg(int fd, Msg *msg)
 void handleDeleteFriendMsg(int fd, Msg *msg)
 {
     RequestDeleteFriend *rmsg = (RequestDeleteFriend*)malloc(msg->len);
+    bzero(rmsg, msg->len);
+
     memcpy(rmsg, msg->data, msg->len);
 
     printf("%s 请求删除 好友%s\n", findOnlineUserWithFd(fd), rmsg->friendid);
@@ -664,6 +689,7 @@ void handleDeleteFriendMsg(int fd, Msg *msg)
 void handleCreateGroupMsg(int fd, Msg*msg)
 {
     RequestCreateGroup *rmsg = (RequestCreateGroup*)malloc(msg->len);
+    bzero(rmsg, msg->len);
 
     memcpy(rmsg, msg->data, msg->len);
 
@@ -682,6 +708,7 @@ void handleCreateGroupMsg(int fd, Msg*msg)
 void handleSearchFriendMsg(int fd, Msg*msg)
 {
     RequestSearchFriend *rmsg1 = (RequestSearchFriend*)malloc(msg->len);
+    bzero(rmsg1, msg->len);
     memcpy(rmsg1, msg->data, msg->len);
 
     init_mysql();
@@ -692,6 +719,7 @@ void handleSearchFriendMsg(int fd, Msg*msg)
     int len = strlen(json) + 1;
 
     ResponseSearchFriend *rmsg2 = (ResponseSearchFriend*)malloc(sizeof(ResponseSearchFriend) + len);
+    bzero(rmsg2, len + sizeof(ResponseSearchFriend));
     rmsg2->length = len;
     strcpy(rmsg2->json, json);
     rmsg2->json[strlen(json)] = '\0';
@@ -705,11 +733,13 @@ void handleSearchFriendMsg(int fd, Msg*msg)
 void handleAddFriendMsg(int fd, Msg*msg)
 {
     RequestAddFriendAck *rmsg = (RequestAddFriendAck*)malloc(msg->len);
+    bzero(rmsg, msg->len);
     memcpy(rmsg, msg->data, msg->len);
 
     int f = findOnlineUserWithUid(rmsg->friendid);
 
     ForwardAddFriendAck *s = (ForwardAddFriendAck*)malloc(sizeof(ForwardAddFriendAck) + rmsg->length);
+    bzero(s, sizeof(ForwardAddFriendAck) + rmsg->length);
     strcpy(s->sendid, findOnlineUserWithFd(fd));
     s->length = rmsg->length;
     if(s->length != 0)
@@ -731,6 +761,7 @@ void handleAddFriendMsg(int fd, Msg*msg)
 void handleAddFriendAckMsg(int fd, Msg *msg)
 {
     AddFriendResult *rmsg = (AddFriendResult*)malloc(msg->len);
+    bzero(rmsg, msg->len);
     memcpy(rmsg, msg->data, msg->len);
 
     if(rmsg->status == 1)
@@ -764,6 +795,7 @@ void handleDeleteGroupMsg(int fd, Msg *msg)
 
 
     DeleteGroup *group = (DeleteGroup *)malloc(msg->len);
+    bzero(group, msg->len);
     memcpy(group, msg->data, msg->len);
 
     if(strcmp(group->groupname, "我的好友") == 0)
@@ -795,4 +827,20 @@ void handleDeleteGroupMsg(int fd, Msg *msg)
     printf("%s\n", group->groupname);
 
     free(group);
+}
+
+void handleRenameFriendGroup(int fd, Msg *msg)
+{
+    RenameFriendGroup *rmsg = (RenameFriendGroup*)malloc(sizeof(RenameFriendGroup));
+    bzero(rmsg, sizeof(RenameFriendGroup));
+    memcpy(rmsg, msg->data, msg->len);
+
+    init_mysql();
+
+    char *groupid = get_groupid(findOnlineUserWithFd(fd), rmsg->oldgroupname);
+    update_friend_groupname(groupid, rmsg->newgroupname);
+
+    close_mysql();
+
+    free(rmsg);
 }

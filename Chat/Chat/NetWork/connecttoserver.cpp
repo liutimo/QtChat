@@ -224,6 +224,17 @@ void ConnectToServer::sendDeleteGroupMsg(const QString &groupname)
     delete rmsg;
 }
 
+void ConnectToServer::sendRenameFriendGroupMsg(const QString &oldname, const QString &newname)
+{
+    RenameFriendGroup *rmsg = new RenameFriendGroup;
+    strcpy(rmsg->oldgroupname, oldname.toUtf8().data());
+    strcpy(rmsg->newgroupname, newname.toUtf8().data());
+
+    send(RENAMEFRIENDGROUP, (char*)rmsg, sizeof(RenameFriendGroup));
+
+    delete rmsg;
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()

@@ -34,6 +34,7 @@ public:
     void sendRequestAddFriendAck(const QString &friendid, const QString& group, const QString &content);
     void sendAddFriendResult(const QString &userid, const QString &groupname, const int status);
     void sendDeleteGroupMsg(const QString &groupname);
+    void sendRenameFriendGroupMsg(const QString &oldname, const QString &newname);
 protected:
     void recv();
 

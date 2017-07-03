@@ -10,10 +10,10 @@
 #include <QDebug>
 
 ListWidget::ListWidget(QWidget *parent) :
-    QListWidget(parent), showBlankMenu(false)
+    QListWidget(parent), showBlankMenu(false), renameGroup(false)
 {
-    setFocusPolicy(Qt::NoFocus);       // 去除item选中时的虚线边框
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//水平滚动条关闭
+    setFocusPolicy(Qt::NoFocus);                                                     // 去除item选中时的虚线边框
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);                            //水平滚动条关闭
     initMenu();
 }
 //初始化菜单
@@ -38,21 +38,32 @@ void ListWidget::initMenu()
     groupMenu->addAction(rename);
 
     connect(addGroup, &QAction::triggered, this, [this](){
-        QListWidgetItem *newItem=new QListWidgetItem(QIcon(":/Resource/mainwidget/arrowright.png"),"未命名");    //创建一个Item
-        newItem->setSizeHint(QSize(this->width(),25));//设置宽度、高度
-        addItem(newItem);         //加到QListWidget中
+        QListWidgetItem *newItem=new QListWidgetItem(QIcon(":/Resource/mainwidget/arrowright.png"),"未命名");             //创建一个Item
+        newItem->setSizeHint(QSize(this->width(),25));                                                                   //设置宽度、高度
+        addItem(newItem);                                                                                                //加到QListWidget中
         groupNameEdit->raise();
-        groupNameEdit->setText(tr("未命名")); //设置默认内容
-        groupNameEdit->selectAll();        //设置全选
+        groupNameEdit->setText(tr("未命名"));                                                                             //设置默认内容
+        groupNameEdit->selectAll();                                                                                      //设置全选
         groupNameEdit->setGeometry(this->visualItemRect(newItem).left() + 15,this->visualItemRect(newItem).top()+1,
                                    this->visualItemRect(newItem).width() - 15, this->visualItemRect(newItem).height()-2);//出现的位置
-        groupNameEdit->show();              //显示
-        groupNameEdit->setFocus();          //获取焦点
-        currentItem = newItem;     // 因为要给group命名，所以当前的currentItem设为该group
+        groupNameEdit->show();                                                                                           //显示
+        groupNameEdit->setFocus();                                                                                       //获取焦点
+        currentItem = newItem;                                                                                           // 因为要给group命名，所以当前的currentItem设为该group
 
         vec.push_back(newItem);
     });
 
+    connect(rename, &QAction::triggered, this, [this](){
+        groupNameEdit->raise();
+        groupNameEdit->setText(currentItem->text());
+        groupNameEdit->selectAll();
+        groupNameEdit->setGeometry(this->visualItemRect(currentItem).left() + 15,this->visualItemRect(currentItem).top()+1,
+                                   this->visualItemRect(currentItem).width() - 15, this->visualItemRect(currentItem).height()-2); //出现的位置
+        groupNameEdit->show();
+        groupNameEdit->setFocus();
+
+        renameGroup = true;
+    });
 
     connect(delGroup, &QAction::triggered, this, [this](){
         ConnectToServer::getInstance()->sendDeleteGroupMsg(currentItem->text());
@@ -76,7 +87,27 @@ void ListWidget::mousePressEvent(QMouseEvent *event)
 {
     QListWidget::mousePressEvent(event);
 
-    if(groupNameEdit->isVisible() && !(groupNameEdit->rect().contains(event->pos())))
+    if(renameGroup)
+    {
+        renameGroup = false;
+        groupNameEdit->hide();
+
+        if(ishide.value(groupNameEdit->text()) != 0)                        //
+        {
+            return;
+        }
+
+        ishide.insert(groupNameEdit->text(), ishide.value(currentItem->text()));
+        ishide.remove(currentItem->text());
+
+        listmap.insert(groupNameEdit->text(), listmap.value(currentItem->text()));
+        listmap.remove(currentItem->text());
+        DataBase::getInstance()->deleteFriendGroup(currentItem->text());
+        ConnectToServer::getInstance()->sendRenameFriendGroupMsg(currentItem->text(), groupNameEdit->text());
+
+        currentItem->setText(groupNameEdit->text());
+    }
+    else if(groupNameEdit->isVisible() && !(groupNameEdit->rect().contains(event->pos())))
     {
         QString groupname = groupNameEdit->text();
 

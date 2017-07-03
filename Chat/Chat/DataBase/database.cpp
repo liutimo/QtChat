@@ -59,6 +59,8 @@ void DataBase::setLoaclUserInfo(const QString& userid, const QString &password)
     }
     else
     {
+        sql_query.prepare(QString("delete from localuserinfo where userid='%1'and userpw='%2';").arg(userid, password));
+        sql_query.exec();
         sql_query.prepare(QString("insert into localuserinfo(userid, userpw) values('%1', '%2')").arg(userid, password));
         sql_query.exec();
     }
@@ -79,13 +81,19 @@ void DataBase::setFriendList(QList<QVector<QString>> friends)
                   "personalizedsignature, grouptype, imagepath, birthofdate"
                   ", sex, mobile, mail, status) values('%1', '%2', '%3', '%4', '%5', '%6', '%7', '%8', '%9', '%10', '%11', '%12')";
 
+    QString sql2 = "delete from friendlist where userid='%1', friendid='%2';";
+
     for (QVector<QString> onefriend : friends)
     {
         QString s = sql.arg(AllVariable::getLoginUserId(),onefriend[0], onefriend[1], onefriend[2], onefriend[3],
                 onefriend[4], onefriend[5], onefriend[6], onefriend[7]).arg(onefriend[8], onefriend[9],
                 onefriend[10] == "online" ? "1" : "2");
-        qDebug() << s;
+
         QSqlQuery sql_query;
+
+        sql_query.prepare(sql2.arg(AllVariable::getLoginUserId(), onefriend[0]));
+        sql_query.exec();
+
         sql_query.prepare(s);
         sql_query.exec();
     }
@@ -358,6 +366,8 @@ QVector<QStringList> DataBase::getGroupInfo()
 
 void DataBase::setGroupMemberInfo(const QMap<QString, QVector<QStringList>> &map)
 {
+
+    QString sql_delete = "delete from chat_groupmember where groupid='%1' and memberid='%2';";
     QString sql = "insert into chat_groupmember(groupid, memberid, membername, memberimage) values('%1', '%2', '%3', '%4');";
 
     for(QString key : map.keys())
@@ -365,6 +375,10 @@ void DataBase::setGroupMemberInfo(const QMap<QString, QVector<QStringList>> &map
         for(QStringList elem : map.value(key))
         {
             QSqlQuery sql_query;
+
+            sql_query.prepare(sql_delete.arg((key, elem[0])));
+            sql_query.exec();
+
             sql_query.prepare(sql.arg(key, elem[0], elem[1], elem[2]));
             sql_query.exec();
         }

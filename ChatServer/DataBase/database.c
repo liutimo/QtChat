@@ -609,3 +609,14 @@ void deletefriend(const char*userid, const char*friendid)
 }
 
 
+void update_friend_groupname(/*const char *userid,*/ const char *groupid, const char *groupname)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql, "update chat_friend_group set groupname='%s' where groupid='%s';", groupname, groupid);
+
+    printf("%s\n", sql);
+
+    if (execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+}

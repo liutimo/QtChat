@@ -15,6 +15,7 @@ void forwardmessage(int fd, int friend_fd, RequestForwordMessageMsg *fmsg)
     ssize_t length = sizeof(ReceivedMessageMsg) + fmsg->length;
 
     ReceivedMessageMsg *msg = (ReceivedMessageMsg*)malloc(sizeof(char) * length);
+    bzero(msg, length);
     memcpy(msg, fmsg, sizeof(char) * length);
 
     char *userid = findOnlineUserWithFd(fd);

@@ -98,4 +98,6 @@ void deletefriend(const char*userid, const char*friendid);
 void delete_friend_group(const char*userid, const char*groupname);
 
 void update_friend_group(const char *userid, const char *oldid, const char *newid);
+
+void update_friend_groupname(/*const char *userid,*/ const char *groupid, const char *groupname);
 #endif // !DATABASE_H;

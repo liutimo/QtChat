@@ -62,7 +62,9 @@ void sendResponseUserInfo(int fd, const char *userinfo)
 
 void sendResponseFriendList(int fd, const char *list)
 {
-    ResponseFriendList *f = (ResponseFriendList*)malloc(sizeof(ResponseFriendList) + strlen(list) + 1);
+    ssize_t length = sizeof(ResponseFriendList) + strlen(list) + 1;
+    ResponseFriendList *f = (ResponseFriendList*)malloc(length);
+    bzero(f, length);
     f->len = strlen(list) + 1;
 
     memcpy(f->friendlist, list, f->len);
