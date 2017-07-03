@@ -620,3 +620,45 @@ void update_friend_groupname(/*const char *userid,*/ const char *groupid, const 
     if (execute_mysql(sql) == -1)
         print_error_mysql(sql);
 }
+
+int create_chat_group(const char *groupname)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+
+    //选择当前最大的groupid
+    sprintf(sql, "select groupid from chat_group order by groupid desc limit 1;");
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+
+    mysql_res = mysql_store_result(mysql);
+    mysql_row = mysql_fetch_row(mysql_res);
+
+    if(mysql_row != NULL)
+    {
+        int groupid = atoi(mysql_row[0]) + 1;
+        char sql_create_chat_group[DATABASE_SQLMAXLENGTH];
+        sprintf(sql_create_chat_group, "insert into chat_group(groupid, groupname) values('%d', '%s');", groupid, groupname);
+
+        if(execute_mysql(sql_create_chat_group) == -1)
+            print_error_mysql(sql_create_chat_group);
+
+        return groupid;
+    }
+
+    return 0;
+}
+
+void add_chat_group_member(const int groupid, const char *userid)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+
+    //选择当前最大的groupid
+    sprintf(sql, "insert into chat_groupmember(groupid, memberid) values('%d', '%s');", groupid, userid);
+
+    printf("%s\n", sql);
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+
+}

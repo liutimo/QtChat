@@ -22,6 +22,7 @@ public:
 
     QString getGroupName();
     QString getGroupId();
+    QString getImagePath();
 signals:
     void updateListWidget();
 public slots:

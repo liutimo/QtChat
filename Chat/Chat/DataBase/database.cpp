@@ -544,7 +544,7 @@ QVector<QStringList> DataBase::get_all_friends()
 
     QSqlQuery sql_query;
     sql_query.prepare(sql);
-    sql_query.addBindValue(/*AllVariable::getLoginUserId()*/"123456");
+    sql_query.addBindValue(AllVariable::getLoginUserId());
 
     sql_query.exec();
 

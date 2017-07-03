@@ -235,6 +235,21 @@ void ConnectToServer::sendRenameFriendGroupMsg(const QString &oldname, const QSt
     delete rmsg;
 }
 
+void ConnectToServer::sendCreateChatGroupMsg(const QString &groupname, const QString &json)
+{
+    qint64 length = json.toUtf8().length();
+    CreateChatGroup *rmsg = (CreateChatGroup *)new char[length + sizeof(CreateChatGroup)];
+    bzero(rmsg, length + sizeof(CreateChatGroup));
+
+    strcpy(rmsg->groupname, groupname.toUtf8().data());
+    rmsg->length = length;
+    strcpy(rmsg->json, json.toUtf8().data());
+
+    send(REQUESTCREATECHATGROUP, (char*)rmsg, length + sizeof(CreateChatGroup));
+
+    delete rmsg;
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
@@ -294,8 +309,12 @@ void ConnectToServer::recv()
         qDebug() << "群组信息回应";
         ResponseGroupInfo *rgi = (ResponseGroupInfo*)new char[msg->len];
         memcpy(rgi, msg->data, msg->len);
-        emit receivedGroupInfo(QByteArray(rgi->json));
+        char *info = new char[rgi->length + 1];
+        strcpy(info, rgi->json);
+        info[rgi->length] = '\0';
+        emit receivedGroupInfo(QByteArray(info));
         delete rgi;
+        delete []info;
         break;
     }
     case RESPONSEGROUPMEMBERINFO: {

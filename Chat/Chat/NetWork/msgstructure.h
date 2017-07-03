@@ -35,6 +35,7 @@ typedef enum _MsgType {
     ADDFRIENDSTATUS,                //添加好友的结果  同意或者拒绝
     DELETEGROUP,                    //删除分组
     RENAMEFRIENDGROUP,              //重命名
+    REQUESTCREATECHATGROUP,         //创建聊天群
     Test
 }MsgType;
 
@@ -234,7 +235,7 @@ typedef struct _ForwardAddFriendAck {
     char sendid[USERIDMAXLEN];
     int length;
     char validate[0];
-}ForwardAddFriendAck ;
+}ForwardAddFriendAck;
 
 
 typedef struct _AddFriendResult {
@@ -251,5 +252,11 @@ typedef struct _RenameFriendGroup {
     char oldgroupname[64];      //旧名称
     char newgroupname[64];      //新名称
 }RenameFriendGroup;
+
+typedef struct _CreateChatGroup {
+    char groupname[64];
+    int length;
+    char json[0];
+}CreateChatGroup;
 
 #endif // MSGSTRUCTURE_H

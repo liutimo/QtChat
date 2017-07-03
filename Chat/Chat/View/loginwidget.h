@@ -83,7 +83,8 @@ private:
     QLineEdit *le_password;
     HeadIcon *hi_headicon;
     QCheckBox *cb_rememberpw;
-    QCheckBox *cb_autologin;
+//    QCheckBox *cb_autologin;
+    QLabel *registerchat;
 
     ConnectToServer *server;
 

@@ -64,6 +64,11 @@ QString GroupItemWidget::getGroupId()
     return groupid;
 }
 
+QString GroupItemWidget::getImagePath()
+{
+    return imagePath;
+}
+
 void GroupItemWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QWidget::contextMenuEvent(event);           //调用基类事件

@@ -22,6 +22,7 @@ public:
     QString getUserid();
     void setStatus(int status);
     void updateGroupMenu();
+    void hideStatus();
 signals:
     void updateListWidget();
     void deleteFriend();

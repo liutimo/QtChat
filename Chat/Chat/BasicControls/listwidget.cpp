@@ -3,6 +3,7 @@
 #include "recentchatitemwidget.h"
 #include "groupitemwidget.h"
 #include "DataBase/database.h"
+#include "View/creategroup.h"
 #include "NetWork/connecttoserver.h"
 #include <View/chatwidget.h>
 #include <QAction>
@@ -22,8 +23,10 @@ void ListWidget::initMenu()
 {
 
     m_groupMenu = new QMenu();
-    m_groupMenu->addAction(new QAction("创建聊天群"));
-    m_groupMenu->addAction(new QAction("搜索聊天群"));
+    QAction *creaegroup = new QAction("创建聊天群");
+    QAction *searchgroup = new QAction("搜索聊天群");
+    m_groupMenu->addAction(creaegroup);
+    m_groupMenu->addAction(searchgroup);
 
     blankMenu = new QMenu();
     groupMenu = new QMenu();
@@ -85,6 +88,11 @@ void ListWidget::initMenu()
         }
         emit updateFriendGroupMenu();
         delete currentItem;
+    });
+
+    connect(creaegroup, &QAction::triggered, this, [this](){
+        CreateGroup *w = new CreateGroup;
+        w->show();
     });
 }
 //鼠标点击事件

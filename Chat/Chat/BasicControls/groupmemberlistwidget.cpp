@@ -7,7 +7,9 @@
 #include <QPushButton>
 #include <QPainter>
 #include <QDebug>
-GroupMemberListWidget::GroupMemberListWidget(QWidget *parent) : QWidget(parent)
+GroupMemberListWidget::GroupMemberListWidget(QWidget *parent) :
+    QWidget(parent), isShow(true),
+    isSelect(false)
 {
     lineedit = new GroupMemberLineEdit(this);
 
@@ -15,7 +17,6 @@ GroupMemberListWidget::GroupMemberListWidget(QWidget *parent) : QWidget(parent)
     listwidget->setStyleSheet("background-color:rgba(255,255,255,200);");
 
     connect(listwidget, &ListWidget::doubleClicked, this, &GroupMemberListWidget::selectOneFriend);
-
 }
 
 void GroupMemberListWidget::paintEvent(QPaintEvent *event)
@@ -27,12 +28,20 @@ void GroupMemberListWidget::paintEvent(QPaintEvent *event)
 
 void GroupMemberListWidget::resizeEvent(QResizeEvent *event)
 {
-    lineedit->move(0, 0);
-    lineedit->resize(width(), 30);
+    if (isShow)
+    {
+        lineedit->move(0, 0);
+        lineedit->resize(width(), 30);
 
-    listwidget->move(0, 30);
+        listwidget->move(0, 30);
 
-    listwidget->resize(width(), height());
+        listwidget->resize(width(), height() - 30);
+    }
+    else
+    {
+        lineedit->hide();
+        listwidget->resize(width(), height());
+    }
 }
 
 void GroupMemberListWidget::setList(const QVector<QStringList> &vec)
@@ -41,9 +50,10 @@ void GroupMemberListWidget::setList(const QVector<QStringList> &vec)
     for(int i = 0; i < vec.size(); ++i)
     {
         QStringList str = vec.at(i);
-        GroupItemWidget *item_widget = new GroupItemWidget;
+        ListViewItemWidget *item_widget = new ListViewItemWidget;
         item_widget->setImage(str.at(2));
-        item_widget->setGroupInfo(str.at(0), str.at(1));
+        item_widget->setUserinfo(str.at(0), str.at(1), "");
+        item_widget->hideStatus();
         item_widget->setStyleSheet("background-color:rgba(255,255,255,0);");
 
         QListWidgetItem *item = new QListWidgetItem;
@@ -55,13 +65,41 @@ void GroupMemberListWidget::setList(const QVector<QStringList> &vec)
 
 }
 
+void GroupMemberListWidget::addOne(const QString &userid, const QString &username, const QString &imagepath)
+{
+    GroupItemWidget *item_widget = new GroupItemWidget;
+    item_widget->setImage(imagepath);
+    item_widget->setGroupInfo(userid, username);
+    item_widget->setStyleSheet("background-color:rgba(255,255,255,0);");
+
+    QListWidgetItem *item = new QListWidgetItem;
+
+    listwidget->insertItem(listwidget->count(), item);
+
+    listwidget->setItemWidget(item, item_widget);
+}
+
 void GroupMemberListWidget::selectOneFriend(const QModelIndex &index)
 {
 
-    GroupItemWidget *w = static_cast<GroupItemWidget *>(listwidget->itemWidget(listwidget->item(index.row())));
+    QListWidgetItem *current_item = listwidget->item(index.row());
+    GroupItemWidget *w = static_cast<GroupItemWidget *>(listwidget->itemWidget(current_item));
 
-    if(w != NULL)
+    if(w != NULL && isSelect)
     {
-        emit selectedOneFriend(w->getGroupId(), w->getGroupName());
+        emit selectedOneFriend(w->getGroupId(), w->getGroupName(), w->getImagePath());
+
+        listwidget->removeItemWidget(current_item);
+        delete current_item;
     }
+}
+
+void GroupMemberListWidget::showSearchWidget(bool showflag)
+{
+    isShow = showflag;
+}
+
+void GroupMemberListWidget::setSelectWidget(bool selectflag)
+{
+    isSelect = selectflag;
 }

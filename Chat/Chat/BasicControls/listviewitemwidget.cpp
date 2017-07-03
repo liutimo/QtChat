@@ -186,3 +186,8 @@ void ListViewItemWidget::updateGroupMenu()
         connect(action, &QAction::triggered, this, &ListViewItemWidget::moveFriendTo);
     }
 }
+
+void ListViewItemWidget::hideStatus()
+{
+    m_status->hide();
+}

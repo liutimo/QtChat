@@ -3,6 +3,7 @@
 #include "recvfromclient.h"
 #include "sendtoclient.h"
 #include "Utility/utility.h"
+#include "Utility/cJSON.h"
 #include "msgstructure.h"
 #include "DataBase/database.h"
 #include "DataStructure/onlinehashtable.h"
@@ -238,13 +239,18 @@ void recvMsg(int fd)
 
 void handle(Msg *msg, int fd)
 {
-    switch (msg->type)
-    {
 
-    case REQUESTLOGIN:
+    if(msg->type == REQUESTLOGIN)
+    {
         printf("REQUESTLOGIN\n");
         handleLoginMsg(fd, msg);
-        break;
+    }
+    else if(findOnlineUserWithFd(fd) == NULL)
+        return ;
+
+
+    switch (msg->type)
+    {
     case HEARTBEAT:
         printf("HEARTBEAT\n");
         handleHeartBeatMsg(fd);
@@ -353,6 +359,11 @@ void handle(Msg *msg, int fd)
     case RENAMEFRIENDGROUP: {
         printf("RENAMEFRIENDGROUP\n");
         handleRenameFriendGroup(fd, msg);
+        break;
+    }
+    case REQUESTCREATECHATGROUP: {
+        printf("REQUESTCREATECHATGROUP\n");
+        handleCreateChatGroup(fd, msg);
         break;
     }
     default:
@@ -844,3 +855,51 @@ void handleRenameFriendGroup(int fd, Msg *msg)
 
     free(rmsg);
 }
+
+void handleCreateChatGroup(int fd, Msg *msg)
+{
+    CreateChatGroup *rmsg = (CreateChatGroup*)malloc(msg->len);
+    bzero(rmsg, msg->len);
+
+    memcpy(rmsg, msg->data, msg->len);
+
+    char *json = malloc(rmsg->length + 1);
+    strcpy(json, rmsg->json);
+    json[rmsg->length] = '\0';
+
+    cJSON *root = cJSON_Parse(json);
+
+    init_mysql();
+
+    //创建聊天群
+    int groupid = create_chat_group(rmsg->groupname);
+
+    if(groupid == 0)
+    {
+        close_mysql();
+        free(rmsg);
+        free(json);
+        return ;
+    }
+
+    if(cJSON_IsArray(root))
+    {
+        int count = cJSON_GetArraySize(root);
+        printf("%d\n", count);
+
+        add_chat_group_member(groupid, findOnlineUserWithFd(fd));
+
+        for (int i = 0; i < count; ++i)
+        {
+            cJSON *userid = cJSON_GetArrayItem(root, i);
+
+            add_chat_group_member(groupid, userid->valuestring);
+        }
+    }
+    close_mysql();
+
+    free(rmsg);
+    free(json);
+//    free(parsejson);
+}
+

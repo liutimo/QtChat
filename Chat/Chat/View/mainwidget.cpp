@@ -460,15 +460,23 @@ void MainWidget::parseUserInfo(const QByteArray &bytearray)
             QFile f(url.fileName());
 
             if(f.open(QIODevice::ReadOnly))
+            {
                 headIcon->setPixmap(QPixmap(url.fileName()));
+                headIcon->update();
+                QSettings *setting = RWSetting::getInstance()->getSetting();
+                setting->setValue("imagepath" + AllVariable::getLoginUserId(), url.fileName());
+            }
             else
             {
                 qDebug() << "download image";
                 HttpConnect *http = new HttpConnect();
                 http->loadFileFormUrl(url_str);
                 connect(http, &HttpConnect::loadCompleted, this, [this, http](){
-                    headIcon->setPixmap(QPixmap(http->getFilePath()));}
-                );
+                    headIcon->setPixmap(QPixmap(http->getFilePath()));
+                    headIcon->update();
+                    QSettings *setting = RWSetting::getInstance()->getSetting();
+                    setting->setValue("imagepath" + AllVariable::getLoginUserId(), http->getFilePath());
+                });
             }
         }
     }
@@ -559,7 +567,7 @@ void MainWidget::parseGroup(const QByteArray&json)
 
 void MainWidget::receivedGroupInfo(const QByteArray&json)
 {
-    isSend = true;
+//    isSend = true;
     parseGroup(json);
 
     QVector<QStringList> lists = DataBase::getInstance()->getGroupInfo();

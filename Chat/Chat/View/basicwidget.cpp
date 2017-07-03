@@ -46,6 +46,7 @@ BasicWidget::~BasicWidget()
 
 void BasicWidget::mouseMoveEvent(QMouseEvent *e)
 {
+    QWidget::mouseMoveEvent(e);
     setOrientation(e);
 
     if (pressed) {
@@ -60,6 +61,8 @@ void BasicWidget::mouseMoveEvent(QMouseEvent *e)
 
 void BasicWidget::mousePressEvent(QMouseEvent *e)
 {
+    QWidget::mousePressEvent(e);
+
     point = e->pos();
     rect = this->geometry();
 
@@ -72,6 +75,8 @@ void BasicWidget::mousePressEvent(QMouseEvent *e)
 
 void BasicWidget::mouseReleaseEvent(QMouseEvent *e)
 {
+    QWidget::mouseReleaseEvent(e);
+
     if (e->button() == Qt::LeftButton) {
         pressed = pressed2 = false;
         rect = this->geometry();

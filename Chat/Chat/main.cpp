@@ -23,11 +23,11 @@ int main(int argc, char *argv[])
     QFile f(":/style.qss");
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
-//      LoginWidget w;
+    LoginWidget w;
 //    ValidateWidget w;
 //   FindWidget w;
 //    AddAckWidget w;
-    CreateGroup w;
+//    CreateGroup w;
     w.show();
     return a.exec();
 }

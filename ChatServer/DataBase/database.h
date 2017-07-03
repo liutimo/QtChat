@@ -100,4 +100,9 @@ void delete_friend_group(const char*userid, const char*groupname);
 void update_friend_group(const char *userid, const char *oldid, const char *newid);
 
 void update_friend_groupname(/*const char *userid,*/ const char *groupid, const char *groupname);
+
+//返回groupid
+int create_chat_group(const char *groupname);
+
+void add_chat_group_member(const int groupid, const char *userid);
 #endif // !DATABASE_H;

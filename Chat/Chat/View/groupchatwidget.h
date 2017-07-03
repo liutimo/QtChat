@@ -32,10 +32,7 @@ public slots:
     void showMessage(const QString &senderid, const QString &msg, const QString &color, const QString &size, const QString &family);
 
 private:
-
-
     void init();
-
 
     HeadIcon *headIcon;
     QLabel *lb_groupname;

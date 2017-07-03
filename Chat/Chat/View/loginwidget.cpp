@@ -58,7 +58,21 @@ void LoginWidget::init()
     cb_username->setFixedSize(200, 30);
     cb_username->setLineEdit(line);
     cb_username->move((w - cb_username->width()) / 2, 200);
-
+    connect(cb_username, &QComboBox::currentTextChanged, this, [this](const QString &text){
+        QSettings *setting = RWSetting::getInstance()->getSetting();
+        QString imagepath = setting->value("imagepath" + text).toString();
+        qDebug() << imagepath;
+        if(imagepath.isEmpty())
+        {
+            hi_headicon->setPixmap(QPixmap(":/timg (1).jpg"));
+            hi_headicon->update();
+        }
+        else
+        {
+            hi_headicon->setPixmap(QPixmap(imagepath));
+            hi_headicon->update();
+        }
+    });
 
     le_password = new QLineEdit(this);
     le_password->setFixedSize(200, 30);
@@ -68,13 +82,16 @@ void LoginWidget::init()
 
 
     cb_rememberpw = new QCheckBox("记住密码", this);
-    cb_rememberpw->setFixedSize(70, 20);
+    cb_rememberpw->setFixedSize(80, 20);
     cb_rememberpw->move(le_password->x(), 280);
 
-    cb_autologin = new QCheckBox("自动登录", this);
-    cb_autologin->setFixedSize(70, 20);
-    cb_autologin->move(le_password->x() + 200 - cb_autologin->width(), 280);
+//    cb_autologin = new QCheckBox("自动登录", this);
+//    cb_autologin->setFixedSize(70, 20);
+//    cb_autologin->move(le_password->x() + 200 - cb_autologin->width(), 280);
 
+    registerchat = new QLabel("<a href=\"http://localhost:8080/Chat/register.jsp\">注册帐号</a>", this);
+    registerchat->setOpenExternalLinks(true);
+    registerchat->move(200, 280);
     btn_login = new QPushButton("登录", this);
     btn_login->setFixedSize(200, 30);
     btn_login->move((w - btn_login->width()) / 2, 310);
@@ -89,7 +106,7 @@ void LoginWidget::init()
 
 
     connect(cb_rememberpw, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
-    connect(cb_autologin, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
+//    connect(cb_autologin, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
     connect(btn_login, &QPushButton::clicked, this, &LoginWidget::btn_login_clicked);
     connect(loginStatusBar, &LoginStatusBar::hide_status, this, &LoginWidget::hide_status);
 
@@ -118,16 +135,16 @@ void LoginWidget::addSetting(int status)
         RWSetting::getInstance()->getSetting()->setValue("记住密码", cb_rememberpw->isChecked());
     }
 
-    if(check == cb_autologin)
-    {
-        RWSetting::getInstance()->getSetting()->setValue("自动登录", cb_rememberpw->isChecked());
-    }
+//    if(check == cb_autologin)
+//    {
+//        RWSetting::getInstance()->getSetting()->setValue("自动登录", cb_rememberpw->isChecked());
+//    }
 }
 
 void LoginWidget::loadSetting()
 {
     cb_rememberpw->setChecked(RWSetting::getInstance()->getSetting()->value("记住密码").toBool());
-    cb_autologin->setChecked(RWSetting::getInstance()->getSetting()->value("自动登录").toBool());
+//    cb_autologin->setChecked(RWSetting::getInstance()->getSetting()->value("自动登录").toBool());
 
     if(cb_rememberpw->isChecked())
     {

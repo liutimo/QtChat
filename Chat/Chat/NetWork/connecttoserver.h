@@ -13,7 +13,6 @@ public:
     static ConnectToServer* getInstance();
     void closeServer();
 
-
     void send(MsgType msgtype, char *data, ssize_t size);
     void sendLoginMsg(LoginMsg *loginmsg);
     void sendHeartBeatMsg(HeartBeatMsg *hearteabtmsg);
@@ -35,6 +34,8 @@ public:
     void sendAddFriendResult(const QString &userid, const QString &groupname, const int status);
     void sendDeleteGroupMsg(const QString &groupname);
     void sendRenameFriendGroupMsg(const QString &oldname, const QString &newname);
+    void sendCreateChatGroupMsg(const QString &groupname, const QString &json);
+
 protected:
     void recv();
 

@@ -84,6 +84,7 @@ void start(int fd)
 
     for (; ;)
     { 
+
         int nfds = epoll_wait(epoll_fd, events, 2048, -1);
         printf("epoll当前可读的fd数目%d\n", nfds);
         for (int i = 0; i < nfds; ++i)
