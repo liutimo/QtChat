@@ -10,7 +10,8 @@
 #include <QDebug>
 
 ListWidget::ListWidget(QWidget *parent) :
-    QListWidget(parent), showBlankMenu(false), renameGroup(false)
+    QListWidget(parent), showFriendMenu(false),
+    renameGroup(false), showGroupMenu(false)
 {
     setFocusPolicy(Qt::NoFocus);                                                     // 去除item选中时的虚线边框
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);                            //水平滚动条关闭
@@ -19,6 +20,10 @@ ListWidget::ListWidget(QWidget *parent) :
 //初始化菜单
 void ListWidget::initMenu()
 {
+
+    m_groupMenu = new QMenu();
+    m_groupMenu->addAction(new QAction("创建聊天群"));
+    m_groupMenu->addAction(new QAction("搜索聊天群"));
 
     blankMenu = new QMenu();
     groupMenu = new QMenu();
@@ -163,18 +168,21 @@ void ListWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QListWidget::contextMenuEvent(event);
 
-    if(currentItem == NULL && showBlankMenu)
+    if(currentItem == NULL && showFriendMenu)
     {
         blankMenu->exec(QCursor::pos());
         return;
     }
-    else if(currentItem != NULL && vec.contains(currentItem))
+    else if(showFriendMenu == true && currentItem != NULL && vec.contains(currentItem))
     {
         groupMenu->exec(QCursor::pos());
         return;
     }
-
-
+    else if(currentItem == NULL && showGroupMenu == true)
+    {
+        m_groupMenu->exec(QCursor::pos());
+        return;
+    }
 }
 
 void ListWidget::setList(QList<QVector<QString>> friends, QStringList groups)
@@ -342,7 +350,12 @@ void ListWidget::updateFriendStatus(const QString &userid, int status)
     friendmap.value(userid)->setStatus(status);
 }
 
-void ListWidget::setShowBlankMenu(bool flag)
+void ListWidget::setShowFriendMenu(bool flag)
 {
-    showBlankMenu = flag;
+    showFriendMenu = flag;
+}
+
+void ListWidget::setShowGroupMenu(bool flag)
+{
+    showGroupMenu = flag;
 }

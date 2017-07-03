@@ -61,6 +61,9 @@ public:
 
     void deleteFriendGroup(const QString &groupname);
 
+    //创建群的时候使用
+    QVector<QStringList> get_all_friends();
+
 signals:
     void setGroupMemberFinished();
 public slots:

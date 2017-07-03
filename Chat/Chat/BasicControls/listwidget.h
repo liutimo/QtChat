@@ -25,7 +25,9 @@ public:
 
     void setGroupList(QVector<QStringList> lists);
     void updateFriendStatus(const QString &userid, int status);
-    void setShowBlankMenu(bool flag = false);
+
+    void setShowFriendMenu(bool flag = false);
+    void setShowGroupMenu(bool flag = false);
 signals:
     void updateFriendGroupMenu();
 private slots:
@@ -36,6 +38,7 @@ private:
     QMenu *blankMenu;                                       //点击空白上的菜单
     QMenu *groupMenu;                                       //点击组上的菜单
     QMenu *movetoMenu;
+    QMenu *m_groupMenu;                                     //聊天群组菜单
 
 
     QVector<QListWidgetItem*> vec;
@@ -53,8 +56,9 @@ private:
 
     QPoint item_point;                                      //menu show on this point
 
-    bool showBlankMenu;                                     //是否在空白处显示菜单
+    bool showFriendMenu;                                     //是否在空白处显示好友列表菜单
     bool renameGroup;                                       //是否重命名分组
+    bool showGroupMenu;
 
 signals:
 

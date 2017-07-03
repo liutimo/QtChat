@@ -537,3 +537,25 @@ void DataBase::deleteFriendGroup(const QString &groupname)
 
     sql_query.exec();
 }
+
+QVector<QStringList> DataBase::get_all_friends()
+{
+    QString sql = "select friendid, username, imagepath from friendlist where userid=?;";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.addBindValue(/*AllVariable::getLoginUserId()*/"123456");
+
+    sql_query.exec();
+
+    QVector<QStringList> vec;
+
+    while(sql_query.next())
+    {
+        QStringList list;
+        list << sql_query.value(0).toString() << sql_query.value(1).toString() << sql_query.value(2).toString();
+        vec.push_back(list);
+    }
+
+    return vec;
+}

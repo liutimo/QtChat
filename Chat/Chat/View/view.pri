@@ -8,7 +8,8 @@ HEADERS += \
     $$PWD/groupchatwidget.h \
     $$PWD/findwidget.h \
     $$PWD/validatewidget.h \
-    $$PWD/addackwidget.h
+    $$PWD/addackwidget.h \
+    $$PWD/creategroup.h
 
 SOURCES += \
     $$PWD/basicwidget.cpp \
@@ -20,4 +21,5 @@ SOURCES += \
     $$PWD/groupchatwidget.cpp \
     $$PWD/findwidget.cpp \
     $$PWD/validatewidget.cpp \
-    $$PWD/addackwidget.cpp
+    $$PWD/addackwidget.cpp \
+    $$PWD/creategroup.cpp

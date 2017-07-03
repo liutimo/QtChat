@@ -12,7 +12,7 @@ GroupMemberLineEdit::GroupMemberLineEdit(QWidget *parent ) : QLineEdit(parent)
 {
     init();
 
-    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 175);color:rgb(170,170,170);text-align:center;font:15px}");
+    setStyleSheet("QLineEdit{border:0px; background-color: rgba(255, 255, 255, 175);color:rgb(170,170,170);text-align:center;font:15px}");
 
     connect(this, &GroupMemberLineEdit::textChanged, this, &GroupMemberLineEdit::textChange);
 }

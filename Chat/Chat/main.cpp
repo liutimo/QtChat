@@ -7,6 +7,7 @@
 #include "View/chatwidget.h"
 #include "View/mainwidget.h"
 #include "View/findwidget.h"
+#include "View/creategroup.h"
 #include "View/validatewidget.h"
 #include "View/messagelistwidget.h"
 #include <QApplication>
@@ -22,10 +23,11 @@ int main(int argc, char *argv[])
     QFile f(":/style.qss");
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
-      LoginWidget w;
+//      LoginWidget w;
 //    ValidateWidget w;
 //   FindWidget w;
 //    AddAckWidget w;
+    CreateGroup w;
     w.show();
     return a.exec();
 }

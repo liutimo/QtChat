@@ -15,10 +15,13 @@ public:
     explicit GroupMemberListWidget(QWidget *parent = nullptr);
     void setList(const QVector<QStringList> &vec);
 signals:
-
+    void selectedOneFriend(const QString &userid, const QString &username);
 protected:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
+
+private slots:
+    void selectOneFriend(const QModelIndex &index);
 
 public slots:
 

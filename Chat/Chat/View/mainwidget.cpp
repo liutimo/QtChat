@@ -124,7 +124,8 @@ void MainWidget::init()
     ListWidget *recentList = new ListWidget;
 
 
-    friendList->setShowBlankMenu(true);
+    friendList->setShowFriendMenu(true);
+    groupList->setShowGroupMenu(true);
 
     stackwidget->addWidget(friendList);
     stackwidget->addWidget(groupList);
