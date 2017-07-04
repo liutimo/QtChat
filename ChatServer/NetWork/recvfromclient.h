@@ -49,6 +49,6 @@ void handleRenameFriendGroup(int fd, Msg *msg);
 
 void handleCreateChatGroup(int fd, Msg *msg);
 
-
+void handleGroupOfflineMessageMsg(int fd, Msg *msg);
 #endif // !RECVFROMCLIENT_H
 

@@ -105,4 +105,6 @@ void update_friend_groupname(/*const char *userid,*/ const char *groupid, const 
 int create_chat_group(const char *groupname);
 
 void add_chat_group_member(const int groupid, const char *userid);
+
+char* get_group_offline_message(const char *receivedid);
 #endif // !DATABASE_H;

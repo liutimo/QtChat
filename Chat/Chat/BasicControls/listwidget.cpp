@@ -355,7 +355,9 @@ void ListWidget::listWidgetMenuTriggered()
 
 void ListWidget::updateFriendStatus(const QString &userid, int status)
 {
-    friendmap.value(userid)->setStatus(status);
+    ListViewItemWidget *item = friendmap.value(userid);
+    if(item)
+        item->setStatus(status);
 }
 
 void ListWidget::setShowFriendMenu(bool flag)

@@ -419,3 +419,39 @@ QToolButton#btn_add_friend{
 QToolButton#btn_add_friend:hover{
     border:0px;border-image: url(':/Resource/mainwidget/menu_btn2_highlight@2x.png');
 }
+
+
+/******************登陆界面选择框***********************/
+QCheckBox {
+    spacing: 5px;
+    font-size:14px;
+}
+
+QCheckBox::indicator {
+    width: 17px;
+    height: 17px;
+}
+
+QCheckBox::indicator:unchecked {
+image: url(:/Resource/loginwidget/checkbox_normal.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+image: url(:/Resource/loginwidget/checkbox_hightlight.png);
+}
+
+QCheckBox::indicator:unchecked:pressed {
+image: url(:/Resource/loginwidget/checkbox_pushed.png);
+}
+
+QCheckBox::indicator:checked {
+image: url(:/Resource/loginwidget/checkbox_tick_normal1.png);
+}
+
+QCheckBox::indicator:checked:hover {
+image: url(:/Resource/loginwidget/checkbox_tick_highlight1.png);
+}
+
+QCheckBox::indicator:checked:pressed {
+image: url(:/Resource/loginwidget/checkbox_tick_pushed1.png);
+}

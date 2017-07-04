@@ -45,6 +45,8 @@ void sendSearchResult(const int fd, ResponseSearchFriend *msg);
 
 void sendFrowardAddFriendAck(const int fd, ForwardAddFriendAck *msg);
 
+
+void sendGroupOfflineMessage(const int fd, ResponseGroupOfflineMessage *msg);
 //发生异常时需要发送的消息
 
 

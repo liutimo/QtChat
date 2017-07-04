@@ -55,6 +55,7 @@ public:
 
 protected:
     void timerEvent(QTimerEvent *event);
+    void paintEvent(QPaintEvent *e);
 
 private:
     void init();
@@ -79,12 +80,13 @@ private:
 
 
     QPushButton *btn_login;
-    QComboBox *cb_username;
+    QLineEdit *le_username;
     QLineEdit *le_password;
     HeadIcon *hi_headicon;
     QCheckBox *cb_rememberpw;
 //    QCheckBox *cb_autologin;
-    QLabel *registerchat;
+    QPushButton *register_btn;
+    QPushButton *findpassword_btn;
 
     ConnectToServer *server;
 
@@ -105,6 +107,7 @@ private:
     MessageListWidget *l;
 
     bool exit = false;
+    bool islogin = false;
 };
 
 #endif // LOGINWIDGET_H

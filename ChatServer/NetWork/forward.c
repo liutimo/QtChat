@@ -51,8 +51,8 @@ void forwardgroupmessage(int fd, RequestForwordGroupMessage *rmsg)
         {
             printf("群成员 %s 不在线\n", memberid[i]);
             //不在线
-//            set_group_offlinechatlog(rmsg->userid, rmsg->groupid, memberid[i], rmsg->message,
-//                                     rmsg->font, rmsg->size, rmsg->color);
+            set_group_offlinechatlog(rmsg->userid, rmsg->groupid, memberid[i], rmsg->message,
+                                     rmsg->font, rmsg->size, rmsg->color);
         }
 
 

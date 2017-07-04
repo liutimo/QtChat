@@ -21,6 +21,7 @@
 #include <QToolButton>
 #include <QStackedWidget>
 #include <QMenu>
+#include <QTimer>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -39,8 +40,18 @@ MainWidget::MainWidget(QWidget *parent) : BasicWidget(parent),
     setMinimumWidth(300);
     setFixedSize(300, 600);
 
-    setWidgetTitle("这是一个主窗口");
+    setWidgetTitle("Chat");
     init_main_menu();
+
+    timer = new QTimer(this);
+    timer->start(1000);
+
+    connect(timer, &QTimer::timeout, this, [this](){
+        if(receiced)
+            timer->stop();
+        ConnectToServer::getInstance()->sendRequestOfflineMessage();
+        ConnectToServer::getInstance()->sendRequestGroupOfflineMessage();
+    });
 }
 
 void MainWidget::init()
@@ -138,9 +149,9 @@ void MainWidget::init()
     btn_main_menu->setObjectName("btn_main_menu");
 
 
-    btn_add_friend = new QToolButton(this);
-    btn_add_friend->move(50, height() - 30);
-    btn_add_friend->resize(70, 28);
+//    btn_add_friend = new QToolButton(this);
+//    btn_add_friend->move(50, height() - 30);
+//    btn_add_friend->resize(70, 28);
 
 
     connect(btn_skin, &QPushButton::clicked, this, &MainWidget::showSkinManageWidget);
@@ -151,11 +162,12 @@ void MainWidget::init()
 
     RequestUserInfoMsg r;
     ConnectToServer::getInstance()->sendRequestUserInfoMsg(&r);
-    ConnectToServer::getInstance()->sendRequestOfflineMessage();
+//    ConnectToServer::getInstance()->sendRequestOfflineMessage();
 
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseUserInfo, this, &MainWidget::receiveUserInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::responseFriendList, this, &MainWidget::receiveFriendList);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedOfflineMessage, this, &MainWidget::receiveOfflineMessage);
+    connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupOfflineMessage, this, &MainWidget::receiveGroupOfflineMessage);
     connect(ConnectToServer::getInstance(), &ConnectToServer::friendStatusChange, this, &MainWidget::friendStatusChange);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupInfo, this, &MainWidget::receivedGroupInfo);
     connect(ConnectToServer::getInstance(), &ConnectToServer::receivedGroupMemberInfo, this, &MainWidget::receivedGroupMemberInfo);
@@ -486,6 +498,7 @@ void MainWidget::parseUserInfo(const QByteArray &bytearray)
 
 void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
 {
+    receiced = true;
     if(bytearray.size() < 3)
         return ;
 
@@ -534,6 +547,57 @@ void MainWidget::receiveOfflineMessage(const QByteArray &bytearray)
 
 }
 
+void MainWidget::receiveGroupOfflineMessage(const QByteArray &bytearray)
+{
+    if(receicedgroupmsg)
+        return;
+    receicedgroupmsg = true;
+    receiced = true;
+    if(bytearray.size() < 3)
+        return ;
+
+    QMap<QString,int>& map = AllVariable::getGroupOfflineMessage();
+
+    QJsonParseError error;
+    QJsonDocument document = QJsonDocument::fromJson(bytearray, &error);
+
+    if(!document.isNull())
+    {
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+
+            //a is friends group by grouptype
+            for(auto name : object.keys())
+            {
+                QJsonArray array = object.value(name).toArray();
+                int size = array.size();
+
+                if(map.value(name) == NULL)
+                {
+                   map.insert(name, 1);
+                }
+                for(int i = 0; i < size; ++i)
+                {
+                    QStringList msg;
+                    QString senderid = array.at(i).toObject().value("senderid").toString();
+                    QString content = array.at(i).toObject().value("content").toString();
+                    QString fontfamily = array.at(i).toObject().value("fontfamliy").toString();
+                    QString fontsize = array.at(i).toObject().value("fontsize").toString();
+                    QString fontcolor = array.at(i).toObject().value("fontcolor").toString();
+
+                    DataBase::getInstance()->setGroupOfflineMessage(name, senderid, content, fontfamily, fontsize, fontcolor);
+                    emit updateMessageBox();
+
+                    map.insert(name, map.value(name) + 1);
+                }
+            }
+        }
+    }
+    else
+        qDebug() << error.errorString();
+}
+
 void MainWidget::parseGroup(const QByteArray&json)
 {
     QVector<QStringList> lists;
@@ -567,7 +631,7 @@ void MainWidget::parseGroup(const QByteArray&json)
 
 void MainWidget::receivedGroupInfo(const QByteArray&json)
 {
-//    isSend = true;
+    isSend = true;
     parseGroup(json);
 
     QVector<QStringList> lists = DataBase::getInstance()->getGroupInfo();

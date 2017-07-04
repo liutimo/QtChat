@@ -36,6 +36,8 @@ typedef enum _MsgType {
     DELETEGROUP,                    //删除分组
     RENAMEFRIENDGROUP,              //重命名
     REQUESTCREATECHATGROUP,         //创建聊天群
+    REQUESTGROUPOFFLINEMESSAGEMSG,  //请求群离线消息
+    RESPONSEGROUPOFFLINEMESSAGEMSG, //回应离线消息
     Test
 }MsgType;
 
@@ -258,5 +260,14 @@ typedef struct _CreateChatGroup {
     int length;
     char json[0];
 }CreateChatGroup;
+
+
+typedef struct _RequestGroupOfflineMessage {
+}RequestGroupOfflineMessage;
+
+typedef struct _ResponseGroupOfflineMessage {
+    int length;
+    char json[0];
+}ResponseGroupOfflineMessage;
 
 #endif // MSGSTRUCTURE_H

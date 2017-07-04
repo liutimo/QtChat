@@ -34,7 +34,7 @@ void sig_handle(int signo)
 int main1()
 {
     init_mysql();
-    get_friends("123456");
+    printf("%s\n", get_group_offline_message("123457"));
     close_mysql();
 }
 

@@ -345,5 +345,21 @@
         <file>Resource/btn_normal.png</file>
         <file>Resource/btnhover.png</file>
         <file>Resource/btndown.png</file>
+        <file>Resource/loginwidget/zhuce_press.png</file>
+        <file>Resource/loginwidget/zhuce_hover.png</file>
+        <file>Resource/loginwidget/zhuce.png</file>
+        <file>Resource/138-14091F95623-50.jpg</file>
+        <file>Resource/loginwidget/button_login_normal.png</file>
+        <file>Resource/loginwidget/button_login_hover.png</file>
+        <file>Resource/loginwidget/button_login_down.png</file>
+        <file>Resource/loginwidget/mima_press.png</file>
+        <file>Resource/loginwidget/mima_hover.png</file>
+        <file>Resource/loginwidget/mima.png</file>
+        <file>Resource/loginwidget/checkbox_tick_pushed1.png</file>
+        <file>Resource/loginwidget/checkbox_tick_normal1.png</file>
+        <file>Resource/loginwidget/checkbox_tick_highlight1.png</file>
+        <file>Resource/loginwidget/checkbox_pushed.png</file>
+        <file>Resource/loginwidget/checkbox_normal.png</file>
+        <file>Resource/loginwidget/checkbox_hightlight.png</file>
     </qresource>
 </RCC>

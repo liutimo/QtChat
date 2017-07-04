@@ -16,6 +16,7 @@
 #include <QMenu>
 #include <QDebug>
 #include <QTimer>
+#include <QPainter>
 #include <QSettings>
 #include <QComboBox>
 #include <QLineEdit>
@@ -27,6 +28,7 @@
 #include <QApplication>
 #include <QSystemTrayIcon>
 #include <QCryptographicHash>
+#include <QDesktopServices>
 
 LoginWidget::LoginWidget(QWidget *parent) : BasicWidget(parent),
     mainwidget(NULL)
@@ -52,13 +54,14 @@ void LoginWidget::init()
     hi_headicon->setObjectName("hi_headicon");
 
 
-    QLineEdit *line = new QLineEdit;
-    line->setPlaceholderText("用户账号");
-    cb_username = new QComboBox(this);
-    cb_username->setFixedSize(200, 30);
-    cb_username->setLineEdit(line);
-    cb_username->move((w - cb_username->width()) / 2, 200);
-    connect(cb_username, &QComboBox::currentTextChanged, this, [this](const QString &text){
+
+    le_username = new QLineEdit(this);
+    le_username->setFixedSize(200, 30);
+    le_username->setPlaceholderText("用户账号");
+    le_username->move((w - le_username->width()) / 2, 200);
+    le_username->setStyleSheet("QLineEdit{border:0px; border-radius:3px; background:rgba(255, 255, 255, 200);}");
+
+    connect(le_username, &QLineEdit::textChanged, this, [this](const QString &text){
         QSettings *setting = RWSetting::getInstance()->getSetting();
         QString imagepath = setting->value("imagepath" + text).toString();
         qDebug() << imagepath;
@@ -79,25 +82,47 @@ void LoginWidget::init()
     le_password->setPlaceholderText("用户密码");
     le_password->setEchoMode(QLineEdit::Password);
     le_password->move((w - le_password->width()) / 2, 240);
+    le_password->setStyleSheet("QLineEdit{border:0px; border-radius:3px; background:rgba(255, 255, 255, 200);}");
 
 
     cb_rememberpw = new QCheckBox("记住密码", this);
     cb_rememberpw->setFixedSize(80, 20);
     cb_rememberpw->move(le_password->x(), 280);
+    cb_rememberpw->setStyleSheet("QCheckBox{color:#0070d8;}");
 
-//    cb_autologin = new QCheckBox("自动登录", this);
-//    cb_autologin->setFixedSize(70, 20);
-//    cb_autologin->move(le_password->x() + 200 - cb_autologin->width(), 280);
 
-    registerchat = new QLabel("<a href=\"http://localhost:8080/Chat/register.jsp\">注册帐号</a>", this);
-    registerchat->setOpenExternalLinks(true);
-    registerchat->move(200, 280);
+
+
     btn_login = new QPushButton("登录", this);
     btn_login->setFixedSize(200, 30);
     btn_login->move((w - btn_login->width()) / 2, 310);
+    btn_login->setStyleSheet("QPushButton{border:0px; border-image:url(':/Resource/loginwidget/button_login_normal.png');}"
+                                "QPushButton:hover{border:0px; border-image:url(':/Resource/loginwidget/button_login_hover.png');}"
+                                "QPushButton:pressed{border:0px; border-image:url(':/Resource/loginwidget/button_login_down.png');}");
+
+    register_btn = new QPushButton(this);
+    register_btn->move(le_password->x(), 350);
+    register_btn->setFixedSize(51, 16);
+    register_btn->setStyleSheet("QPushButton{border:0px;border-image:url(':/Resource/loginwidget/zhuce.png');}"
+                                "QPushButton:hover{border:0px;border-image:url(':/Resource/loginwidget/zhuce_hover.png');}"
+                                "QPushButton:pressed{border:0px;border-image:url(':/Resource/loginwidget/zhuce_press.png');}");
+
+    connect(register_btn, &QPushButton::clicked, this, [this](){
+       QDesktopServices::openUrl(QUrl("http://localhost:8080/Chat/register.jsp"));
+    });
+
+    findpassword_btn = new QPushButton(this);
+    findpassword_btn->move(210, 350);
+    findpassword_btn->setFixedSize(51, 16);
+    findpassword_btn->setStyleSheet("QPushButton{border:0px;border-image:url(':/Resource/loginwidget/mima.png');}"
+                                "QPushButton:hover{border:0px;border-image:url(':/Resource/loginwidget/mima_hover.png');}"
+                                "QPushButton:pressed{border:0px;border-image:url(':/Resource/loginwidget/mima_press.png');}");
+
+    connect(findpassword_btn, &QPushButton::clicked, this, [this](){
+       QDesktopServices::openUrl(QUrl("http://www.baidu.com"));
+    });
 
 
-    server = ConnectToServer::getInstance();
 
     loginStatusBar = new LoginStatusBar(this);
     loginStatusBar->move(0, 480);
@@ -109,21 +134,6 @@ void LoginWidget::init()
 //    connect(cb_autologin, &QCheckBox::stateChanged, this, &LoginWidget::addSetting);
     connect(btn_login, &QPushButton::clicked, this, &LoginWidget::btn_login_clicked);
     connect(loginStatusBar, &LoginStatusBar::hide_status, this, &LoginWidget::hide_status);
-
-
-    /*登陆状态*/
-    connect(server, &ConnectToServer::connected, [](){qDebug() << "connected;";});
-    connect(server, &ConnectToServer::loginStatus, this, &LoginWidget::loginStatus);
-    connect(server, &ConnectToServer::responseHeartBeat, this, &LoginWidget::recvHeartBeat);
-
-    /*message hite*/
-    connect(server, &ConnectToServer::receivedMessage, this, &LoginWidget::handleMessage);
-    connect(server, &ConnectToServer::disconnected, this, [this](){
-        QApplication::quit();
-        ;});
-    connect(server, &ConnectToServer::receivedGroupMessage, this, &LoginWidget::handleGroupMessage);
-    connect(server, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
-            this, &LoginWidget::socketError);
 }
 
 void LoginWidget::addSetting(int status)
@@ -151,7 +161,7 @@ void LoginWidget::loadSetting()
         DataBase *d = DataBase::getInstance();
         QPair<QString, QString> p = d->getLocalUserInfo();
 
-        cb_username->setCurrentText(p.first);
+        le_username->setText(p.first);
         le_password->setText(p.second);
     }
     else
@@ -159,20 +169,47 @@ void LoginWidget::loadSetting()
         DataBase *d = DataBase::getInstance();
         QPair<QString, QString> p = d->getLocalUserInfo();
 
-        cb_username->setCurrentText(p.first);
+        le_username->setText(p.first);
         le_password->setText("");
     }
 }
 
 void LoginWidget::btn_login_clicked()
 {
+
+    server = ConnectToServer::getInstance();
+
+    if(server->state() == QAbstractSocket::UnconnectedState)
+    {
+        showStatusBar("网络不可达");
+        server->close();
+        return;
+    }
+    /*登陆状态*/
+    connect(server, &ConnectToServer::connected, [](){qDebug() << "connected;";});
+    connect(server, &ConnectToServer::loginStatus, this, &LoginWidget::loginStatus);
+    connect(server, &ConnectToServer::responseHeartBeat, this, &LoginWidget::recvHeartBeat);
+
+    /*message hite*/
+    connect(server, &ConnectToServer::receivedMessage, this, &LoginWidget::handleMessage);
+    connect(server, &ConnectToServer::disconnected, this, [this](){
+//        QApplication::quit();
+        islogin = false;
+        mainwidget->setSatus(Offline);
+        server->close();
+        ;});
+    connect(server, &ConnectToServer::receivedGroupMessage, this, &LoginWidget::handleGroupMessage);
+    connect(server, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
+            this, &LoginWidget::socketError);
+
     //更新数据库。
     DataBase *d = DataBase::getInstance();
-    d->setLoaclUserInfo(cb_username->currentText(), le_password->text());
+    d->setLoaclUserInfo(le_username->text(), le_password->text());
 
     LoginMsg *l = new LoginMsg();
-    strcpy(l->userid, cb_username->currentText().toUtf8().data());
+    strcpy(l->userid, le_username->text().toUtf8().data());
     strcpy(l->password, QCryptographicHash::hash(le_password->text().toUtf8(), QCryptographicHash::Sha1).toHex());      //对密码进行哈希加密
+
     server->sendLoginMsg(l);
 
     delete l;
@@ -193,7 +230,7 @@ void LoginWidget::showStatusBar(const QString &text)
 {
     loginStatusBar->show();
     loginStatusBar->setInfo(text);
-    setFixedHeight(this->height() + 20);
+    setFixedHeight(500);
 }
 
 void LoginWidget::loginStatus(LoginStatus ls)
@@ -202,8 +239,8 @@ void LoginWidget::loginStatus(LoginStatus ls)
     {
     case LOGINSUCCESS:
     {
-
-        AllVariable::setLoginUserId(cb_username->currentText());
+        islogin = true;
+        AllVariable::setLoginUserId(le_username->text());
 
         QThread::sleep(1);
         mainwidget = new MainWidget();
@@ -230,7 +267,7 @@ void LoginWidget::loginStatus(LoginStatus ls)
     }
     case LOGINREPEAT:
     {
-        showStatusBar(QString("%1已经登陆,请勿重复登陆!").arg(cb_username->currentText()));
+        showStatusBar(QString("%1已经登陆,请勿重复登陆!").arg(le_username->text()));
         break;
     }
     default:
@@ -241,15 +278,12 @@ void LoginWidget::loginStatus(LoginStatus ls)
 void LoginWidget::recvHeartBeat()
 {
     i = 0;
-    //    qDebug() << "收到心跳包回复";
 }
 
 void LoginWidget::timerEvent(QTimerEvent *event)
 {
-    //    qDebug() << "发送心跳包";
     if(i == 3)
     {
-//        qDebug() << "离线";
         i = 0;
         mainwidget->setSatus(Offline);
 
@@ -269,9 +303,13 @@ void LoginWidget::timerEvent(QTimerEvent *event)
 void LoginWidget::socketError(QAbstractSocket::SocketError socketError)
 {
     switch (socketError) {
+    qDebug() <<socketError;
     case QAbstractSocket::RemoteHostClosedError:
         i = 3;
+        if(exit)
+            QApplication::quit();
         break;
+
     default:
         break;
     }
@@ -306,9 +344,14 @@ void LoginWidget::init_traymenu()
     QAction *action_exit = new QAction("退出");
 
     connect(action_exit, &QAction::triggered, this, [this](){
-        ConnectToServer::getInstance()->sendRequestExitMessage();
-        ConnectToServer::getInstance()->close();
+        if(islogin) {
+            ConnectToServer::getInstance()->sendRequestExitMessage();
+        }
+        else
+            QApplication::exit();
         exit = true;
+        if(!ConnectToServer::getInstance()->isWritable())
+            QApplication::exit();
     });
 
     connect(action_show, &QAction::triggered, this, [this](){
@@ -443,11 +486,19 @@ void LoginWidget::setTrayIcon()
 }
 void LoginWidget::iconIsActived(QSystemTrayIcon::ActivationReason e)
 {
-//    qDebug() << 11;
+
 }
 
 void LoginWidget::showMessageBox()
 {
     l->show();
     l->move((QCursor::pos()));
+}
+
+void LoginWidget::paintEvent(QPaintEvent *e)
+{
+    BasicWidget::paintEvent(e);
+    QPainter p(this);
+
+    p.drawPixmap(0, 0, QPixmap(":/Resource/138-14091F95623-50.jpg").scaled(width(), 480, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 }

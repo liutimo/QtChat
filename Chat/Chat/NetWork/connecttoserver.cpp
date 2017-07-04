@@ -6,8 +6,6 @@
 #include <QThread>
 ConnectToServer::ConnectToServer(QObject *parent) : QTcpSocket(parent)
 {
-    connectToHost(IP, PORT);
-
     connect(this, &ConnectToServer::readyRead, this, &ConnectToServer::recv);
 }
 
@@ -19,9 +17,11 @@ ConnectToServer* ConnectToServer::getInstance()
 {
     mutex->lock();
 
-    if(server == NULL || !server->isValid())
+    if(server == NULL || !server->isValid() || server->state() == QAbstractSocket::UnconnectedState)
+    {
         server = new ConnectToServer();
-
+        server->connectToHost(IP, PORT);
+    }
     mutex->unlock();
 
     return server;
@@ -156,6 +156,7 @@ void ConnectToServer::sendRequestExitMessage()
 {
     RequestExit *msg = new RequestExit;
     send(EXIT, (char*)msg, sizeof(RequestExit));
+
     delete msg;
 }
 
@@ -246,6 +247,16 @@ void ConnectToServer::sendCreateChatGroupMsg(const QString &groupname, const QSt
     strcpy(rmsg->json, json.toUtf8().data());
 
     send(REQUESTCREATECHATGROUP, (char*)rmsg, length + sizeof(CreateChatGroup));
+
+    delete rmsg;
+}
+
+void ConnectToServer::sendRequestGroupOfflineMessage()
+{
+    RequestGroupOfflineMessage *rmsg = new RequestGroupOfflineMessage;
+    bzero(rmsg, sizeof(RequestGroupOfflineMessage));
+
+    send(REQUESTGROUPOFFLINEMESSAGEMSG, (char*)rmsg, sizeof(RequestGroupOfflineMessage));
 
     delete rmsg;
 }
@@ -362,6 +373,22 @@ void ConnectToServer::recv()
         strcpy(message, rmsg->validate);
         message[rmsg->length] = '\0';
         emit receivedFriendAddRequest(rmsg->sendid, message);
+        break;
+    }
+    case RESPONSEGROUPOFFLINEMESSAGEMSG: {
+        qDebug() << "群组离线消息";
+        ResponseGroupOfflineMessage *message = (ResponseGroupOfflineMessage*)new char[msg->len];
+        bzero(message, msg->len);
+        memcpy(message, msg->data, msg->len);
+
+        char *json = new char[message->length + 1];
+        strcpy(json, message->json);
+        json[message->length] = '\0';
+
+        emit receivedGroupOfflineMessage(json);
+
+        delete []json;
+        delete message;
         break;
     }
     default:

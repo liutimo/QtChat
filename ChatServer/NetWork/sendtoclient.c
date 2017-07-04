@@ -82,7 +82,7 @@ void sendMessage(int fd, ReceivedMessageMsg *msg)
 //发送离线消息给用户
 void sendfflineMessage(int fd, ResponseOfflineMessage *msg)
 {
-    printf("发送离线离线消息\n");
+    printf("发送好友离线消息\n");
     sendMsg(fd, RESPONSEOFFLINEMESSAGE, msg, msg->length + sizeof(ResponseOfflineMessage));
 }
 
@@ -120,4 +120,10 @@ void sendFrowardAddFriendAck(const int fd, ForwardAddFriendAck *rmsg)
 {
     printf("转发添加好友请求\n");
     sendMsg(fd, FORWARDADDFRIENDACK, rmsg, rmsg->length + sizeof(ForwardAddFriendAck));
+}
+
+void sendGroupOfflineMessage(const int fd, ResponseGroupOfflineMessage *msg)
+{
+    printf("发送群组离线消息\n");
+    sendMsg(fd, RESPONSEGROUPOFFLINEMESSAGEMSG, msg, msg->length + sizeof(ResponseGroupOfflineMessage));
 }

@@ -12,6 +12,9 @@
 #include <QPushButton>
 BasicWidget::BasicWidget(QWidget *parent) : QWidget(parent)
 {
+
+    setAutoFillBackground(true);
+
     setWindowFlags(Qt::FramelessWindowHint);
     setMouseTracking(true); // 响应鼠标移动
 
@@ -53,8 +56,7 @@ void BasicWidget::mouseMoveEvent(QMouseEvent *e)
         QPoint p = e->globalPos();
         this->move(p.x() - point.x(), p.y() - point.y());
     }
-    else if (pressed2 && orientation != NONE)
-    {
+    else if (pressed2 && orientation != NONE) {
         setSize(e);
     }
 }
@@ -81,6 +83,7 @@ void BasicWidget::mouseReleaseEvent(QMouseEvent *e)
         pressed = pressed2 = false;
         rect = this->geometry();
     }
+    qDebug() << "pressed = false";
     pressed = false;
 }
 
@@ -110,6 +113,12 @@ void BasicWidget::enterEvent(QEvent *event)
 
 void BasicWidget::leaveEvent(QEvent *event)
 {
+}
+
+void BasicWidget::focusOutEvent(QFocusEvent *e)
+{
+    qDebug() << "s";
+    pressed = false;
 }
 
 void BasicWidget::setAdjustmentSize(bool _adjustment)

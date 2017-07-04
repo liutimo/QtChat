@@ -366,6 +366,12 @@ void handle(Msg *msg, int fd)
         handleCreateChatGroup(fd, msg);
         break;
     }
+    case REQUESTGROUPOFFLINEMESSAGEMSG: {
+        printf("REQUESTGROUPOFFLINEMESSAGEMSG\n");
+        handleGroupOfflineMessageMsg(fd, msg);
+        break;
+    }
+
     default:
         break;
     }
@@ -438,9 +444,6 @@ void handleLoginMsg(int fd, Msg *msg)
             }
             ++i;
         }
-
-
-
         free(rfsc);
         free(friends);
     }
@@ -903,3 +906,24 @@ void handleCreateChatGroup(int fd, Msg *msg)
 //    free(parsejson);
 }
 
+void handleGroupOfflineMessageMsg(int fd, Msg *msg)
+{
+    init_mysql();
+    //获取离线消息（如果存在的话）
+    char *json = get_group_offline_message(findOnlineUserWithFd(fd));
+    close_mysql();
+
+
+    ssize_t length = sizeof(ResponseGroupOfflineMessage) + strlen(json);
+    ResponseGroupOfflineMessage *rmsg = (ResponseGroupOfflineMessage*)malloc(sizeof(ResponseGroupOfflineMessage) + strlen(json));
+    bzero(rmsg, length);
+
+    rmsg->length = strlen(json);
+    strcpy(rmsg->json, json);
+
+    sendGroupOfflineMessage(fd, rmsg);
+
+    free(json);
+    free(rmsg);
+
+}

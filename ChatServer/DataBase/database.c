@@ -265,11 +265,15 @@ char *get_offline_message(const char *userid)
 void del_offline_message(const char *userid)
 {
     char sql_del_offline[DATABASE_SQLMAXLENGTH];
-
+    char sql_del_group_offline[DATABASE_SQLMAXLENGTH];
     sprintf(sql_del_offline, "delete from offlinemessage where receiverid='%s';", userid);
+    sprintf(sql_del_group_offline, "delete from chat_group_offlinemessage where receiverid='%s';", userid);
 
     if(execute_mysql(sql_del_offline) == -1)
         print_error_mysql(sql_del_offline);
+
+    if(execute_mysql(sql_del_group_offline) == -1)
+        print_error_mysql(sql_del_group_offline);
 }
 
 void move_friend_to_group(char *userid, char *friendid, char *groupid)
@@ -661,4 +665,52 @@ void add_chat_group_member(const int groupid, const char *userid)
     if(execute_mysql(sql) == -1)
         print_error_mysql(sql);
 
+}
+
+char* get_group_offline_message(const char *receivedid)
+{
+    char sql1[DATABASE_SQLMAXLENGTH];
+    char sql2[DATABASE_SQLMAXLENGTH];
+
+    sprintf(sql1, "select distinct groupid from chat_group_offlinemessage where receiverid='%s';", receivedid);
+    sprintf(sql2, "select groupid, senderid, content, fontfamliy, fontsize, fontcolor "
+                 "from chat_group_offlinemessage where receiverid='%s';", receivedid);
+
+    if(execute_mysql(sql1) == -1)
+        print_error_mysql(sql1);
+
+    cJSON *root = cJSON_CreateObject();
+
+    mysql_res = mysql_store_result(mysql);
+    while((mysql_row = mysql_fetch_row(mysql_res)) != NULL)
+    {
+        cJSON_AddItemToObject(root, mysql_row[0], cJSON_CreateArray());
+    }
+
+    if(execute_mysql(sql2) == -1)
+        print_error_mysql(sql2);
+     mysql_res = mysql_store_result(mysql);
+
+     while((mysql_row = mysql_fetch_row(mysql_res)) != NULL)
+     {
+         cJSON *node = root->child;
+         while(node)
+         {
+             if(strcmp(node->string, mysql_row[0]) == 0)
+             {
+                 cJSON *tmp = cJSON_CreateObject();
+                 cJSON_AddStringToObject(tmp, "senderid", mysql_row[1]);
+                 cJSON_AddStringToObject(tmp, "content", mysql_row[2]);
+                 cJSON_AddStringToObject(tmp, "fontfamliy", mysql_row[3]);
+                 cJSON_AddStringToObject(tmp, "fontsize", mysql_row[4]);
+                 cJSON_AddStringToObject(tmp, "fontcolor", mysql_row[5]);
+                 cJSON_AddItemToArray(node, tmp);
+                 break;
+             }
+             else
+                 node = node->next;
+         }
+     }
+
+     return cJSON_PrintUnformatted(root);
 }

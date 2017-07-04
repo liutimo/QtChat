@@ -55,6 +55,7 @@ private slots:
     void receiveFriendList(const QByteArray&);
     void receiveUserInfo(const QByteArray&);
     void receiveOfflineMessage(const QByteArray&);
+    void receiveGroupOfflineMessage(const QByteArray &);
     void receivedGroupInfo(const QByteArray&);
     void receivedGroupMemberInfo(const QByteArray&);
     void changeStatus();
@@ -100,7 +101,7 @@ private:
 
     ListWidget *searachwidget;
 
-    QToolButton *btn_add_friend;
+//    QToolButton *btn_add_friend;
 
     QToolButton *btn_main_menu;
 
@@ -116,6 +117,12 @@ private:
     QMenu *main_menu;
 
     bool isSend = false;
+
+    //这是一个不合适的解决方案。应该是我服务器没写好。导致服务端发送数据后客户端收不到离线消息。所以只能设置一个定时器定时的发送离线消息请求
+    QTimer *timer;
+    bool receiced = false;                                      //是否受到离线用户消息
+    bool receicedgroupmsg = false;                              //是否受到群组离线消息
+    bool isreceived = false;                                    //是否收到群组信息
 };
 
 #endif // MAINWIDGET_H
