@@ -6,7 +6,7 @@
 #define MAINWIDGET_H
 
 #include "basicwidget.h"
-
+#include "loginwidget.h"
 QT_BEGIN_NAMESPACE
 class QPushButton;
 class HeadIcon;
@@ -34,6 +34,7 @@ class MainWidget : public BasicWidget
 public:
     MainWidget(QWidget *parent = Q_NULLPTR);
     void setSatus(Status status);
+    void setLoginWidget(LoginWidget *l);
 
 protected:
     void resizeEvent(QResizeEvent *);
@@ -112,6 +113,8 @@ private:
     QAction *state_away;
     QAction *state_offline;
     QAction *state_notdisturb;
+
+    LoginWidget *loginwidget;
 
 
     QMenu *main_menu;

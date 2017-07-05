@@ -191,3 +191,15 @@ void ListViewItemWidget::hideStatus()
 {
     m_status->hide();
 }
+//void ListViewItemWidget::setSupportClick(bool flag )
+//{
+//    supportDoubleClicked = flag;
+//}
+
+void ListViewItemWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+//    if(supportDoubleClicked)
+
+    QWidget::mouseDoubleClickEvent(event);
+    listWidgetMenuTriggered();
+}

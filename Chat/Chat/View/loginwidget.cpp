@@ -244,7 +244,7 @@ void LoginWidget::loginStatus(LoginStatus ls)
 
         QThread::sleep(1);
         mainwidget = new MainWidget();
-
+        mainwidget->setLoginWidget(this);
         connect(mainwidget, &MainWidget::loadFinished, this, &LoginWidget::showMainWidget);
         connect(mainwidget, &MainWidget::updateMessageBox, this, [this](){
             timer->start();
@@ -260,9 +260,13 @@ void LoginWidget::loginStatus(LoginStatus ls)
         break;
     }
     case LOGINPWERROR:
-    case LOGINUNKNOW:
     {
         showStatusBar("密码错误，请重新输入密码!");
+        break;
+    }
+    case LOGINUNKNOW:
+    {
+        showStatusBar("CHAT帐号不存在！");
         break;
     }
     case LOGINREPEAT:
@@ -270,8 +274,10 @@ void LoginWidget::loginStatus(LoginStatus ls)
         showStatusBar(QString("%1已经登陆,请勿重复登陆!").arg(le_username->text()));
         break;
     }
-    default:
+    default:{
+        showStatusBar("未知错误！");
         break;
+    }
     }
 }
 
@@ -501,4 +507,11 @@ void LoginWidget::paintEvent(QPaintEvent *e)
     QPainter p(this);
 
     p.drawPixmap(0, 0, QPixmap(":/Resource/138-14091F95623-50.jpg").scaled(width(), 480, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+}
+
+void LoginWidget::restore()
+{
+    loginStatusBar->hide();
+    this->setFixedSize(width(), height() - 20);
+    ConnectToServer::getInstance()->close();
 }

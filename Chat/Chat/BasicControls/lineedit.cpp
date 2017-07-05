@@ -13,7 +13,7 @@ LineEdit::LineEdit(QWidget *parent ) : QLineEdit(parent)
 {
     init();
 
-    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 175);color:rgb(170,170,170);text-align:center;font:15px}");
+    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 200);color:rgb(170,170,170);text-align:center;font:15px}");
 
     connect(this, &LineEdit::textChanged, this, &LineEdit::textChange);
 }
@@ -35,7 +35,7 @@ void LineEdit::init()
     connect(btn_clear, &QPushButton::clicked, this, [this](){
         btn_clear->hide();
         this->clear();
-        setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 50);color:rgb(170,170,170);text-align:center;font:15px}");
+        setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 200);color:rgb(170,170,170);text-align:center;font:15px}");
     });
 }
 
@@ -53,7 +53,7 @@ void LineEdit::focusOutEvent(QFocusEvent *e)
 {
     QLineEdit::focusOutEvent(e);
     //btn_clear->hide();
-    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 175);color:rgb(170,170,170);text-align:center;font:15px}");
+    setStyleSheet("QLineEdit{border:0px;background-color: rgba(255, 255, 255, 200);color:rgb(170,170,170);text-align:center;font:15px}");
     emit LineEditFocusOut();
 }
 

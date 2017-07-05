@@ -15,7 +15,7 @@
 #include <QAction>
 #include <QSettings>
 
-GroupItemWidget::GroupItemWidget(QWidget *parent) : QWidget(parent)
+GroupItemWidget::GroupItemWidget(QWidget *parent) : QWidget(parent), isGroupItem(true)
 {
     init();
     resize(200, 50);
@@ -36,8 +36,17 @@ void GroupItemWidget::init()
     QAction *sendMsg = new QAction(QIcon(":/Resource/mainwidget/sendmsg.png"), "发送即时消息", this);
     connect(sendMsg, &QAction::triggered, this, &GroupItemWidget::listWidgetMenuTriggered);
 
+    exitMsg = new QAction(QIcon(":/Resource/mainwidget/sendmsg.png"), "退出该多人聊天", this);
+
+    connect(exitMsg, &QAction::triggered, this, [this](){
+        ConnectToServer::getInstance()->sendRequestExitGroupMessage(groupname);
+        emit exitGroup();
+
+        DataBase::getInstance()->delete_group(AllVariable::getLoginUserId(), groupid);
+    });
 
     groupMenu->addAction(sendMsg);
+    groupMenu->addAction(exitMsg);
 }
 
 void GroupItemWidget::resizeEvent(QResizeEvent *event)
@@ -69,6 +78,13 @@ QString GroupItemWidget::getImagePath()
     return imagePath;
 }
 
+
+void GroupItemWidget::setGroup(bool flag)
+{
+    isGroupItem = flag;
+
+}
+
 void GroupItemWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QWidget::contextMenuEvent(event);           //调用基类事件
@@ -77,37 +93,71 @@ void GroupItemWidget::contextMenuEvent(QContextMenuEvent *event)
 
 void GroupItemWidget::listWidgetMenuTriggered()
 {
-    QMap<QString, GroupChatWidget*>& groupchatwidgets = AllVariable::getGroupChatWidget();
+    if(isGroupItem == true) {
+        QMap<QString, GroupChatWidget*>& groupchatwidgets = AllVariable::getGroupChatWidget();
 
-    GroupChatWidget *chat = groupchatwidgets.value(groupid);
+        GroupChatWidget *chat = groupchatwidgets.value(groupid);
 
-    if (chat == NULL)
-    {
-        chat = new GroupChatWidget();
-        groupchatwidgets.insert(groupid, chat);
+        if (chat == NULL)
+        {
+            chat = new GroupChatWidget();
+            groupchatwidgets.insert(groupid, chat);
+            chat->initMemberList();
+        }
+
+        QSettings *setting = RWSetting::getInstance()->getSetting();
+        QStringList us = setting->value("RecentlyGroupChat").toStringList();
+
+        for (QStringList::iterator iter = us.begin(); iter != us.end();)
+        {
+            if (*iter == groupid)
+                iter = us.erase(iter);
+            else
+                ++iter;
+        }
+
+        us << groupid;
+
+        setting->setValue("RecentlyGroupChat", us);
+
+        chat->setGroupId(groupid);
+        chat->setGroupName(groupname);
+        chat->setIcon(imagePath);
         chat->initMemberList();
+        chat->show();
     }
-
-    QSettings *setting = RWSetting::getInstance()->getSetting();
-    QStringList us = setting->value("RecentlyGroupChat").toStringList();
-
-    for (QStringList::iterator iter = us.begin(); iter != us.end();)
+    else
     {
-        if (*iter == groupid)
-            iter = us.erase(iter);
-        else
-            ++iter;
+        QMap<QString, ChatWidget*>& chatwidgets = AllVariable::getChatWidgetMap();
+
+        ChatWidget *chat = chatwidgets.value(groupid);
+
+        if (chat == NULL)
+        {
+            chat = new ChatWidget();
+            chatwidgets.insert(groupid, chat);
+        }
+
+        QSettings *setting = RWSetting::getInstance()->getSetting();
+        QStringList us = setting->value("RecentlyGroupChat").toStringList();
+
+        for (QStringList::iterator iter = us.begin(); iter != us.end();)
+        {
+            if (*iter == groupid)
+                iter = us.erase(iter);
+            else
+                ++iter;
+        }
+
+        us << groupid;
+
+        setting->setValue("RecentlyGroupChat", us);
+
+        chat->setUserid(groupid);
+        chat->setUserName(groupname);
+        chat->setIcon(imagePath);
+        chat->show();
     }
-
-    us << groupid;
-
-    setting->setValue("RecentlyGroupChat", us);
-
-    chat->setGroupId(groupid);
-    chat->setGroupName(groupname);
-    chat->setIcon(imagePath);
-    chat->initMemberList();
-    chat->show();
 }
 
 void GroupItemWidget::setImage(const QString& url)
@@ -129,3 +179,7 @@ void GroupItemWidget::setImage(const QString& url)
 
 }
 
+void GroupItemWidget::hideExit()
+{
+    groupMenu->removeAction(exitMsg);
+}

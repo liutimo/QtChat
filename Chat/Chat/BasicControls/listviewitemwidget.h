@@ -23,6 +23,7 @@ public:
     void setStatus(int status);
     void updateGroupMenu();
     void hideStatus();
+//    void setSupportClick(bool flag = true);
 signals:
     void updateListWidget();
     void deleteFriend();
@@ -35,7 +36,7 @@ protected:
     void resizeEvent(QResizeEvent *);
     void contextMenuEvent(QContextMenuEvent *event);
     void listWidgetMenuTriggered();
-
+    void mouseDoubleClickEvent(QMouseEvent *event);
 private:
     void init();
 
@@ -50,6 +51,8 @@ private:
     QMenu *movetoMenu;
 
     QLabel *m_status;
+
+//    bool supportDoubleClicked = false;
 };
 
 #endif // LISTVIEWITEMWIDGET_H

@@ -244,7 +244,7 @@ QVector<QStringList> DataBase::getRecentlyChatFriendInfo(const QStringList &list
     for(int i = list.size() - 1; i >=0; --i)
     {
         QString sq = sql.arg(list.at(i), AllVariable::getLoginUserId());
-//        qDebug() << sq;
+        //        qDebug() << sq;
         QSqlQuery sql_query;
         sql_query.prepare(sq);
         sql_query.exec();
@@ -273,7 +273,6 @@ QVector<QStringList> DataBase::searachFriend(const QString &key)
                   "like '%%1%' or  username like '%%1%' or friendid like'%%1%' and userid='%2';";
     sql = sql.arg(key, AllVariable::getLoginUserId());
 
-//    qDebug() << sql;
 
     QSqlQuery sql_query;
     sql_query.prepare(sql);
@@ -368,7 +367,7 @@ void DataBase::setGroupMemberInfo(const QMap<QString, QVector<QStringList>> &map
 {
 
     QString sql_delete = "delete from chat_groupmember where groupid='%1' and memberid='%2';";
-    QString sql = "insert into chat_groupmember(groupid, memberid, membername, memberimage) values('%1', '%2', '%3', '%4');";
+    QString sql = "insert into chat_groupmember(userid, groupid, memberid, membername, memberimage) values('%1', '%2', '%3', '%4', '%5');";
 
     for(QString key : map.keys())
     {
@@ -379,7 +378,7 @@ void DataBase::setGroupMemberInfo(const QMap<QString, QVector<QStringList>> &map
             sql_query.prepare(sql_delete.arg((key, elem[0])));
             sql_query.exec();
 
-            sql_query.prepare(sql.arg(key, elem[0], elem[1], elem[2]));
+            sql_query.prepare(sql.arg(AllVariable::getLoginUserId(), key, elem[0], elem[1], elem[2]));
             sql_query.exec();
         }
     }
@@ -558,4 +557,27 @@ QVector<QStringList> DataBase::get_all_friends()
     }
 
     return vec;
+}
+
+void DataBase::delete_group(const QString &userid, const QString &groupid)
+{
+    QString sql = "delete from chat_group where userid=? and groupid=?;";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.addBindValue(AllVariable::getLoginUserId());
+    sql_query.addBindValue(groupid);
+
+    sql_query.exec();
+}
+
+void DataBase::delete_all_groupmember()
+{
+    QString sql = "delete from chat_groupmember where userid=?;";
+
+    QSqlQuery sql_query;
+    sql_query.prepare(sql);
+    sql_query.addBindValue(AllVariable::getLoginUserId());
+
+    sql_query.exec();
 }

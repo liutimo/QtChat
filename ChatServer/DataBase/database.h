@@ -21,6 +21,7 @@ MYSQL_RES *mysql_res;
 MYSQL_ROW *mysql_row;
 
 
+void start_mysql();
 //????????
 int init_mysql();
 
@@ -107,4 +108,8 @@ int create_chat_group(const char *groupname);
 void add_chat_group_member(const int groupid, const char *userid);
 
 char* get_group_offline_message(const char *receivedid);
+
+void delete_one_member(const char *groupid, const char *memberid);
+
+char * get_group_id(const char *groupname);
 #endif // !DATABASE_H;

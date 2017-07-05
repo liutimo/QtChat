@@ -23,8 +23,12 @@ public:
     QString getGroupName();
     QString getGroupId();
     QString getImagePath();
+
+    void setGroup(bool flag);
+    void hideExit();
 signals:
     void updateListWidget();
+    void exitGroup();
 public slots:
 
 private slots:
@@ -45,6 +49,10 @@ private:
     QString imagePath;
 
     QMenu *groupMenu;
+
+    QAction *exitMsg;
+
+    bool isGroupItem;                   //判断是否是群组中ITEM
 };
 
 

@@ -12,7 +12,7 @@ extern pthread_mutex_t mutex;
 void sendMsg(int fd, MsgType msgtype, char *data, ssize_t size)
 {
     pthread_mutex_lock(&mutex);
-    char *buf = (char*)malloc((sizeof(Msg) + size));
+    char *buf = malloc((sizeof(Msg) + size));
     Msg *msg = (Msg*)buf;
     msg->m_uiCheckCrc = 0xAFAFAFAF;
     msg->type = msgtype;
@@ -67,7 +67,8 @@ void sendResponseFriendList(int fd, const char *list)
     bzero(f, length);
     f->len = strlen(list) + 1;
 
-    memcpy(f->friendlist, list, f->len);
+    strcpy(f->friendlist, list);
+    f->friendlist[strlen(list)] = '\0';
 
     printf("发送好友列表\n");
     sendMsg(fd, RESPONSEFRIENDLIST, f, sizeof(ResponseFriendList) + f->len);
@@ -107,7 +108,7 @@ void sendFriendStatusChange(int fd, ResponseFriendStatusChange *msg)
 void sendGroupMessage(const int fd, RequestForwordGroupMessage* rmsg)
 {
     printf("发送群消息\n");
-    sendMsg(fd, REQUESTFORWARDGROUPMESSAGE, rmsg, rmsg->length + sizeof(RequestForwordGroupMessage));
+    sendMsg(fd, REQUESTFORWARDGROUPMESSAGE, rmsg, rmsg->length + sizeof(RequestForwordGroupMessage) + 1);
 }
 
 void sendSearchResult(const int fd, ResponseSearchFriend *rmsg)

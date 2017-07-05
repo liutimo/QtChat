@@ -261,6 +261,18 @@ void ConnectToServer::sendRequestGroupOfflineMessage()
     delete rmsg;
 }
 
+void ConnectToServer::sendRequestExitGroupMessage(const QString &groupname)
+{
+    qDebug() << "退出群组" << groupname;
+    RequestExitGroup *rmsg = new RequestExitGroup;
+    bzero(rmsg, sizeof(RequestExitGroup));
+    strcpy(rmsg->groupname, groupname.toUtf8().data());
+
+    send(REQUESTEXITGROUP, (char*)rmsg, sizeof(RequestExitGroup));
+
+    delete rmsg;
+}
+
 /*****************************???????????????**************************************/
 
 void ConnectToServer::recv()
@@ -384,8 +396,8 @@ void ConnectToServer::recv()
         char *json = new char[message->length + 1];
         strcpy(json, message->json);
         json[message->length] = '\0';
-
-        emit receivedGroupOfflineMessage(json);
+        qDebug() << json;
+        emit receivedGroupOfflineMessage(QByteArray(json));
 
         delete []json;
         delete message;

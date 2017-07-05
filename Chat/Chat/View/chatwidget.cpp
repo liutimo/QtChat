@@ -56,13 +56,15 @@ void ChatWidget::init()
 
     textedit = new QTextEdit(this);
     textedit->setReadOnly(true);
-    textedit->setStyleSheet("background-color: rgba(255, 255, 255, 200);");
+    textedit->setStyleSheet("background-color: rgba(255, 255, 255, 50);");
 
     chatinput = new ChatInput(this);
     chatinput->setObjectName("chatinput");
     chatinput->setStyleSheet("background-color: rgba(255, 255, 255, 200);");
     connect(chatinput, &ChatInput::sendMsg, this, &ChatWidget::setMessage);
-
+    connect(chatinput, &ChatInput::closed, this, [this](){
+        this->close();
+    });
 
     QSettings *setting = RWSetting::getInstance()->getSetting();
     SkinType skintype = (SkinType)setting->value("SkinType").toInt();
@@ -95,7 +97,6 @@ void ChatWidget::resizeEvent(QResizeEvent *event)
 
     textedit->resize(width(), height() - 240);
     textedit->move(0, 45);
-
 
     chatinput->resize(width() , 200);
     chatinput->move(0, height() - 200);
@@ -137,7 +138,7 @@ void ChatWidget::setMessage(const QString &msg)
 
     QStringList fontinfo =  chatinput->getFontInfo();
 
-    char *buf = new char[sizeof(RequestForwordMessageMsg) + msg.toUtf8().size()];
+    char *buf = new char[sizeof(RequestForwordMessageMsg) + msg.toUtf8().size() + 1];
 
     RequestForwordMessageMsg *rmsg = (RequestForwordMessageMsg*)buf;
     strcpy(rmsg->friendid, userid.toUtf8().data());
@@ -145,11 +146,12 @@ void ChatWidget::setMessage(const QString &msg)
     strcpy(rmsg->size, fontinfo.at(1).toUtf8().data());
     strcpy(rmsg->color, fontinfo.at(2).toUtf8().data());
 
-    rmsg->length = msg.toUtf8().size();
-    memcpy(rmsg->message, msg.toUtf8().data(), rmsg->length);
+    rmsg->length = msg.toUtf8().size() + 1;
+    strcpy(rmsg->message, msg.toUtf8().data());
+    rmsg->message[rmsg->length] = '\0';
 
     ConnectToServer::getInstance()->sendRequestForwordMessageMsg(rmsg);
-    delete []buf;
+    delete rmsg;
 
 
     QString html = QString("<html><b style=\"color:green; font-size:16px;\">%1</b> <em style=\"color:gray; font-size:12px;\">%2</em>"

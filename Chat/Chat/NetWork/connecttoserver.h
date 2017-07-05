@@ -36,6 +36,7 @@ public:
     void sendRenameFriendGroupMsg(const QString &oldname, const QString &newname);
     void sendCreateChatGroupMsg(const QString &groupname, const QString &json);
     void sendRequestGroupOfflineMessage();
+    void sendRequestExitGroupMessage(const QString &);
 protected:
     void recv();
 
@@ -48,7 +49,7 @@ signals:
     void receivedGroupMessage(ForwordGroupMessage *msg);
     void responseUserInfo(QByteArray);
     void receivedOfflineMessage(QByteArray);
-    void receivedGroupOfflineMessage(QByteArray);
+    void receivedGroupOfflineMessage(const QByteArray&);
     void receivedGroupInfo(const QByteArray&);
     void receivedGroupMemberInfo(const QByteArray&);
     void friendStatusChange(const QString, int);

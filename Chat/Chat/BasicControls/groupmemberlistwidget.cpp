@@ -50,11 +50,12 @@ void GroupMemberListWidget::setList(const QVector<QStringList> &vec)
     for(int i = 0; i < vec.size(); ++i)
     {
         QStringList str = vec.at(i);
-        ListViewItemWidget *item_widget = new ListViewItemWidget;
+        GroupItemWidget *item_widget = new GroupItemWidget;
         item_widget->setImage(str.at(2));
-        item_widget->setUserinfo(str.at(0), str.at(1), "");
-        item_widget->hideStatus();
+        item_widget->setGroupInfo(str.at(0), str.at(1));
         item_widget->setStyleSheet("background-color:rgba(255,255,255,0);");
+        item_widget->setGroup(false);
+        item_widget->hideExit();
 
         QListWidgetItem *item = new QListWidgetItem;
 
@@ -71,7 +72,6 @@ void GroupMemberListWidget::addOne(const QString &userid, const QString &usernam
     item_widget->setImage(imagepath);
     item_widget->setGroupInfo(userid, username);
     item_widget->setStyleSheet("background-color:rgba(255,255,255,0);");
-
     QListWidgetItem *item = new QListWidgetItem;
 
     listwidget->insertItem(listwidget->count(), item);

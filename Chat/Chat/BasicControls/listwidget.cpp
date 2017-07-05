@@ -325,10 +325,16 @@ void ListWidget::setGroupList(QVector<QStringList> lists)
         GroupItemWidget *itemwidget = new GroupItemWidget;
         itemwidget->setGroupInfo(elem.at(0), elem.at(1));
         itemwidget->setImage(elem.at(2));
+
         QListWidgetItem *newItem = new QListWidgetItem();
         newItem->setSizeHint(QSize(this->width(),50));
         insertItem(count(),newItem);
         setItemWidget(newItem, itemwidget);
+
+        connect(itemwidget, &GroupItemWidget::exitGroup, this, [this,newItem](){
+            removeItemWidget(newItem);
+            delete newItem;
+        });
     }
 }
 
@@ -342,6 +348,7 @@ void ListWidget::setList(QVector<QStringList> lists, int)
         ListViewItemWidget *itemwidget = new ListViewItemWidget;
         itemwidget->setUserinfo(elem.at(0), elem.at(1), elem.at(2));
         itemwidget->setImage(elem.at(3));
+        itemwidget->hideStatus();
         QListWidgetItem *newItem = new QListWidgetItem();
         newItem->setSizeHint(QSize(this->width(),30));
         insertItem(count(),newItem);

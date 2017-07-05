@@ -54,7 +54,7 @@ int main()
 
     fd = init();
 
-
+    start_mysql();
 //    pthread_create(&pid, NULL, pollhandle, NULL);
 
     start(fd);

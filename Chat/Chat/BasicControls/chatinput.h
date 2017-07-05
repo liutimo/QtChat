@@ -30,6 +30,7 @@ protected:
 
 signals:
     void sendMsg(const QString &);
+    void closed();
 public slots:
     void btn_send_clicked();
 private slots:

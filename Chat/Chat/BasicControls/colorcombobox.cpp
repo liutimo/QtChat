@@ -27,7 +27,6 @@ void ColorComboBox::populateList()
 
     for (int i = 0; i < colorNames.size(); ++i) {
         QColor color(colorNames[i]);
-
         insertItem(i, colorNames[i]);
         setItemData(i, color, Qt::DecorationRole);
     }

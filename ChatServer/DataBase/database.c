@@ -5,21 +5,34 @@
 #include <stdio.h>
 #include <string.h>
 
-int init_mysql()
+
+void start_mysql()
 {
     mysql = mysql_init(NULL);
 
     //连接数据库。如果失败，返回-1.
-    if (!mysql_real_connect(mysql, DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD,
-        DATABASE_DBNAME, DATABASE_PORT, NULL, 0))
-        return -1;
+    mysql = mysql_real_connect(mysql, DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD,
+        DATABASE_DBNAME, DATABASE_PORT, NULL, 0);
+//        return -1;
 
-    return execute_mysql("set names utf8");
+    execute_mysql("set names utf8");
+}
+
+int init_mysql()
+{
+//    mysql = mysql_init(NULL);
+
+//    //连接数据库。如果失败，返回-1.
+//    mysql = mysql_real_connect(mysql, DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD,
+//        DATABASE_DBNAME, DATABASE_PORT, NULL, 0);
+////        return -1;
+
+//    return execute_mysql("set names utf8");
 }
 
 int execute_mysql(const char *sql)
 {
-    if (mysql_real_query(mysql, sql, strlen(sql)))
+    if (mysql_query(mysql, sql))
         return -1;
 
     return 0;
@@ -27,7 +40,7 @@ int execute_mysql(const char *sql)
 
 void close_mysql()
 {
-    mysql_close(mysql);
+//    mysql_close(mysql);
 }
 
 void print_error_mysql(const char *msg)
@@ -451,7 +464,6 @@ char **get_memberid(const char *groupid)
     int count = atoi(mysql_row[0]);
 
     char **members = (char**)malloc(sizeof(char*) * count + 1);
-    members[count] = NULL;
 
     if(execute_mysql(sql_get_membeid) == -1)
         print_error_mysql(sql_get_membeid);
@@ -465,6 +477,8 @@ char **get_memberid(const char *groupid)
         strcpy(memberid, mysql_row[0]);
         members[i++] = memberid;
     }
+
+    members[i] = NULL;
 
     return members;
 }
@@ -714,3 +728,41 @@ char* get_group_offline_message(const char *receivedid)
 
      return cJSON_PrintUnformatted(root);
 }
+
+
+void delete_one_member(const char *groupid, const char *memberid)
+{
+    char sql[DATABASE_SQLMAXLENGTH];
+
+    //选择当前最大的groupid
+    sprintf(sql, "delete from chat_groupmember where groupid='%s' and memberid='%s';", groupid, memberid);
+
+    printf("%s\n", sql);
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+}
+
+
+char* get_group_id(const char *groupname)
+{
+
+    if(groupname == NULL)
+        return NULL;
+    char sql[DATABASE_SQLMAXLENGTH];
+    sprintf(sql, "select groupid from chat_group where groupname='%s';", groupname);
+
+    if(execute_mysql(sql) == -1)
+        print_error_mysql(sql);
+
+    mysql_res = mysql_store_result(mysql);
+
+    mysql_row = mysql_fetch_row(mysql_res);
+
+    if(mysql_row == NULL)
+        return NULL;
+
+    return mysql_row[0];
+}
+
+

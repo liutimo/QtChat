@@ -18,7 +18,6 @@ ChatInput::ChatInput(QWidget *parent) : QWidget(parent)
     init();
     setMouseTracking(true);
     setDefault();
-
 }
 
 
@@ -35,22 +34,28 @@ void ChatInput::init()
 
     btn_chat_input_shake = new QToolButton(this);
     btn_chat_input_shake->setObjectName("btn_chat_input_shake");
+    btn_chat_input_shake->hide();
 
     btn_chat_input_voice = new QToolButton(this);
     btn_chat_input_voice->setObjectName("btn_chat_input_voice");
+    btn_chat_input_voice->hide();
 
     btn_chat_input_image = new QToolButton(this);
     btn_chat_input_image->setObjectName("btn_chat_input_image");
+    btn_chat_input_image->hide();
 
     btn_chat_input_music = new QToolButton(this);
     btn_chat_input_music->setObjectName("btn_chat_input_music");
+    btn_chat_input_music->hide();
 
     btn_chat_input_screenshot = new QToolButton(this);
     btn_chat_input_screenshot->setObjectName("btn_chat_input_screenshot");
+    btn_chat_input_screenshot->hide();
 
     btn_chat_input_messagemanage = new QToolButton(this);
-    btn_chat_input_messagemanage->setText("message record");
+    btn_chat_input_messagemanage->setText("聊天记录");
     btn_chat_input_messagemanage->setObjectName("btn_chat_input_messagemanage");
+    btn_chat_input_messagemanage->hide();
 
     label_font = new QLabel("字体:", this);
     label_color = new QLabel("颜色:", this);
@@ -59,8 +64,10 @@ void ChatInput::init()
     cb_font = new QFontComboBox(this);
     cb_font->setEditable(false);
 
+
     cb_color = new ColorComboBox(this);
     cb_color->setEditable(false);
+    cb_color->setCurrentIndex(7); //默认黑色
 
     cb_size = new QComboBox(this);
     cb_size->setEditable(false);
@@ -71,11 +78,13 @@ void ChatInput::init()
     connect(te_message, &QTextEdit::textChanged, this, &ChatInput::test);
 
     btn_chat_input_send = new QToolButton(this);
-    btn_chat_input_send->setText("Send");
+    btn_chat_input_send->setText("发送");
+    btn_chat_input_send->setStyleSheet("background-color:#00B0F0;");
     connect(btn_chat_input_send, &QToolButton::clicked, this, &ChatInput::btn_send_clicked);
 
     btn_chat_input_close = new QToolButton(this);
-    btn_chat_input_close->setText("Close");
+    btn_chat_input_close->setText("关闭");
+    btn_chat_input_close->setStyleSheet("background-color:#EB3F2F;");
 
     QVBoxLayout *v_layout = new QVBoxLayout;
 
@@ -123,6 +132,10 @@ void ChatInput::init()
     setLayout(v_layout);
 
     this->setStyleSheet("QToolButton{background-color: rgba(255, 255, 255, 0);}");
+
+    connect(btn_chat_input_close, &QToolButton::clicked, this, [this](){
+       emit closed();
+    });
 }
 
 void ChatInput::test()

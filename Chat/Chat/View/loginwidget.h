@@ -51,7 +51,7 @@ class LoginWidget : public BasicWidget
     Q_OBJECT
 public:
     LoginWidget(QWidget *parent = Q_NULLPTR);
-
+    void restore();
 
 protected:
     void timerEvent(QTimerEvent *event);

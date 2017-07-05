@@ -101,6 +101,7 @@ void MessageListWidget::showChatWidget(const QString userid)
     w->show();
     this->updateMessage();
     hide();
+    setFixedSize(width(), getHeight());
 }
 
 void MessageListWidget::showGroupChatWidget(const QString groupid)
@@ -130,4 +131,5 @@ void MessageListWidget::showGroupChatWidget(const QString groupid)
     w->show();
     updateMessage();
     hide();
+    setFixedSize(width(), getHeight());
 }

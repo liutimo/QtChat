@@ -38,6 +38,7 @@ typedef enum _MsgType {
     REQUESTCREATECHATGROUP,         //创建聊天群
     REQUESTGROUPOFFLINEMESSAGEMSG,  //请求群离线消息
     RESPONSEGROUPOFFLINEMESSAGEMSG, //回应离线消息
+    REQUESTEXITGROUP,               //请求退出群组
     Test
 }MsgType;
 
@@ -264,5 +265,9 @@ typedef struct _ResponseGroupOfflineMessage {
     int length;
     char json[0];
 }ResponseGroupOfflineMessage;
+
+typedef struct _RequestExitGroup{
+    char groupname[64];
+}RequestExitGroup;
 
 #endif // MSGSTRUCTURE_H

@@ -271,9 +271,11 @@ void handle(Msg *msg, int fd)
         init_mysql();
         char *json = get_offline_message(findOnlineUserWithFd(fd));
         close_mysql();
-        ResponseOfflineMessage *rom = (ResponseOfflineMessage*)malloc(sizeof(ResponseOfflineMessage) + strlen(json));
+        ResponseOfflineMessage *rom = (ResponseOfflineMessage*)malloc(sizeof(ResponseOfflineMessage) + strlen(json) + 1);
+        bzero(rom, sizeof(ResponseOfflineMessage) + strlen(json));
         rom->length = strlen(json);
         strcpy(rom->json, json);
+        rom->json[rom->length] = '\0';
         sendfflineMessage(fd, rom);
         free(rom);
         free(json);
@@ -371,7 +373,11 @@ void handle(Msg *msg, int fd)
         handleGroupOfflineMessageMsg(fd, msg);
         break;
     }
-
+    case REQUESTEXITGROUP: {
+        printf("REQUESTEXITGROUP");
+        handleExitGroupMsg(fd, msg);
+        break;
+    }
     default:
         break;
     }
@@ -897,6 +903,13 @@ void handleCreateChatGroup(int fd, Msg *msg)
             cJSON *userid = cJSON_GetArrayItem(root, i);
 
             add_chat_group_member(groupid, userid->valuestring);
+
+            int f = findOnlineUserWithUid( userid->valuestring);
+            if(f != -1)
+            {
+                handleRequestGroupMessage(f);
+                handleRequestGroupMemberMessage(f);
+            }
         }
     }
     close_mysql();
@@ -914,11 +927,11 @@ void handleGroupOfflineMessageMsg(int fd, Msg *msg)
     close_mysql();
 
 
-    ssize_t length = sizeof(ResponseGroupOfflineMessage) + strlen(json);
+    ssize_t length = sizeof(ResponseGroupOfflineMessage) + strlen(json) + 1;
     ResponseGroupOfflineMessage *rmsg = (ResponseGroupOfflineMessage*)malloc(sizeof(ResponseGroupOfflineMessage) + strlen(json));
     bzero(rmsg, length);
 
-    rmsg->length = strlen(json);
+    rmsg->length = strlen(json) + 1;
     strcpy(rmsg->json, json);
 
     sendGroupOfflineMessage(fd, rmsg);
@@ -926,4 +939,44 @@ void handleGroupOfflineMessageMsg(int fd, Msg *msg)
     free(json);
     free(rmsg);
 
+}
+
+
+void handleExitGroupMsg(int fd, Msg *msg)
+{
+    RequestExitGroup *rmsg = (RequestExitGroup*)malloc(msg->len);
+    bzero(rmsg, msg->len);
+    memcpy(rmsg, msg->data, msg->len);
+    init_mysql();
+    printf("%s\n", rmsg->groupname);
+    char *groupid = get_group_id(rmsg->groupname);
+
+    if(groupid == NULL)
+    {
+        free(rmsg);
+        return;
+    }
+    delete_one_member(groupid, findOnlineUserWithFd(fd));
+
+    char **memberid = get_memberid(groupid);
+
+    int i = 0;
+    while(memberid[i] != NULL)
+    {
+        int f = findOnlineUserWithUid(memberid[i]);
+
+        if(f != -1)
+        {
+            handleRequestGroupMemberMessage(f);
+        }
+
+        free(memberid[i]);
+        i++;
+    }
+
+
+    close_mysql();
+
+    free(rmsg);
+    free(memberid);
 }

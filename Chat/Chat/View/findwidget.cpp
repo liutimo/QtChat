@@ -161,5 +161,6 @@ void FindWidget::addFriend()
 
 void FindWidget::sendRequest(const QString& content, const QString &group)
 {
+    qDebug() << "11";
     ConnectToServer::getInstance()->sendRequestAddFriendAck(userid->text(), group, content);
 }

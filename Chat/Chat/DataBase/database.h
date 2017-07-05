@@ -64,6 +64,10 @@ public:
     //创建群的时候使用
     QVector<QStringList> get_all_friends();
 
+    void delete_group(const QString &userid, const QString &groupid);
+
+    void delete_all_groupmember();
+
 signals:
     void setGroupMemberFinished();
 public slots:

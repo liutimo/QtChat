@@ -24,7 +24,8 @@ int main(int argc, char *argv[])
     f.open(QIODevice::ReadOnly | QIODevice::Text);
     a.setStyleSheet(f.readAll());
     LoginWidget w;
-//    ValidateWidget w;
+//    ChatInput w;
+    //    ValidateWidget w;
 //   FindWidget w;
 //    AddAckWidget w;
 //    CreateGroup w;

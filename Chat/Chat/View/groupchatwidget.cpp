@@ -74,6 +74,10 @@ void GroupChatWidget::init()
     chatinput->setStyleSheet("background-color:transparent");
     chatinput->installEventFilter(this);
     connect(chatinput, &ChatInput::sendMsg, this, &GroupChatWidget::setMessage);
+    connect(chatinput, &ChatInput::closed, this, [this](){
+        this->close();
+    });
+
 
     listwidget = new GroupMemberListWidget(this);
     listwidget->setStyleSheet("background-color: transparent;");
@@ -174,7 +178,7 @@ void GroupChatWidget::setMessage(const QString &msg)
 
     QStringList fontinfo =  chatinput->getFontInfo();
 
-    char *buf = new char[sizeof(ForwordGroupMessage) + msg.toUtf8().size()];
+    char *buf = new char[sizeof(ForwordGroupMessage) + msg.toUtf8().size() + 1];
 
     ForwordGroupMessage *rmsg = (ForwordGroupMessage*)buf;
     strcpy(rmsg->userid, AllVariable::getLoginUserId().toUtf8().data());
@@ -183,9 +187,10 @@ void GroupChatWidget::setMessage(const QString &msg)
     strcpy(rmsg->size, fontinfo.at(1).toUtf8().data());
     strcpy(rmsg->color, fontinfo.at(2).toUtf8().data());
 
-    rmsg->length = msg.toUtf8().size();
+//    qDebug() << msg.toUtf8().size() << msg;
+    rmsg->length = msg.toUtf8().size() + 1;
     memcpy(rmsg->message, msg.toUtf8().data(), rmsg->length);
-
+    rmsg->message[msg.toUtf8().size()] = '\0';
     ConnectToServer::getInstance()->sendForwordGroupMessage(rmsg);
     delete []buf;
 

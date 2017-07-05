@@ -558,8 +558,9 @@ void MainWidget::receiveGroupOfflineMessage(const QByteArray &bytearray)
 
     QMap<QString,int>& map = AllVariable::getGroupOfflineMessage();
 
-    QJsonParseError error;
-    QJsonDocument document = QJsonDocument::fromJson(bytearray, &error);
+//    QJsonParseError error;
+    qDebug() << bytearray;
+    QJsonDocument document = QJsonDocument::fromJson(bytearray);
 
     if(!document.isNull())
     {
@@ -594,8 +595,10 @@ void MainWidget::receiveGroupOfflineMessage(const QByteArray &bytearray)
             }
         }
     }
-    else
-        qDebug() << error.errorString();
+//    else
+//        qDebug() << error.errorString();
+
+     ConnectToServer::getInstance()->sendRequestAckOfflineMsg();
 }
 
 void MainWidget::parseGroup(const QByteArray&json)
@@ -671,7 +674,6 @@ void MainWidget::receivedGroupMemberInfo(const QByteArray &json)
                     vec.append(list);
                     qDebug() << list;
                 }
-
                 map.insert(key, vec);
             }
         }
@@ -680,6 +682,7 @@ void MainWidget::receivedGroupMemberInfo(const QByteArray &json)
     else
         qDebug() << error.errorString();
 
+    DataBase::getInstance()->delete_all_groupmember();
     DataBase::getInstance()->setGroupMemberInfo(map);
 }
 
@@ -720,13 +723,13 @@ void MainWidget::init_main_menu()
 {
     QAction *setting = new QAction("设置");
     QAction *addfriend = new QAction("添加好友");
-
+    QAction *layout = new QAction("注销登陆");
     //主界面菜单
     main_menu = new QMenu();
     main_menu->addAction(setting);
     main_menu->addAction(addfriend);
-    main_menu->addAction(new QAction("修改资料"));
-    main_menu->addAction(new QAction("注销登陆"));
+//    main_menu->addAction(new QAction("修改资料"));
+    main_menu->addAction(layout);
     main_menu->addAction(new QAction("退出"));
 
     btn_main_menu->setMenu(main_menu);
@@ -738,14 +741,25 @@ void MainWidget::init_main_menu()
         FindWidget *w = new FindWidget();
         w->show();
     });
+
+    connect(layout, &QAction::triggered, this, [this](){
+       ConnectToServer::getInstance()->sendRequestExitMessage();
+       loginwidget->show();
+       loginwidget->restore();
+       this->close();
+    });
 }
-
-
 
 void MainWidget::receivedFriendAddRequest(const QString &sendid, const QString &validate)
 {
+    qDebug() << "qq";
     AddAckWidget *w = new AddAckWidget();
     w->setWindowModality(Qt::ApplicationModal);
     w->show();
     w->setText(sendid, validate);
+}
+
+void MainWidget::setLoginWidget(LoginWidget *l)
+{
+    loginwidget = l;
 }

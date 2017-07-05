@@ -62,6 +62,9 @@ void CreateGroup::init()
 
         json.setArray(array);
 
+        if(group_name->text().isEmpty())
+            return;
+
         ConnectToServer::getInstance()->sendCreateChatGroupMsg(group_name->text(), json.toJson());
         ConnectToServer::getInstance()->sendRequestGroupInfo();
         close();
