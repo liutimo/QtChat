@@ -101,8 +101,8 @@ void start(int fd)
             else if (events[i].events & EPOLLIN)
             {
                 // read from client
-                recvMsg(events[i].data.fd);
-//                recvConnectionMsg(events[i].data.fd);
+//                recvMsg(events[i].data.fd);
+                recvConnectionMsg(events[i].data.fd);
             }
 
         }
